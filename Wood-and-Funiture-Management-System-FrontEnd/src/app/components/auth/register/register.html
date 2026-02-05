@@ -1,0 +1,108 @@
+<div class="dashboard-layout">
+    <app-admin-side></app-admin-side>
+
+    <main class="main-content">
+        <app-header></app-header>
+
+        <div class="content-body">
+            <div class="admin-header-box mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="header-icon-circle">
+                        <i class="bi bi-person-fill-add"></i>
+                    </div>
+                    <div>
+                        <h1 class="admin-title">Create System User</h1>
+                        <p class="admin-subtitle">Assign roles and credentials for new staff members</p>
+                    </div>
+                </div>
+                <button class="btn btn-wood-outline" routerLink="/user-management">
+                    <i class="bi bi-arrow-left"></i> Back to Directory
+                </button>
+            </div>
+
+            <div class="admin-card">
+                <form (ngSubmit)="onRegister()" #registerForm="ngForm" class="admin-form">
+                    <div class="form-section-title">
+                        <i class="bi bi-shield-lock-fill"></i> Authentication Details
+                    </div>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="admin-label">User Identifier (Username)</label>
+                            <div class="admin-input-group">
+                                <i class="bi bi-at"></i>
+                                <input type="text" name="username" [(ngModel)]="registerData.username" required
+                                    placeholder="e.g. jsmith">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="admin-label">Access Level (Role)</label>
+                            <div class="admin-input-group">
+                                <i class="bi bi-person-badge"></i>
+                                <select name="role" [(ngModel)]="registerData.role" required>
+                                    <option value="ADMIN">System Administrator</option>
+                                    <option value="MANAGER">Inventory Manager</option>
+                                    <option value="EMPLOYEE">Standard Employee</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">
+                        <i class="bi bi-person-vcard-fill"></i> Personal Information
+                    </div>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-4">
+                            <label class="admin-label">First Name</label>
+                            <input type="text" name="firstName" [(ngModel)]="registerData.firstName" required
+                                placeholder="John" class="admin-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="admin-label">Last Name</label>
+                            <input type="text" name="lastName" [(ngModel)]="registerData.lastName" required
+                                placeholder="Doe" class="admin-control">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="admin-label">Official Email</label>
+                            <input type="email" name="email" [(ngModel)]="registerData.email" required
+                                placeholder="john@company.com" class="admin-control">
+                        </div>
+                    </div>
+
+                    <div class="form-section-title">
+                        <i class="bi bi-key-fill"></i> Security Credentials
+                    </div>
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6">
+                            <label class="admin-label">Initial Password</label>
+                            <div class="admin-input-group">
+                                <i class="bi bi-lock-fill"></i>
+                                <input type="password" name="password" [(ngModel)]="registerData.password" required
+                                    placeholder="••••••••">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="admin-label">Verify Password</label>
+                            <div class="admin-input-group">
+                                <i class="bi bi-shield-check"></i>
+                                <input type="password" name="confirmPassword" [(ngModel)]="registerData.confirmPassword"
+                                    required placeholder="••••••••">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="admin-actions">
+                        <button type="submit" class="btn btn-admin-primary"
+                            [disabled]="!registerForm.form.valid || isLoading">
+                            <i class="bi bi-check-circle-fill me-2" *ngIf="!isLoading"></i>
+                            <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                            {{ isLoading ? 'Authorizing...' : 'Finalize & Create Account' }}
+                        </button>
+                        <button type="button" class="btn btn-admin-secondary" routerLink="/user-management">
+                            Discard Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>

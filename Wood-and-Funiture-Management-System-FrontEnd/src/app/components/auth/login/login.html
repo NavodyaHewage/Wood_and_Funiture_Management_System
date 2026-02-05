@@ -1,0 +1,97 @@
+<div class="login-wrapper">
+    <!-- Left Side: Branding/Logo -->
+    <div class="branding-section">
+        <div class="branding-content">
+            <div class="logo-container">
+                <img src="/logo.jpg" alt="Sachintha Timber Mall Logo" class="brand-logo">
+            </div>
+            <h1 class="brand-title">Sachintha Timber Mall</h1>
+            <p class="brand-subtitle">Wood & Furniture Management System</p>
+            <div class="brand-features">
+                <div class="feature-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Comprehensive Inventory Management</span>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Real-time Order Tracking</span>
+                </div>
+                <div class="feature-item">
+                    <i class="bi bi-check-circle-fill"></i>
+                    <span>Secure & Reliable</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side: Login Form -->
+    <div class="form-section">
+        <div class="form-container">
+            <div class="form-header">
+                <h2>Welcome Back</h2>
+                <p class="text-muted">Please sign in to your account</p>
+            </div>
+
+            <!-- Alert Messages -->
+            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+                <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage }}
+                <div *ngIf="lockCountdown > 0" class="mt-2 fw-bold text-center">
+                    Please try again in: {{ formatTime(lockCountdown) }}
+                </div>
+            </div>
+            <div *ngIf="successMessage" class="alert alert-success" role="alert">
+                <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
+            </div>
+
+            <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">Username</label>
+                    <div class="input-group">
+                        <span class="input-icon">
+                            <i class="bi bi-person"></i>
+                        </span>
+                        <input type="text" class="form-control" id="username" name="username"
+                            [(ngModel)]="loginData.username" required placeholder="Enter your username"
+                            [disabled]="isLoading">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">Password</label>
+                    <div class="input-group">
+                        <span class="input-icon">
+                            <i class="bi bi-lock"></i>
+                        </span>
+                        <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="password"
+                            name="password" [(ngModel)]="loginData.password" required placeholder="Enter your password"
+                            [disabled]="isLoading || lockCountdown > 0">
+                        <span class="password-toggle" (click)="showPassword = !showPassword">
+                            <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-options">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe" [(ngModel)]="rememberMe"
+                            name="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                            Remember me
+                        </label>
+                    </div>
+                    <div class="d-flex flex-column align-items-end">
+                        <a routerLink="/change-password" class="forgot-password mb-1">Forgot Password?</a>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-login"
+                    [disabled]="!loginForm.form.valid || isLoading || lockCountdown > 0">
+                    <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
+                        aria-hidden="true"></span>
+                    <span *ngIf="!isLoading">Sign In</span>
+                    <span *ngIf="isLoading">Signing In...</span>
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
