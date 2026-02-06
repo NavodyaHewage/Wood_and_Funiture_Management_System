@@ -20,9 +20,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    /**
-     * User login endpoint
-     */
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
         try {
@@ -69,9 +66,6 @@ public class AuthController {
         }
     }
 
-    /**
-     * User registration endpoint
-     */
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         try {
@@ -90,9 +84,6 @@ public class AuthController {
         }
     }
 
-    /**
-     * Refresh token endpoint
-     */
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshTokenRequest request) {
         try {
@@ -111,9 +102,6 @@ public class AuthController {
         }
     }
 
-    /**
-     * Validate token endpoint
-     */
     @GetMapping("/validate")
     public ResponseEntity<?> validateToken(@RequestHeader("Authorization") String token) {
         try {
@@ -132,9 +120,7 @@ public class AuthController {
         }
     }
 
-    /**
-     * Logout endpoint
-     */
+
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser() {
         try {

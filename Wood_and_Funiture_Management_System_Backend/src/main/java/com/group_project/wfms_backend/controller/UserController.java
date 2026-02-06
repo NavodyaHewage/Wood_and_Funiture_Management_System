@@ -21,9 +21,6 @@ public class UserController {
 
     private final UserService userService;
 
-    /**
-     * Get current logged-in user details
-     */
     @GetMapping("/me")
     public ResponseEntity<?> getCurrentUser() {
         try {
@@ -37,9 +34,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Get all users - ADMIN only
-     */
     @GetMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllUsers() {
@@ -54,9 +48,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Get user by ID - ADMIN only
-     */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getUserById(@PathVariable Integer id) {
@@ -76,9 +67,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Get users by role - ADMIN only
-     */
     @GetMapping("/role/{role}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getUsersByRole(@PathVariable String role) {
@@ -98,9 +86,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Get active users - ADMIN only
-     */
     @GetMapping("/active")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getActiveUsers() {
@@ -115,9 +100,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Get user statistics - ADMIN only
-     */
     @GetMapping("/statistics")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getUserStatistics() {
@@ -132,9 +114,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Update user - ADMIN only
-     */
     @PutMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> updateUser(@PathVariable Integer id,
@@ -155,9 +134,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Activate/Deactivate user - ADMIN only
-     */
     @PatchMapping("/{id}/toggle-status")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> toggleUserStatus(@PathVariable Integer id) {
@@ -177,9 +153,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Unlock user account - ADMIN only
-     */
     @PatchMapping("/{id}/unlock")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> unlockUser(@PathVariable Integer id) {
@@ -199,9 +172,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Change password - Authenticated users can change their own password
-     */
     @PatchMapping("/change-password")
     public ResponseEntity<?> changePassword(@RequestBody Map<String, String> request) {
         try {
@@ -235,9 +205,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Reset password - ADMIN only
-     */
     @PatchMapping("/{id}/reset-password")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> resetPassword(@PathVariable Integer id,
@@ -265,9 +232,7 @@ public class UserController {
         }
     }
 
-    /**
-     * Delete user - ADMIN only
-     */
+
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
@@ -287,9 +252,6 @@ public class UserController {
         }
     }
 
-    /**
-     * Check if username exists
-     */
     @GetMapping("/check-username/{username}")
     public ResponseEntity<?> checkUsername(@PathVariable String username) {
         try {
@@ -306,9 +268,7 @@ public class UserController {
         }
     }
 
-    /**
-     * Check if email exists
-     */
+
     @GetMapping("/check-email/{email}")
     public ResponseEntity<?> checkEmail(@PathVariable String email) {
         try {
