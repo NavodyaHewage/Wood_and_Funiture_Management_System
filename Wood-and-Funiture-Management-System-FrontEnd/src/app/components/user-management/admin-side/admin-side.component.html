@@ -1,0 +1,32 @@
+<div class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo-box">
+            <img src="/logo.jpg" alt="Logo" class="mini-logo">
+        </div>
+        <div class="sidebar-info">
+            <h5 class="m-0">WFMS Admin</h5>
+            <small class="text-white-50">Management System</small>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <ul class="nav-list">
+            <li *ngFor="let item of menuItems">
+                <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+                    <i class="bi" [ngClass]="item.icon"></i>
+                    <span>{{ item.name }}</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+        <div class="user-brief">
+            <i class="bi bi-person-circle fs-4"></i>
+            <div class="ms-2">
+                <div class="fw-bold">Admin User</div>
+                <small class="text-white-50">Administrator</small>
+            </div>
+        </div>
+    </div>
+</div>

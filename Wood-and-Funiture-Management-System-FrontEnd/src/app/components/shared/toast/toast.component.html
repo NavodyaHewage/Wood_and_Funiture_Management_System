@@ -1,0 +1,24 @@
+<div class="toast-container">
+    <div *ngFor="let toast of toasts$ | async" class="toast-card" [ngClass]="toast.type"
+        (click)="removeToast(toast.id)">
+
+        <div class="toast-icon">
+            <i class="bi" [ngClass]="getIcon(toast.type)"></i>
+        </div>
+
+        <div class="toast-content">
+            <div class="toast-header" *ngIf="toast.title">
+                <span class="toast-title">{{ toast.title }}</span>
+            </div>
+            <div class="toast-body">
+                {{ toast.message }}
+            </div>
+        </div>
+
+        <button class="toast-close" (click)="removeToast(toast.id); $event.stopPropagation()">
+            <i class="bi bi-x"></i>
+        </button>
+
+        <div class="toast-progress" [style.animation-duration.ms]="toast.duration"></div>
+    </div>
+</div>
