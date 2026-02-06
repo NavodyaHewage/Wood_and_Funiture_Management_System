@@ -68,22 +68,8 @@ public class WebSecurityConfig {
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         // User endpoints
                         .requestMatchers("/users/change-password").permitAll()
+                        .requestMatchers("/users/me").permitAll()
                         .requestMatchers("/users/**", "/users").hasRole("ADMIN")
-
-                        // Manager and Admin endpoints
-                        .requestMatchers("/reports/**").hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers("/employee/**").hasAnyRole("ADMIN", "MANAGER")
-
-                        // Supplier, Manager and Admin endpoints
-                        .requestMatchers("/raw-materials/**").hasAnyRole("ADMIN", "MANAGER", "SUPPLIER")
-                        .requestMatchers("/grn/**").hasAnyRole("ADMIN", "MANAGER", "SUPPLIER")
-
-                        // All authenticated users
-                        .requestMatchers("/customer/**").authenticated()
-                        .requestMatchers("/quotation/**").authenticated()
-                        .requestMatchers("/orders/**").authenticated()
-                        .requestMatchers("/receipts/**").authenticated()
-                        .requestMatchers("/products/**").authenticated()
 
                         // Any other request must be authenticated
                         .anyRequest().authenticated());

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
 import { ToastService } from '../../../service/toast.service';
+import { SessionService } from '../../../service/session.service';
 
 @Component({
   selector: 'app-login',
@@ -30,30 +31,17 @@ export class Login {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private sessionService: SessionService
   ) { }
 
   onLogin() {
-    // Clear previous messages
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    // Validate inputs
-    if (!this.loginData.username || !this.loginData.password) {
-      this.toastService.showWarning('Please enter both username and password');
-      return;
-    }
-
-    this.isLoading = true;
-
-    // Call authentication service
+    // ... validation logic ...
     this.authService.login(this.loginData.username, this.loginData.password).subscribe({
       next: (response) => {
         this.isLoading = false;
         this.toastService.showSuccess('Login successful! Welcome back.');
-        this.remainingAttempts = null;
-        this.lockCountdown = 0;
-        if (this.countdownInterval) clearInterval(this.countdownInterval);
+        this.sessionService.startMonitoring();
 
         // Show success message briefly before redirecting
         setTimeout(() => {

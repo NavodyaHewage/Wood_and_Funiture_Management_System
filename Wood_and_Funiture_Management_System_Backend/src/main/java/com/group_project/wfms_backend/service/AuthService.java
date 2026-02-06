@@ -68,8 +68,9 @@ public class AuthService {
                 userService.resetFailedAttempts(user);
             }
 
-            // Update last login
+            // Update last login and activity
             user.setLastLogin(LocalDateTime.now());
+            user.setLastActivity(LocalDateTime.now());
             userRepository.save(user);
 
             log.info("User {} logged in successfully", loginRequest.getUsername());
@@ -148,6 +149,10 @@ public class AuthService {
         // Generate new access token
         String newAccessToken = jwtUtils.generateTokenFromUsername(username);
         long expiresIn = jwtUtils.getRemainingTimeInMs(newAccessToken);
+
+        // Update last activity on successful refresh
+        user.setLastActivity(LocalDateTime.now());
+        userRepository.save(user);
 
         log.info("Token refreshed for user: {}", username);
 

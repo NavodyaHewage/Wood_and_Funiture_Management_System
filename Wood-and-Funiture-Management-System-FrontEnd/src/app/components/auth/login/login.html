@@ -33,12 +33,12 @@
             </div>
 
             <!-- Alert Messages -->
-            <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
+            <!-- <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
                 <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage }}
                 <div *ngIf="lockCountdown > 0" class="mt-2 fw-bold text-center">
                     Please try again in: {{ formatTime(lockCountdown) }}
                 </div>
-            </div>
+            </div> -->
             <div *ngIf="successMessage" class="alert alert-success" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
             </div>
