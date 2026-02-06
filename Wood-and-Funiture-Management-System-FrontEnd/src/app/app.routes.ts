@@ -1,3 +1,18 @@
 import { Routes } from '@angular/router';
+import { Login } from './components/auth/login/login';
+import { Register } from './components/auth/register/register';
+import { AdminDashComponent } from './components/user-management/admin-dash/admin-dash.component';
+import { ChangePassword } from './components/auth/change-password/change-password';
+import { UserManagementDashboardComponent } from './components/user-management/user-management-dashboard/user-management-dashboard.component';
 
-export const routes: Routes = [];
+import { ProfileComponent } from './components/profile/profile.component';
+
+export const routes: Routes = [
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'login', component: Login, data: { title: 'User Login' } },
+    { path: 'register', component: Register, data: { title: 'Register New User' } },
+    { path: 'admin-dashboard', component: AdminDashComponent, data: { title: 'Admin Dashboard' } },
+    { path: 'user-management', component: UserManagementDashboardComponent, data: { title: 'User Management' } },
+    { path: 'change-password', component: ChangePassword, data: { title: 'Change Password' } },
+    { path: 'profile', component: ProfileComponent,  data: { title: 'User Profile' }}
+];
