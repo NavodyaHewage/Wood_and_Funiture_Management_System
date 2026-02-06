@@ -1,0 +1,191 @@
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #fdfce8;
+}
+
+.main-content {
+    flex-grow: 1;
+    margin-left: 280px;
+    width: calc(100% - 280px);
+}
+
+.content-body {
+    padding: 40px;
+}
+
+.profile-avatar {
+    font-size: 4rem;
+    color: #713600;
+}
+
+.profile-name {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #38240D;
+    margin: 0;
+}
+
+.bg-wood {
+    background-color: #713600;
+}
+
+.btn-wood {
+    background: #713600;
+    color: white;
+    padding: 10px 25px;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-wood:hover {
+    background: #5d2d00;
+    transform: translateY(-2px);
+    color: white;
+}
+
+.admin-card {
+    background: white;
+    border-radius: 20px;
+    border: 1px solid rgba(113, 54, 0, 0.1);
+    box-shadow: 0 10px 40px rgba(56, 36, 13, 0.05);
+    overflow: hidden;
+}
+
+.card-header-wood {
+    background: rgba(113, 54, 0, 0.03);
+    padding: 20px;
+    border-bottom: 1px solid rgba(113, 54, 0, 0.05);
+}
+
+.card-header-wood h5 {
+    color: #713600;
+    font-weight: 700;
+    margin: 0;
+}
+
+.info-row {
+    display: flex;
+    padding: 12px 0;
+    border-bottom: 1px dashed rgba(113, 54, 0, 0.1);
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    width: 180px;
+    font-weight: 700;
+    color: #C05800;
+}
+
+.value {
+    color: #38240D;
+    font-weight: 500;
+}
+
+.bio-text {
+    padding: 15px;
+    background: #FDFBD4;
+    border-radius: 12px;
+    color: #38240D;
+    min-height: 80px;
+}
+
+.admin-control {
+    width: 100%;
+    padding: 12px 15px;
+    background: #FDFBD4;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    color: #38240D;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.admin-control:focus {
+    border-color: #C05800;
+    background: white;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(192, 88, 0, 0.05);
+}
+
+.wood-label {
+    font-weight: 700;
+    color: #713600;
+    margin-bottom: 8px;
+}
+
+.btn-admin-primary {
+    background: linear-gradient(135deg, #713600 0%, #C05800 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.btn-admin-secondary {
+    background: #FDFBD4;
+    color: #713600;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 12px;
+    font-weight: 700;
+}
+
+.status-indicator {
+    padding: 8px 15px;
+    border-radius: 50px;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-indicator.active {
+    background: rgba(40, 167, 69, 0.1);
+    color: #28a745;
+}
+
+.wood-title {
+    color: #713600;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+}
+
+.permission-list {
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+
+.permission-list li {
+    padding: 8px 0;
+    font-weight: 500;
+    color: #38240D;
+}
+
+.btn-wood-outline {
+    border: 2px solid #713600;
+    color: #713600;
+    font-weight: 700;
+    padding: 10px 20px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.btn-wood-outline:hover {
+    background: #713600;
+    color: #FDFBD4;
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 80px;
+        width: calc(100% - 80px);
+    }
+}

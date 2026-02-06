@@ -1,0 +1,60 @@
+<div class="dashboard-layout">
+    <!-- Navigation Sidebar -->
+    <app-admin-side></app-admin-side>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Dynamic Header -->
+        <app-header></app-header>
+
+        <!-- Dashboard Body / Child Routes -->
+        <div class="content-body">
+            <!-- For now, we show a welcome message. 
+                 Later, this could have <router-outlet> for child views -->
+            <div class="welcome-section">
+                <h1>Welcome to Sachintha Timber Mall</h1>
+                <p>Manage your wood and furniture inventory efficiently.</p>
+            </div>
+
+            <!-- Stats Grid placeholder -->
+            <div class="stats-grid">
+                <div class="stat-card" routerLink="/user-management" style="cursor: pointer;">
+                    <i class="bi bi-people"></i>
+                    <div class="stat-info">
+                        <h3>Users</h3>
+                        <p>Manage Staff & Roles</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="bi bi-box-seam"></i>
+                    <div class="stat-info">
+                        <h3>150+</h3>
+                        <p>Total Products</p>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <i class="bi bi-cart"></i>
+                    <div class="stat-info">
+                        <h3>24</h3>
+                        <p>Pending Orders</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions-section mt-5">
+                <h3 class="mb-4">Quick Actions</h3>
+                <div class="actions-grid">
+                    <button class="btn btn-action-card" routerLink="/register">
+                        <i class="bi bi-person-plus"></i>
+                        <span>Add New Staff</span>
+                    </button>
+                    <button class="btn btn-action-card" routerLink="/user-management">
+                        <i class="bi bi-shield-lock"></i>
+                        <span>System Access</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
