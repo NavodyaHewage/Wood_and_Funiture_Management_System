@@ -1,9 +1,8 @@
 package com.group_project.wfms_backend.service;
 
 import com.group_project.wfms_backend.dto.auth.*;
-import com.group_project.wfms_backend.model.User;
-import com.group_project.wfms_backend.model.UserRole;
-import com.group_project.wfms_backend.repository.UserRepository;
+import com.group_project.wfms_backend.model.*;
+import com.group_project.wfms_backend.repository.*;
 import com.group_project.wfms_backend.security.UserDetailsImpl;
 import com.group_project.wfms_backend.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +28,9 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtils jwtUtils;
     private final UserService userService;
+    private final EmployeeRepository employeeRepository;
+    private final SupplierRepository supplierRepository;
+    private final CustomerRepository customerRepository;
 
     /**
      * Authenticate user and generate JWT tokens
@@ -98,6 +100,14 @@ public class AuthService {
      */
     @Transactional
     public MessageResponse signup(SignupRequest signUpRequest) {
+        if (Boolean.TRUE.equals(signUpRequest.getIsSystemUser())) {
+            return registerSystemUser(signUpRequest);
+        } else {
+            return registerNonSystemUser(signUpRequest);
+        }
+    }
+
+    private MessageResponse registerSystemUser(SignupRequest signUpRequest) {
         // Check if username exists
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             throw new RuntimeException("Username is already taken!");
@@ -122,9 +132,80 @@ public class AuthService {
 
         userRepository.save(user);
 
-        log.info("New user registered: {}", user.getUsername());
+        // Role-specific persistence
+        if (user.getRole() == UserRole.MANAGER) {
+            Employee employee = new Employee();
+            employee.setFullName(signUpRequest.getFullName());
+            employee.setNic(signUpRequest.getNic());
+            employee.setAddress(signUpRequest.getAddress());
+            employee.setMobileNumber(signUpRequest.getMobile());
+            employee.setEmail(signUpRequest.getEmail());
+            employee.setDesignation("Manager");
+            employeeRepository.save(employee);
+        } else if (user.getRole() == UserRole.SUPPLIER) {
+            if (!"Regular".equalsIgnoreCase(signUpRequest.getSupCat())) {
+                throw new RuntimeException("Only Regular suppliers can be system users!");
+            }
+            Supplier supplier = new Supplier();
+            supplier.setSupName(signUpRequest.getFullName());
+            supplier.setSupCat(signUpRequest.getSupCat());
+            supplier.setMobile(signUpRequest.getMobile());
+            supplier.setAddress(signUpRequest.getAddress());
+            supplier.setEmail(signUpRequest.getEmail());
+            supplierRepository.save(supplier);
+        }
 
-        return new MessageResponse("User registered successfully!");
+        log.info("New system user registered: {}", user.getUsername());
+        return new MessageResponse("System user registered successfully!");
+    }
+
+    private MessageResponse registerNonSystemUser(SignupRequest signUpRequest) {
+        String entityType = signUpRequest.getEntityType();
+        if (entityType == null) {
+            throw new RuntimeException("Entity type is required for non-system users!");
+        }
+
+        switch (entityType.toUpperCase()) {
+            case "EMPLOYEE":
+                Employee employee = new Employee();
+                employee.setFullName(signUpRequest.getFullName());
+                employee.setNic(signUpRequest.getNic());
+                employee.setAddress(signUpRequest.getAddress());
+                employee.setMobileNumber(signUpRequest.getMobile());
+                employee.setEmail(signUpRequest.getEmail());
+                employee.setDesignation(signUpRequest.getDesignation());
+                employeeRepository.save(employee);
+                break;
+
+            case "SUPPLIER":
+                if ("Regular".equalsIgnoreCase(signUpRequest.getSupCat())) {
+                    throw new RuntimeException("Regular suppliers must be system users!");
+                }
+                Supplier supplier = new Supplier();
+                supplier.setSupName(signUpRequest.getFullName());
+                supplier.setSupCat(signUpRequest.getSupCat());
+                supplier.setMobile(signUpRequest.getMobile());
+                supplier.setAddress(signUpRequest.getAddress());
+                supplier.setEmail(signUpRequest.getEmail());
+                supplierRepository.save(supplier);
+                break;
+
+            case "CUSTOMER":
+                Customer customer = new Customer();
+                customer.setCusName(signUpRequest.getFullName());
+                customer.setMobile(signUpRequest.getMobile());
+                customer.setNic(signUpRequest.getNic());
+                customer.setAddress(signUpRequest.getAddress());
+                customer.setEmail(signUpRequest.getEmail());
+                customerRepository.save(customer);
+                break;
+
+            default:
+                throw new RuntimeException("Invalid entity type: " + entityType);
+        }
+
+        log.info("New non-system {} registered: {}", entityType, signUpRequest.getFullName());
+        return new MessageResponse("Non-system user registered successfully!");
     }
 
     /**

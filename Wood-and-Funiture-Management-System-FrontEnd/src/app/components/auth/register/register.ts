@@ -17,13 +17,20 @@ import { AdminSideComponent } from '../../user-management/admin-side/admin-side.
 })
 export class Register {
   registerData = {
+    isSystemUser: true,
+    entityType: 'EMPLOYEE',
     username: '',
-    firstName: '',
-    lastName: '',
-    email: '',
     password: '',
     confirmPassword: '',
-    role: 'EMPLOYEE'
+    role: 'ADMIN',
+    email: '',
+    mobile: '',
+    address: '',
+    nic: '',
+    fullName: '',
+    designation: '',
+    dateJoined: '',
+    supCat: 'Local'
   };
 
   isLoading = false;
@@ -35,13 +42,24 @@ export class Register {
   ) { }
 
   onRegister() {
-    if (this.registerData.password !== this.registerData.confirmPassword) {
-      this.toastService.showError('Passwords do not match!');
+    if (this.registerData.isSystemUser) {
+      if (this.registerData.password !== this.registerData.confirmPassword) {
+        this.toastService.showError('Passwords do not match!');
+        return;
+      }
+      if (!this.registerData.username || !this.registerData.password) {
+        this.toastService.showWarning('Please fill in username and password for system users.');
+        return;
+      }
+    }
+
+    if (this.registerData.isSystemUser && this.registerData.role === 'SUPPLIER' && this.registerData.supCat !== 'Regular') {
+      this.toastService.showError('Only Regular suppliers can have system accounts!');
       return;
     }
 
-    if (!this.registerData.username || !this.registerData.email || !this.registerData.password) {
-      this.toastService.showWarning('Please fill in all required fields.');
+    if (!this.registerData.fullName || !this.registerData.mobile) {
+      this.toastService.showWarning('Please fill in Name and Mobile Number.');
       return;
     }
 
