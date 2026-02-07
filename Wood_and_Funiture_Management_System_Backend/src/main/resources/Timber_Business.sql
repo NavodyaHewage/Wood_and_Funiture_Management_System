@@ -1,15 +1,24 @@
 CREATE DATABASE timber_business;
 USE timber_business;
 
-CREATE TABLE User (
-    user_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_name VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('ADMIN', 'SUPPLIER', 'MANAGER') NOT NULL,
-    user_details TEXT,
-    created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_login TIMESTAMP NULL,
-    is_active BOOLEAN DEFAULT TRUE
+CREATE TABLE user (
+                      user_id INT NOT NULL AUTO_INCREMENT,
+                      user_name VARCHAR(100) NOT NULL,
+                      account_locked BIT(1) DEFAULT NULL,
+                      email VARCHAR(255) DEFAULT NULL,
+                      failed_login_attempts INT DEFAULT NULL,
+                      lock_time DATETIME(6) DEFAULT NULL,
+                      phone_number VARCHAR(15) DEFAULT NULL,
+                      password VARCHAR(255) NOT NULL,
+                      role ENUM('ADMIN','SUPPLIER','MANAGER') NOT NULL,
+                      user_details TEXT DEFAULT NULL,
+                      created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
+                      last_login TIMESTAMP NULL DEFAULT NULL,
+                      is_active TINYINT(1) DEFAULT 1,
+                      last_activity DATETIME(6) DEFAULT NULL,
+                      PRIMARY KEY (user_id),
+                      UNIQUE KEY uk_user_name (user_name),
+                      UNIQUE KEY uk_email (email)
 );
 
 -- ============================================
