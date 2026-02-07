@@ -16,6 +16,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -108,6 +109,14 @@ public class AuthService {
     }
 
     private MessageResponse registerSystemUser(SignupRequest signUpRequest) {
+        // Validation for credentials
+        if (signUpRequest.getUsername() == null || signUpRequest.getUsername().trim().isEmpty()) {
+            throw new RuntimeException("Username is required for system users!");
+        }
+        if (signUpRequest.getPassword() == null || signUpRequest.getPassword().trim().isEmpty()) {
+            throw new RuntimeException("Password is required for system users!");
+        }
+
         // Check if username exists
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             throw new RuntimeException("Username is already taken!");
@@ -129,6 +138,7 @@ public class AuthService {
         user.setIsActive(true);
         user.setFailedLoginAttempts(0);
         user.setAccountLocked(false);
+        user.setSupplierCategory(signUpRequest.getSupCat());
 
         userRepository.save(user);
 
@@ -141,6 +151,9 @@ public class AuthService {
             employee.setMobileNumber(signUpRequest.getMobile());
             employee.setEmail(signUpRequest.getEmail());
             employee.setDesignation("Manager");
+            if (signUpRequest.getDateJoined() != null && !signUpRequest.getDateJoined().isEmpty()) {
+                employee.setDateJoined(LocalDate.parse(signUpRequest.getDateJoined()));
+            }
             employeeRepository.save(employee);
         } else if (user.getRole() == UserRole.SUPPLIER) {
             if (!"Regular".equalsIgnoreCase(signUpRequest.getSupCat())) {
@@ -174,6 +187,9 @@ public class AuthService {
                 employee.setMobileNumber(signUpRequest.getMobile());
                 employee.setEmail(signUpRequest.getEmail());
                 employee.setDesignation(signUpRequest.getDesignation());
+                if (signUpRequest.getDateJoined() != null && !signUpRequest.getDateJoined().isEmpty()) {
+                    employee.setDateJoined(LocalDate.parse(signUpRequest.getDateJoined()));
+                }
                 employeeRepository.save(employee);
                 break;
 

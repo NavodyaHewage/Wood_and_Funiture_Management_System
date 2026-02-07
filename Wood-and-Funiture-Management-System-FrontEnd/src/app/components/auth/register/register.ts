@@ -41,6 +41,43 @@ export class Register {
     private toastService: ToastService
   ) { }
 
+  onUserTypeChange() {
+    if (this.registerData.isSystemUser) {
+      if (this.registerData.role === 'SUPPLIER') {
+        this.registerData.supCat = 'Regular';
+      }
+    } else {
+      if (this.registerData.entityType === 'SUPPLIER' && this.registerData.supCat === 'Regular') {
+        this.registerData.supCat = 'Local';
+      }
+    }
+  }
+
+  onRoleChange() {
+    if (this.registerData.isSystemUser && this.registerData.role === 'SUPPLIER') {
+      this.registerData.supCat = 'Regular';
+    }
+  }
+
+  onEntityTypeChange() {
+    if (!this.registerData.isSystemUser && this.registerData.entityType === 'SUPPLIER') {
+      if (this.registerData.supCat === 'Regular') {
+        this.registerData.supCat = 'Local';
+      }
+    }
+  }
+
+  validateNIC(nic: string): boolean {
+    const nicRegex = /^(\d{9}[vV]|\d{12})$/;
+    return nicRegex.test(nic);
+  }
+
+  validateMobile(mobile: string): boolean {
+    // Basic 10 digit validation
+    const mobileRegex = /^\d{10}$/;
+    return mobileRegex.test(mobile);
+  }
+
   onRegister() {
     if (this.registerData.isSystemUser) {
       if (this.registerData.password !== this.registerData.confirmPassword) {
@@ -60,6 +97,23 @@ export class Register {
 
     if (!this.registerData.fullName || !this.registerData.mobile) {
       this.toastService.showWarning('Please fill in Name and Mobile Number.');
+      return;
+    }
+
+    if (!this.validateMobile(this.registerData.mobile)) {
+      this.toastService.showError('Invalid Mobile Number! Please enter 10 digits.');
+      return;
+    }
+
+    // Validate NIC for Employees, Customers, and Managers
+    const needsNIC = this.registerData.entityType !== 'SUPPLIER' && this.registerData.role !== 'SUPPLIER';
+    if (needsNIC && this.registerData.nic) {
+      if (!this.validateNIC(this.registerData.nic)) {
+        this.toastService.showError('Invalid NIC format! Use 9 numbers + V or 12 numbers.');
+        return;
+      }
+    } else if (needsNIC && !this.registerData.nic) {
+      this.toastService.showWarning('NIC Number is required!');
       return;
     }
 

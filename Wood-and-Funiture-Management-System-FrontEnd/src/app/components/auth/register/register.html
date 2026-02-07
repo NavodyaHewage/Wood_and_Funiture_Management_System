@@ -30,12 +30,14 @@
                         <div class="col-md-6 d-flex gap-4">
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="userType" id="systemUser"
-                                    [value]="true" [(ngModel)]="registerData.isSystemUser">
+                                    [value]="true" [(ngModel)]="registerData.isSystemUser"
+                                    (change)="onUserTypeChange()">
                                 <label class="form-check-label" for="systemUser">System User</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="userType" id="nonSystemUser"
-                                    [value]="false" [(ngModel)]="registerData.isSystemUser">
+                                    [value]="false" [(ngModel)]="registerData.isSystemUser"
+                                    (change)="onUserTypeChange()">
                                 <label class="form-check-label" for="nonSystemUser">Non-System User</label>
                             </div>
                         </div>
@@ -47,7 +49,7 @@
                             <label class="admin-label">User Role</label>
                             <div class="admin-input-group">
                                 <i class="bi bi-person-badge"></i>
-                                <select name="role" [(ngModel)]="registerData.role" required>
+                                <select name="role" [(ngModel)]="registerData.role" (change)="onRoleChange()" required>
                                     <option value="ADMIN">Administrator</option>
                                     <option value="MANAGER">Manager</option>
                                     <option value="SUPPLIER">Supplier</option>
@@ -58,7 +60,8 @@
                             <label class="admin-label">Entity Type</label>
                             <div class="admin-input-group">
                                 <i class="bi bi-diagram-3-fill"></i>
-                                <select name="entityType" [(ngModel)]="registerData.entityType" required>
+                                <select name="entityType" [(ngModel)]="registerData.entityType"
+                                    (change)="onEntityTypeChange()" required>
                                     <option value="EMPLOYEE">Employee</option>
                                     <option value="SUPPLIER">Supplier</option>
                                     <option value="CUSTOMER">Customer</option>
@@ -143,15 +146,32 @@
                                 placeholder="e.g. Carpenter" class="admin-control">
                         </div>
 
+                        <!-- Date Joined -->
+                        <div class="col-md-6"
+                            *ngIf="registerData.entityType === 'EMPLOYEE' || registerData.role === 'MANAGER' || registerData.role === 'ADMIN'">
+                            <label class="admin-label">Date of Joining</label>
+                            <input type="date" name="dateJoined" [(ngModel)]="registerData.dateJoined"
+                                class="admin-control">
+                        </div>
+
                         <!-- Supplier Category (Supplier) -->
                         <div class="col-md-6"
                             *ngIf="registerData.entityType === 'SUPPLIER' || registerData.role === 'SUPPLIER'">
                             <label class="admin-label">Supplier Category</label>
-                            <select name="supCat" [(ngModel)]="registerData.supCat" class="admin-control">
-                                <option value="Regular">Regular (System Access)</option>
-                                <option value="Local">Local</option>
-                                <option value="International">International</option>
-                                <option value="Specialized">Specialized</option>
+                            <select name="supCat" [(ngModel)]="registerData.supCat" class="admin-control"
+                                [disabled]="registerData.isSystemUser && registerData.role === 'SUPPLIER'">
+                                <option value="Regular"
+                                    *ngIf="registerData.isSystemUser && registerData.role === 'SUPPLIER'">Regular
+                                    (System Access Required)</option>
+                                <option value="Local"
+                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">Local
+                                </option>
+                                <option value="International"
+                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">
+                                    International</option>
+                                <option value="Specialized"
+                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">Specialized
+                                </option>
                             </select>
                         </div>
                     </div>

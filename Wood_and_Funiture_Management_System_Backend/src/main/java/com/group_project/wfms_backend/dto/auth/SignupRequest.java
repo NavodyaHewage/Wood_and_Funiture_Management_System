@@ -2,7 +2,6 @@ package com.group_project.wfms_backend.dto.auth;
 
 import com.group_project.wfms_backend.model.UserRole;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,10 +11,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SignupRequest {
 
-    @NotBlank(message = "Username is required for system users")
     private String username;
 
-    @NotBlank(message = "Password is required for system users")
     private String password;
 
     @Email(message = "Email should be valid")

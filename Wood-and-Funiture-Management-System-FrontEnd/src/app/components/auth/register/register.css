@@ -132,6 +132,29 @@
     box-shadow: 0 5px 15px rgba(192, 88, 0, 0.1);
 }
 
+/* Calendar/Date Input Customization */
+input[type="date"].admin-control {
+    cursor: pointer;
+    font-family: inherit;
+}
+
+input[type="date"].admin-control::-webkit-calendar-picker-indicator {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23C05800' class='bi bi-calendar-event' viewBox='0 0 16 16'%3E%3Cpath d='M11 6.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5z'/%3E%3Cpath d='M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z'/%3E%3C/svg%3E");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    filter: none;
+    margin-right: 5px;
+}
+
+input[type="date"].admin-control:hover::-webkit-calendar-picker-indicator {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
 .admin-actions {
     display: flex;
     gap: 20px;

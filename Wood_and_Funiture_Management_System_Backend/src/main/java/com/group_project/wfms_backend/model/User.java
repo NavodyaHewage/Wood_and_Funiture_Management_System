@@ -71,6 +71,9 @@ public class User {
     @Column(name = "lock_time")
     private LocalDateTime lockTime;
 
+    @Column(name = "supplier_category", length = 100)
+    private String supplierCategory;
+
     // Helper method to check if account is locked
     public boolean isAccountNonLocked() {
         if (!accountLocked) {
