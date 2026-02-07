@@ -26,7 +26,7 @@ public class SignupRequest {
 
     // Redesign logic fields
     private Boolean isSystemUser;
-    private String entityType; // EMPLOYEE, SUPPLIER, CUSTOMER
+    private String entityType; // EMPLOYEE, SUPPLIER
 
     // Entity Specific Fields
     private String fullName; // Employee/Customer/Supplier name
