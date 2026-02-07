@@ -138,7 +138,6 @@ public class AuthService {
         user.setIsActive(true);
         user.setFailedLoginAttempts(0);
         user.setAccountLocked(false);
-        user.setSupplierCategory(signUpRequest.getSupCat());
 
         userRepository.save(user);
 
