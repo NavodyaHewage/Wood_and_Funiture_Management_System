@@ -25,6 +25,7 @@
                             <tr>
                                 <th>#ID</th>
                                 <th>User Info</th>
+                                <th>NIC</th>
                                 <th>Role</th>
                                 <th>Status</th>
                                 <th>Last Login</th>
@@ -44,6 +45,9 @@
                                             <div class="user-email">{{ user.email }}</div>
                                         </div>
                                     </div>
+                                </td>
+                                <td>
+                                    <span class="nic-badge">{{ user.nic || 'N/A' }}</span>
                                 </td>
                                 <td>
                                     <select class="form-select role-select" [value]="user.role"

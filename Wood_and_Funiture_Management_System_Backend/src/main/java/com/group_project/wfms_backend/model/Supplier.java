@@ -35,6 +35,9 @@ public class Supplier {
     @Column(name = "Email", length = 100)
     private String email;
 
+    @Column(name = "NIC", length = 20)
+    private String nic;
+
     @CreationTimestamp
     @Column(name = "Created_date", updatable = false)
     private LocalDateTime createdDate;

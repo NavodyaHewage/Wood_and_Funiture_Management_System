@@ -130,9 +130,8 @@
                                 placeholder="Enter residential or business address" class="admin-control">
                         </div>
 
-                        <!-- NIC (Employee, Customer, Manager) -->
-                        <div class="col-md-6"
-                            *ngIf="registerData.entityType !== 'SUPPLIER' && registerData.role !== 'SUPPLIER'">
+                        <!-- NIC -->
+                        <div class="col-md-6">
                             <label class="admin-label">NIC Number</label>
                             <input type="text" name="nic" [(ngModel)]="registerData.nic" placeholder="Enter NIC number"
                                 class="admin-control">

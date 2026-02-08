@@ -105,14 +105,13 @@ export class Register {
       return;
     }
 
-    // Validate NIC for Employees, Customers, and Managers
-    const needsNIC = this.registerData.entityType !== 'SUPPLIER' && this.registerData.role !== 'SUPPLIER';
-    if (needsNIC && this.registerData.nic) {
+    // Validate NIC
+    if (this.registerData.nic) {
       if (!this.validateNIC(this.registerData.nic)) {
         this.toastService.showError('Invalid NIC format! Use 9 numbers + V or 12 numbers.');
         return;
       }
-    } else if (needsNIC && !this.registerData.nic) {
+    } else {
       this.toastService.showWarning('NIC Number is required!');
       return;
     }

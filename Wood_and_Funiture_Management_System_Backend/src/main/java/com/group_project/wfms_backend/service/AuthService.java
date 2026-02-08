@@ -132,7 +132,8 @@ public class AuthService {
         user.setUsername(signUpRequest.getUsername());
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
         user.setEmail(signUpRequest.getEmail());
-        user.setPhoneNumber(signUpRequest.getPhoneNumber());
+        user.setPhoneNumber(
+                signUpRequest.getMobile() != null ? signUpRequest.getMobile() : signUpRequest.getPhoneNumber());
         user.setUserDetails(signUpRequest.getUserDetails());
         user.setRole(signUpRequest.getRole() != null ? signUpRequest.getRole() : UserRole.MANAGER);
         user.setIsActive(true);
@@ -142,14 +143,20 @@ public class AuthService {
         userRepository.save(user);
 
         // Role-specific persistence
-        if (user.getRole() == UserRole.MANAGER) {
+        if (user.getRole() == UserRole.MANAGER || user.getRole() == UserRole.ADMIN) {
             Employee employee = new Employee();
             employee.setFullName(signUpRequest.getFullName());
             employee.setNic(signUpRequest.getNic());
             employee.setAddress(signUpRequest.getAddress());
             employee.setMobileNumber(signUpRequest.getMobile());
             employee.setEmail(signUpRequest.getEmail());
-            employee.setDesignation("Manager");
+            // Use provided designation or default based on role
+            String designation = signUpRequest.getDesignation();
+            if (designation == null || designation.isEmpty()) {
+                designation = (user.getRole() == UserRole.ADMIN) ? "Administrator" : "Manager";
+            }
+            employee.setDesignation(designation);
+
             if (signUpRequest.getDateJoined() != null && !signUpRequest.getDateJoined().isEmpty()) {
                 employee.setDateJoined(LocalDate.parse(signUpRequest.getDateJoined()));
             }
@@ -164,6 +171,7 @@ public class AuthService {
             supplier.setMobile(signUpRequest.getMobile());
             supplier.setAddress(signUpRequest.getAddress());
             supplier.setEmail(signUpRequest.getEmail());
+            supplier.setNic(signUpRequest.getNic());
             supplierRepository.save(supplier);
         }
 

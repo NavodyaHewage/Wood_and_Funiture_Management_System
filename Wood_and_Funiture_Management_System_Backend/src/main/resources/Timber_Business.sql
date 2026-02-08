@@ -47,6 +47,7 @@ CREATE TABLE Supplier (
     Mobile VARCHAR(15) NOT NULL,
     Address TEXT,
     Email VARCHAR(100),
+    NIC VARCHAR(20),
     Created_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     Is_active BOOLEAN DEFAULT TRUE
 );
