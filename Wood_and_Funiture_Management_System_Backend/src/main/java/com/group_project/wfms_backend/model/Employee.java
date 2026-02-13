@@ -41,7 +41,10 @@ public class Employee {
     @Column(name="Is_active")
     private Boolean isActive;
 
-    
+    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<EmployeeAttendance>attendanceRecords;
+
+
 
 
 }
