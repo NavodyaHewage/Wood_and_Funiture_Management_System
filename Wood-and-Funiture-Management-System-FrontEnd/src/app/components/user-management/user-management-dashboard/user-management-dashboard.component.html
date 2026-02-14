@@ -25,6 +25,7 @@
                             <tr>
                                 <th>#ID</th>
                                 <th>User Info</th>
+                                <th>NIC</th>
                                 <th>Role</th>
                                 <th>Status</th>
                                 <th>Last Login</th>
@@ -46,11 +47,14 @@
                                     </div>
                                 </td>
                                 <td>
+                                    <span class="nic-badge">{{ user.nic || 'N/A' }}</span>
+                                </td>
+                                <td>
                                     <select class="form-select role-select" [value]="user.role"
                                         (change)="onUpdateRole(user, $any($event.target).value)">
                                         <option value="ADMIN">Admin</option>
                                         <option value="MANAGER">Manager</option>
-                                        <option value="EMPLOYEE">Employee</option>
+                                        <option value="SUPPLIER">Supplier</option>
                                     </select>
                                 </td>
                                 <td>

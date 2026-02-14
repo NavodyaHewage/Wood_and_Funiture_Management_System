@@ -12,12 +12,20 @@ export interface LoginRequest {
 }
 
 export interface SignupRequest {
-    username: string;
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
+    username?: string;
+    email?: string;
+    password?: string;
     role?: string;
+    userDetails?: string;
+    isSystemUser?: boolean;
+    entityType?: string;
+    fullName?: string;
+    nic?: string;
+    address?: string;
+    mobile?: string;
+    designation?: string;
+    dateJoined?: string;
+    supCat?: string;
 }
 
 export interface JwtResponse {

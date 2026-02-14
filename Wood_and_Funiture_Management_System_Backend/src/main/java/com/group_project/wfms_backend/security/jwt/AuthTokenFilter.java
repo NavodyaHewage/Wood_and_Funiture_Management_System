@@ -39,9 +39,10 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String username = jwtUtils.getUserNameFromJwtToken(jwt);
 
-                // Check for inactivity
+                // Check for inactivity (skip for logout requests)
+                boolean isLogoutRequest = request.getRequestURI().endsWith("/auth/logout");
                 User user = userRepository.findByUsername(username).orElse(null);
-                if (user != null) {
+                if (user != null && !isLogoutRequest) {
                     java.time.LocalDateTime now = java.time.LocalDateTime.now();
                     java.time.LocalDateTime lastActivity = user.getLastActivity();
 
