@@ -3,10 +3,14 @@ package com.group_project.wfms_backend.service;
 import com.group_project.wfms_backend.dto.auth.MessageResponse;
 import com.group_project.wfms_backend.model.User;
 import com.group_project.wfms_backend.model.UserRole;
+import com.group_project.wfms_backend.repository.CustomerRepository;
+import com.group_project.wfms_backend.repository.EmployeeRepository;
+import com.group_project.wfms_backend.repository.SupplierRepository;
 import com.group_project.wfms_backend.repository.UserRepository;
 import com.group_project.wfms_backend.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,6 +31,9 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
+    private final SupplierRepository supplierRepository;
+    private final CustomerRepository customerRepository;
     private final PasswordEncoder passwordEncoder;
 
     private static final int MAX_FAILED_ATTEMPTS = 5;
@@ -112,8 +119,23 @@ public class UserService {
             user.setEmail(email);
         }
 
-        if (updates.containsKey("phoneNumber")) {
-            user.setPhoneNumber((String) updates.get("phoneNumber"));
+        if (updates.containsKey("nic")) {
+            String nic = (String) updates.get("nic");
+            String email = user.getEmail();
+            if (email != null) {
+                employeeRepository.findByEmail(email).ifPresent(e -> {
+                    e.setNic(nic);
+                    employeeRepository.save(e);
+                });
+                supplierRepository.findByEmail(email).ifPresent(s -> {
+                    s.setNic(nic);
+                    supplierRepository.save(s);
+                });
+                customerRepository.findByEmail(email).ifPresent(c -> {
+                    c.setNic(nic);
+                    customerRepository.save(c);
+                });
+            }
         }
 
         if (updates.containsKey("userDetails")) {
@@ -332,6 +354,17 @@ public class UserService {
         response.put("email", user.getEmail());
         response.put("role", user.getRole().name());
         response.put("phoneNumber", user.getPhoneNumber());
+
+        // Fetch NIC from linked entities
+        String nic = null;
+        if (user.getEmail() != null) {
+            nic = employeeRepository.findByEmail(user.getEmail()).map(e -> e.getNic())
+                    .orElseGet(() -> supplierRepository.findByEmail(user.getEmail()).map(s -> s.getNic())
+                            .orElseGet(() -> customerRepository.findByEmail(user.getEmail()).map(c -> c.getNic())
+                                    .orElse(null)));
+        }
+        response.put("nic", nic);
+
         response.put("userDetails", user.getUserDetails());
         response.put("isActive", user.getIsActive());
         response.put("createdDate", user.getCreatedDate());
