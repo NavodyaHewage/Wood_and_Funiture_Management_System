@@ -4,6 +4,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 @Table(name = "Employee_Salary_details")
@@ -29,20 +33,36 @@ public class Employeesalarydetails {
         @Column(name = "Year", nullable = false)
         private Integer year;
 
-        @Column(name = "Total_Amount")
-        private BigDecimal totalAmount;
+        @Column(name = "Total_Amount",precision = 15,scale = 2)
+        private BigDecimal totalAmount = BigDecimal.ZERO;
 
         @Column(name = "Paid_Amount")
-        private BigDecimal paidAmount;
+        private BigDecimal paidAmount = BigDecimal.ZERO;
 
-        // Database calculated column
-        @Column(name = "Balance_Amount", insertable = false, updatable = false)
+        @Transient
         private BigDecimal balanceAmount;
+
 
         // ENUM mapping
         @Enumerated(EnumType.STRING)
         @Column(name = "Status")
-        private Salary_details_Status status;
+        private Salary_details_Status status=Salary_details_Status.PENDING;
+
+        @OneToMany(mappedBy ="salaryDetails",cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+        private List<Employeesalarypayment>payments;
+
+        @OneToMany(mappedBy="salaryDetails",cascade =CascadeType.ALL,fetch= FetchType.LAZY)
+        private List<Employeeloan>loanDeductions;
+
+        @PostLoad
+        public void calculateBalance(){
+                if (this.totalAmount != null && this.paidAmount != null) {
+                        this.balanceAmount = this.totalAmount.add(this.paidAmount);
+                }
+        }
+
+
+
     }
 
-}
+

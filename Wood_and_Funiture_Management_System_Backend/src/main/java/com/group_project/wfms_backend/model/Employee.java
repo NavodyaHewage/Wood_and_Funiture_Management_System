@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name ="Employee")
@@ -42,9 +43,16 @@ public class Employee {
     private Boolean isActive;
 
     @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<EmployeeAttendance>attendanceRecords;
+    private List<EmployeeAttendance> attendanceRecords;
 
+    @OneToMany(mappedBy = "employee",cascade=CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Employeesalarydetails> employeeRecords;
 
+    @OneToMany(mappedBy = "employee",cascade=CascadeType.ALL,fetch = FetchType.LAZY)
+    private List<Employeeloan> loans;
+
+    @OneToMany(mappedBy = "employee",cascade = CascadeType.ALL,fetch=FetchType.LAZY)
+    private List<Rawmaterialcuttingfee>cuttingFees;
 
 
 }

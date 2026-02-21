@@ -4,5 +4,6 @@ import jakarta.persistence.Entity;
 
 @Entity
 
-public class Employeesalarypayment {
+public class Rawmaterialcuttingfee {
+
 }
