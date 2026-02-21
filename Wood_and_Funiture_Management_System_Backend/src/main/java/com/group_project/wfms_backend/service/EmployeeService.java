@@ -1,13 +1,18 @@
 package com.group_project.wfms_backend.service;
 
+import com.group_project.wfms_backend.dto.EmployeeNameAndNICView;
 import com.group_project.wfms_backend.model.Employee;
 import com.group_project.wfms_backend.repository.EmployeeRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class EmployeeService {
@@ -49,5 +54,16 @@ public class EmployeeService {
     public void deleteEmployee(Integer id) {
         Employee employee = getEmployeeById(id);
         employeeRepository.delete(employee);
+    }
+
+    @Transactional
+    public List<EmployeeNameAndNICView> getEmployeeNameAndNIC(){
+        List<Employee> employee = employeeRepository.getEmployeeNameAndNIC();
+        if(employee.isEmpty()){
+            throw new RuntimeException("Employee not found");
+        }
+        return employee.stream()
+                .map(e -> new EmployeeNameAndNICView(e.getId(), e.getFullName(), e.getNic()))
+                .toList();
     }
 }

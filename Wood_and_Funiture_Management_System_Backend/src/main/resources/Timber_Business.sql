@@ -67,7 +67,7 @@ CREATE TABLE Employee (
     Date_Joined DATE,
     Is_active BOOLEAN DEFAULT TRUE
 );
-
+SELECT Id , Full_Name , NIC FROM Employee;
 -- ============================================
 -- PRODUCT CATEGORY
 -- ============================================

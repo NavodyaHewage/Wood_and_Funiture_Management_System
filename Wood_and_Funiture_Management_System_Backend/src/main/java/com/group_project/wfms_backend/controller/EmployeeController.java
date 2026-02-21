@@ -1,5 +1,6 @@
 package com.group_project.wfms_backend.controller;
 
+import com.group_project.wfms_backend.dto.EmployeeNameAndNICView;
 import com.group_project.wfms_backend.model.Employee;
 import com.group_project.wfms_backend.service.EmployeeService;
 import lombok.RequiredArgsConstructor;
@@ -39,5 +40,10 @@ public class EmployeeController {
     public ResponseEntity<?> deleteEmployee(@PathVariable Integer id) {
         employeeService.deleteEmployee(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/getEmployeeNameAndNIC")
+    public List<EmployeeNameAndNICView>  getEmployeeNameAndNIC(){
+        return employeeService.getEmployeeNameAndNIC();
     }
 }
