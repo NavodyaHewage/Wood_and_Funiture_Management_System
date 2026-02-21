@@ -76,7 +76,7 @@ CREATE TABLE Prouct_Category (
     Product_Cat_id INT PRIMARY KEY AUTO_INCREMENT,
     Product_Cat_name VARCHAR(150) NOT NULL,
     Material_Category VARCHAR(100),
-    Unit_of_Measurement ENUM('Cubic Feet', 'Square Feet', 'Pieces', 'Kg') DEFAULT 'Square Feet',
+    Unit_of_Measurement ENUM('Cubic Feet', 'Square Feet') DEFAULT 'Square Feet',
     Description TEXT
 );
 
@@ -88,7 +88,7 @@ CREATE TABLE Quotation (
     Quotation_Id INT PRIMARY KEY AUTO_INCREMENT,
     Customer_Id INT NOT NULL,
     Total_Amount DECIMAL(15,2) DEFAULT 0.00,
-    Status ENUM('Pending', 'Approved', 'Rejected', 'Converted') DEFAULT 'Pending',
+    Status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
     Quotation_Date DATE NOT NULL,
     Valid_Until DATE,
     Created_by INT,
@@ -332,7 +332,7 @@ CREATE TABLE Employee_Salary_Rate (
     Rate_id INT PRIMARY KEY AUTO_INCREMENT,
     Rate_Name VARCHAR(100) NOT NULL,
     Amount DECIMAL(10,2) NOT NULL,
-    Rate_Type ENUM('Daily', 'Monthly', 'Hourly', 'Per Unit') DEFAULT 'Monthly',
+    Rate_Type ENUM('Daily', 'Monthly') DEFAULT 'Monthly',
     Effective_From DATE NOT NULL,
     Is_active BOOLEAN DEFAULT TRUE
 );
