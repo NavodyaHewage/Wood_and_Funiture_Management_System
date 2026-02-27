@@ -11,6 +11,7 @@ export interface User {
     role: string;
     isActive: boolean;
     phoneNumber?: string;
+    nic?: string;
     lastLogin?: string;
 }
 

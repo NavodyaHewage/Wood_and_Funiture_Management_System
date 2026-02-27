@@ -22,71 +22,156 @@
 
             <div class="admin-card">
                 <form (ngSubmit)="onRegister()" #registerForm="ngForm" class="admin-form">
+                    <!-- User Type Selection -->
                     <div class="form-section-title">
-                        <i class="bi bi-shield-lock-fill"></i> Authentication Details
+                        <i class="bi bi-people-fill"></i> Registration Type
                     </div>
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-6">
-                            <label class="admin-label">User Identifier (Username)</label>
-                            <div class="admin-input-group">
-                                <i class="bi bi-at"></i>
-                                <input type="text" name="username" [(ngModel)]="registerData.username" required
-                                    placeholder="e.g. jsmith">
+                    <div class="row g-4 mb-4">
+                        <div class="col-md-6 d-flex gap-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userType" id="systemUser"
+                                    [value]="true" [(ngModel)]="registerData.isSystemUser"
+                                    (change)="onUserTypeChange()">
+                                <label class="form-check-label" for="systemUser">System User</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="userType" id="nonSystemUser"
+                                    [value]="false" [(ngModel)]="registerData.isSystemUser"
+                                    (change)="onUserTypeChange()">
+                                <label class="form-check-label" for="nonSystemUser">Non-System User</label>
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="admin-label">Access Level (Role)</label>
+                    </div>
+
+                    <!-- Role / Entity Selection -->
+                    <div class="row g-4 mb-5">
+                        <div class="col-md-6" *ngIf="registerData.isSystemUser">
+                            <label class="admin-label">User Role</label>
                             <div class="admin-input-group">
                                 <i class="bi bi-person-badge"></i>
-                                <select name="role" [(ngModel)]="registerData.role" required>
-                                    <option value="ADMIN">System Administrator</option>
-                                    <option value="MANAGER">Inventory Manager</option>
-                                    <option value="EMPLOYEE">Standard Employee</option>
+                                <select name="role" [(ngModel)]="registerData.role" (change)="onRoleChange()" required>
+                                    <option value="ADMIN">Administrator</option>
+                                    <option value="MANAGER">Manager</option>
+                                    <option value="SUPPLIER">Supplier</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6" *ngIf="!registerData.isSystemUser">
+                            <label class="admin-label">Entity Type</label>
+                            <div class="admin-input-group">
+                                <i class="bi bi-diagram-3-fill"></i>
+                                <select name="entityType" [(ngModel)]="registerData.entityType"
+                                    (change)="onEntityTypeChange()" required>
+                                    <option value="EMPLOYEE">Employee</option>
+                                    <option value="SUPPLIER">Supplier</option>
+                                    <option value="CUSTOMER">Customer</option>
                                 </select>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-section-title">
-                        <i class="bi bi-person-vcard-fill"></i> Personal Information
-                    </div>
-                    <div class="row g-4 mb-5">
-                        <div class="col-md-4">
-                            <label class="admin-label">First Name</label>
-                            <input type="text" name="firstName" [(ngModel)]="registerData.firstName" required
-                                placeholder="John" class="admin-control">
+                    <!-- Authentication Details (System Users Only) -->
+                    <div *ngIf="registerData.isSystemUser">
+                        <div class="form-section-title">
+                            <i class="bi bi-shield-lock-fill"></i> Authentication Details
                         </div>
-                        <div class="col-md-4">
-                            <label class="admin-label">Last Name</label>
-                            <input type="text" name="lastName" [(ngModel)]="registerData.lastName" required
-                                placeholder="Doe" class="admin-control">
-                        </div>
-                        <div class="col-md-4">
-                            <label class="admin-label">Official Email</label>
-                            <input type="email" name="email" [(ngModel)]="registerData.email" required
-                                placeholder="john@company.com" class="admin-control">
+                        <div class="row g-4 mb-5">
+                            <div class="col-md-4">
+                                <label class="admin-label">Username</label>
+                                <div class="admin-input-group">
+                                    <i class="bi bi-at"></i>
+                                    <input type="text" name="username" [(ngModel)]="registerData.username"
+                                        [required]="registerData.isSystemUser" placeholder="e.g. jsmith">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="admin-label">Password</label>
+                                <div class="admin-input-group">
+                                    <i class="bi bi-lock-fill"></i>
+                                    <input type="password" name="password" [(ngModel)]="registerData.password"
+                                        [required]="registerData.isSystemUser" placeholder="••••••••">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="admin-label">Confirm Password</label>
+                                <div class="admin-input-group">
+                                    <i class="bi bi-shield-check"></i>
+                                    <input type="password" name="confirmPassword"
+                                        [(ngModel)]="registerData.confirmPassword"
+                                        [required]="registerData.isSystemUser" placeholder="••••••••">
+                                </div>
+                            </div>
                         </div>
                     </div>
 
+                    <!-- Common & Dynamic Fields -->
                     <div class="form-section-title">
-                        <i class="bi bi-key-fill"></i> Security Credentials
+                        <i class="bi bi-person-vcard-fill"></i> Details
                     </div>
                     <div class="row g-4 mb-5">
                         <div class="col-md-6">
-                            <label class="admin-label">Initial Password</label>
-                            <div class="admin-input-group">
-                                <i class="bi bi-lock-fill"></i>
-                                <input type="password" name="password" [(ngModel)]="registerData.password" required
-                                    placeholder="••••••••">
-                            </div>
+                            <label class="admin-label">Full Name / Entity Name</label>
+                            <input type="text" name="fullName" [(ngModel)]="registerData.fullName" required
+                                placeholder="Enter full name" class="admin-control">
                         </div>
                         <div class="col-md-6">
-                            <label class="admin-label">Verify Password</label>
-                            <div class="admin-input-group">
-                                <i class="bi bi-shield-check"></i>
-                                <input type="password" name="confirmPassword" [(ngModel)]="registerData.confirmPassword"
-                                    required placeholder="••••••••">
-                            </div>
+                            <label class="admin-label">Mobile Number</label>
+                            <input type="text" name="mobile" [(ngModel)]="registerData.mobile" required
+                                placeholder="e.g. 0771234567" class="admin-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="admin-label">Email Address</label>
+                            <input type="email" name="email" [(ngModel)]="registerData.email"
+                                placeholder="example@domain.com" class="admin-control">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="admin-label">Address</label>
+                            <input type="text" name="address" [(ngModel)]="registerData.address"
+                                placeholder="Enter residential or business address" class="admin-control">
+                        </div>
+
+                        <!-- NIC -->
+                        <div class="col-md-6">
+                            <label class="admin-label">NIC Number</label>
+                            <input type="text" name="nic" [(ngModel)]="registerData.nic" placeholder="Enter NIC number"
+                                class="admin-control">
+                        </div>
+
+                        <!-- Designation (Employee) -->
+                        <div class="col-md-6"
+                            *ngIf="registerData.entityType === 'EMPLOYEE' && !registerData.isSystemUser">
+                            <label class="admin-label">Designation</label>
+                            <input type="text" name="designation" [(ngModel)]="registerData.designation"
+                                placeholder="e.g. Carpenter" class="admin-control">
+                        </div>
+
+                        <!-- Date Joined -->
+                        <div class="col-md-6"
+                            *ngIf="registerData.entityType === 'EMPLOYEE' || registerData.role === 'MANAGER' || registerData.role === 'ADMIN'">
+                            <label class="admin-label">Date of Joining</label>
+                            <input type="date" name="dateJoined" [(ngModel)]="registerData.dateJoined"
+                                class="admin-control">
+                        </div>
+
+                        <!-- Supplier Category (Supplier) -->
+                        <div class="col-md-6"
+                            *ngIf="registerData.entityType === 'SUPPLIER' || registerData.role === 'SUPPLIER'">
+                            <label class="admin-label">Supplier Category</label>
+                            <select name="supCat" [(ngModel)]="registerData.supCat" class="admin-control"
+                                [disabled]="registerData.isSystemUser && registerData.role === 'SUPPLIER'">
+                                <option value="Regular"
+                                    *ngIf="registerData.isSystemUser && registerData.role === 'SUPPLIER'">Regular
+                                    (System Access Required)</option>
+                                <option value="Local"
+                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">Local
+                                </option>
+                                <option value="International"
+                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">
+                                    International</option>
+                                <option value="Specialized"
+                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">Specialized
+                                </option>
+                            </select>
                         </div>
                     </div>
 
@@ -95,10 +180,10 @@
                             [disabled]="!registerForm.form.valid || isLoading">
                             <i class="bi bi-check-circle-fill me-2" *ngIf="!isLoading"></i>
                             <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                            {{ isLoading ? 'Authorizing...' : 'Finalize & Create Account' }}
+                            {{ isLoading ? 'Processing...' : 'Complete Registration' }}
                         </button>
                         <button type="button" class="btn btn-admin-secondary" routerLink="/user-management">
-                            Discard Changes
+                            Cancel
                         </button>
                     </div>
                 </form>
