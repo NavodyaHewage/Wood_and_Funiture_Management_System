@@ -23,7 +23,7 @@ public class EmployeeAttendance {
     private Integer attendId;
 
     @ManyToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="Employeeid",nullable =false)
+    @JoinColumn(name="Employee_id",nullable =false)
     private Employee employee;
 
     @Column(name="Date",nullable= false)

@@ -1,8 +1,5 @@
 package com.group_project.wfms_backend.model;
 
-import lombok.Getter;
-
-@Getter
 public enum LoanType {
     LOAN("Loan"),
     ADVANCE("Advance"),

@@ -4,28 +4,29 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.Fetch;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
-@Table(name = "Employee_Salary_details")
+@Table(name = "Employee_Salary_details",uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"Employee_id","Month","Year"})
+})
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Employeesalarydetails {
+public class EmployeeSalaryDetails {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "Salary_details_id")
         private Integer salaryDetailsId;
 
-        // Many salary records belong to one employee
-        @ManyToOne
+        /*Many salary records belong to one employee
+         @ManyToOne
         @JoinColumn(name = "Employee_id", nullable = false)
-        private Employee employee;
+        private Employee employee;*/
 
         @Column(name = "Month", nullable = false)
         private Integer month;
@@ -36,7 +37,7 @@ public class Employeesalarydetails {
         @Column(name = "Total_Amount",precision = 15,scale = 2)
         private BigDecimal totalAmount = BigDecimal.ZERO;
 
-        @Column(name = "Paid_Amount")
+        @Column(name = "Paid_Amount",precision = 15,scale = 2)
         private BigDecimal paidAmount = BigDecimal.ZERO;
 
         @Transient
