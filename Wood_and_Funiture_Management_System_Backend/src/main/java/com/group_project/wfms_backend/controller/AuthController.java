@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class AuthController {
 
+
     private final AuthService authService;
 
     @PostMapping("/login")

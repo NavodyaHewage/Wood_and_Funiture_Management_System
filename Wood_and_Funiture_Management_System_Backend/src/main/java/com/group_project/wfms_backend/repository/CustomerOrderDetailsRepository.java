@@ -15,6 +15,8 @@ import java.util.Optional;
 @Repository
 public interface CustomerOrderDetailsRepository extends JpaRepository<CustomerOrderDetails, Integer> {
 
+
+
     // 🔹 Get all items of an order
     @Query("SELECT d FROM CustomerOrderDetails d WHERE d.order.orderId = :orderId")
     List<CustomerOrderDetails> findByOrderId(@Param("orderId") Integer orderId);
@@ -27,6 +29,7 @@ public interface CustomerOrderDetailsRepository extends JpaRepository<CustomerOr
     // 🔹 Get total quantity of a product sold
     @Query("SELECT SUM(d.quantity) FROM CustomerOrderDetails d WHERE d.productCategory.id = :productId")
     BigDecimal getTotalQuantitySold(@Param("productId") Integer productId);
+
 
 
 

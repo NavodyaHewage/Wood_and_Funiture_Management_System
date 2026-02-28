@@ -17,9 +17,9 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
 
     Optional<Customer> findByEmail(String email);
 
-
     Optional<Customer> findByMobile(String mobile);
 
+    List<Customer> serchByName(String name);
 
     // 🔹 Search by name
     @Query("SELECT c FROM Customer c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))")
@@ -29,6 +29,11 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     // 🔹 Get active customers
     @Query("SELECT c FROM Customer c WHERE c.isActive = true")
     List<Customer> findActiveCustomers();
+
+
+
+
 }
+
 
 

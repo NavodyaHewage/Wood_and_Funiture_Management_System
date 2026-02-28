@@ -12,8 +12,8 @@ import java.util.List;
 @Repository
 public interface ProductCategoryRepository extends JpaRepository<ProductCategory,Integer> {
     List<ProductCategory> findAllByOrderByNameAsc();
-
-
+    List<ProductCategory> findAllByMaterialCategory();
+    List<ProductCategory> findAllByOrderByProductcategory();
     // 🔹 Search by product name
     @Query("SELECT p FROM ProductCategory p WHERE LOWER(p.productCatName) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<ProductCategory> searchProducts(@Param("name") String name);

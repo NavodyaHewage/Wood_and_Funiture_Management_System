@@ -18,6 +18,8 @@ public interface CustomerorderRepository  extends JpaRepository<CustomerOrder,In
     Optional<CustomerOrder> findByOrderid(Integer Orderid);
     boolean existsByOrderid(Integer OrderId);
 
+    List<CustomerOrder> findOrderByCustomerid(Integer customerid);
+    List<CustomerOrder> findByOrderStatus(Integer orderid);
 
     @Query("SELECT o FROM CustomerOrder o WHERE o.customer.id = :customerId")
     List<CustomerOrder> findOrdersByCustomerId(@Param("customerId") Integer customerId);

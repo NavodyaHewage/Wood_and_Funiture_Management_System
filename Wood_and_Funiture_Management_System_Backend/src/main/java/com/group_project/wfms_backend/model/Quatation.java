@@ -49,8 +49,8 @@ public class Quatation {
     @Column(name = "Remarks", columnDefinition = "TEXT")
     private String remarks;
 
-    @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<QuotationDetails> quotationDetails;
+//    @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<QuotationDetails> quotationDetails;
 
 
 }
