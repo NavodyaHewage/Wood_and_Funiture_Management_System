@@ -8,6 +8,7 @@ import java.util.List;
 @Repository
 public interface QuotationRepository  extends JpaRepository<Quatation,Integer>{
 
-
+List<Quatation> findAllByCustomerOrderId(Integer custmoerid);
+List<Quatation> findbyStatus (Quatation.QuotationStatus status);
 
 }

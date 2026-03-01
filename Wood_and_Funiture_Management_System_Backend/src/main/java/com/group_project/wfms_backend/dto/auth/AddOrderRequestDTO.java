@@ -1,16 +1,20 @@
 package com.group_project.wfms_backend.dto.auth;
 //order eka add krana ekna
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.group_project.wfms_backend.controller.CustomerOrderDetails;
+import com.group_project.wfms_backend.model.Customer;
+import org.springframework.security.core.userdetails.User;
 
+import java.math.BigDecimal;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public class AddOrderRequestDTO {
-    private Integer customerId;
-    private List<AddOrderItemDTO> items;
+
+//    private Customer customer;
+//    private BigDecimal totalAmount;
+//    private BigDecimal paidAmount;
+//    private User createdBy;
+//    private List<CustomerOrderDetails> details;
+
+    // getters & setters
 }

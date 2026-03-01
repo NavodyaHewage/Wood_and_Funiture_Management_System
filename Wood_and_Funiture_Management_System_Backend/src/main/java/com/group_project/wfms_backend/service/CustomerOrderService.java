@@ -24,18 +24,22 @@ public class CustomerOrderService {
 
 
     // method ekk hdla api gannwa ekata adla details okkom order add krnn den order add krnn oni
-    public customerOrder createOrder(CustomerOrder createOrder,
+    public CustomerOrder createOrder(
        CustomerOrder  order,
        List<CustomerOrderDetails> detailsList){
-        CustomerOrderDetails orderDetails = ();
-        for(CustomerOrderDetails details:detailsList) {
-            details.setorderRepo(savedaOrder);
-            detailsRepo.save(details);
+
+        CustomerOrder savedOrder = orderRepo.save(order);
+
+        for(CustomerOrderDetails d : detailsList) {
+            d.setorder(savedOrder);
+            detailsRepo.save(d);
         }
 
 
+
+         return savedOrder;
         }
     }
 
-    )
-}
+
+
