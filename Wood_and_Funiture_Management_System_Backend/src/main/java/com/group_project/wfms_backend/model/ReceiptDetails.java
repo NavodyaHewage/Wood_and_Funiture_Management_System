@@ -1,5 +1,6 @@
 package com.group_project.wfms_backend.model;
 
+import com.group_project.wfms_backend.controller.CustomerOrderDetails;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

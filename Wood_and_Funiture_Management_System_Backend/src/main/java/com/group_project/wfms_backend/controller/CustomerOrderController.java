@@ -22,23 +22,6 @@ import java.time.LocalDate;
 
 public class CustomerOrderController {
 
-//    @Autowired
-//    private CustomerOrderService customerOrderService;
-//
-//    @PostMapping("/add")
-//    public ResponseEntity<CustomerOrderDetails> addCustomerOrder(@RequestBody CustomerOrderDetails customerOrderDetails){
-//        @RequestBody AddOrderRequestDTO dto);
-//
-//        CustomerOrder order = new CustomerOrder();
-//        order.setCustomer(dto.getCustomer());
-//        order.setOrderDate(LocalDate.now());
-//        order.setStatus(OrderStatus.Pending);
-//        order.setTotalAmount(dto.getTotalAmount());
-//        order.setPaidAmount(dto.getPaidAmount());
-//        order.setCreatedBy(dto.getCreatedBy());
-//
-//        orderService.createOrder(order, dto.getDetails());
-//        return ResponseEntity.ok("Customer Order Added Successfully");
     }
 
 
@@ -56,8 +39,6 @@ public class CustomerOrderController {
 
 
 
-
-    }
 
 
 

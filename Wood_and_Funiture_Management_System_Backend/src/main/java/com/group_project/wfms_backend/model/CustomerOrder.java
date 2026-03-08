@@ -2,55 +2,55 @@ package com.group_project.wfms_backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@ToString
 @Entity
-
-
-
+@Table(name = "Customer_Order")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class CustomerOrder {
+
     @Id
-    @GeneratedValue
-    private Long Orderid;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "Order_Id")
+    private Long orderId;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name="Customer_id",nullable = true)
-    private CustomerOrder customerOrder;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Customer_Id", nullable = false)
+    private Customer customer;
 
-    @Column(name="Receipt_Number",length=50)
-    private String rReceiptNumber;
+    @Column(name = "Receipt_Number", length = 50)
+    private String receiptNumber;
 
-    @Column(name="Total_Amount",length=15)
-    private BigDecimal totalAmount;
+    @Column(name = "Total_Amount", precision = 15, scale = 2)
+    private BigDecimal totalAmount = BigDecimal.ZERO;
 
-    @Column(name="Paid_Amount ",precision=15,scale=2)
-    private BigDecimal paidAmount=BigDecimal.ZERO;
+    @Column(name = "Paid_Amount", precision = 15, scale = 2)
+    private BigDecimal paidAmount = BigDecimal.ZERO;
 
-    @Column(name="balance amount",precision =15,scale=2,insertable=false)
+    // Generated column - read only
+    @Column(name = "Balance_Amount", precision = 15, scale = 2, insertable = false, updatable = false)
     private BigDecimal balanceAmount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name="status",nullable=false)
-    private OrderStatus orderStatus;
+    @Column(name = "Status")
+    private OrderStatus status = OrderStatus.PENDING;
 
-    @Column(name="order_date",nullable=false)
+    @Column(name = "Order_Date", nullable = false)
     private LocalDate orderDate;
 
-    @ManyToOne(fetch=FetchType.LAZY)//eager ,lazy danakota hoda idea ekk thiyenn oni dana then gena //perforamnece saha behavior controll
-    @JoinColumn(name="created_by")
-        private CustomerOrder createdBy;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Created_by")
+    private User createdBy;
 
-//    @OneToMany(mappedBy = "customerOrder",cascade = CascadeType.ALL,orphanRemoval = true)
-//    private List<CustomerOrderDetails> orderDetails;
-//
-
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CustomerOrderDetails> orderDetails;
 
 
 }

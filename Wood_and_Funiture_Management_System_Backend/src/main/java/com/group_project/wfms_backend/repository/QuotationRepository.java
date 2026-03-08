@@ -1,14 +1,33 @@
 package com.group_project.wfms_backend.repository;
 
-import com.group_project.wfms_backend.model.Quatation;
+
+
+
+
+import com.group_project.wfms_backend.model.Quotation;
+import com.group_project.wfms_backend.model.QuotationStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.util.List;
+
 @Repository
-public interface QuotationRepository  extends JpaRepository<Quatation,Integer>{
+public interface QuotationRepository extends JpaRepository<Quotation, Integer> {
 
-List<Quatation> findAllByCustomerOrderId(Integer custmoerid);
-List<Quatation> findbyStatus (Quatation.QuotationStatus status);
+    List<Quotation> findByCustomer_CusId(Integer customerId);
 
+    List<Quotation> findByStatus(QuotationStatus status);
+
+    List<Quotation> findByQuotationDateBetween(LocalDate startDate, LocalDate endDate);
+
+    List<Quotation> findByCustomer_CusIdAndStatus(Integer customerId, QuotationStatus status);
+
+    @Query("SELECT q FROM Quotation q WHERE q.validUntil < :today AND q.status = 'Pending'")
+    List<Quotation> findExpiredPendingQuotations(@Param("today") LocalDate today);
+
+    @Query("SELECT q FROM Quotation q ORDER BY q.quotationDate DESC")
+    List<Quotation> findAllOrderByDateDesc();
 }

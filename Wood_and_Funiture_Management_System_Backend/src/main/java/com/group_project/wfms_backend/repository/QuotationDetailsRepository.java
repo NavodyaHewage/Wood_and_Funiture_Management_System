@@ -1,17 +1,20 @@
 package com.group_project.wfms_backend.repository;
 
-import com.group_project.wfms_backend.model.QuotationDeatails;
-import org.springframework.data.domain.Example;
+import com.group_project.wfms_backend.model.QuotationDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
-public interface QuotationDetailsRepository extends JpaRepository<QuotationDeatails,Integer> {
+public interface QuotationDetailsRepository extends JpaRepository<QuotationDetails, Integer> {
 
-    Optional<QuotationDeatails>FindFirstByUser_Username(@Param("username") String username);
+    List<QuotationDetails> findByQuotation_QuotationId(Integer quotationId);
 
+    void deleteByQuotation_QuotationId(Integer quotationId);
+
+    //@Query("SELECT qd FROM QuotationDetails qd WHERE qd.productCategory.productCatId = :catId")
+    List<QuotationDetails> findByProductCategoryId(Integer productCatId);
 }

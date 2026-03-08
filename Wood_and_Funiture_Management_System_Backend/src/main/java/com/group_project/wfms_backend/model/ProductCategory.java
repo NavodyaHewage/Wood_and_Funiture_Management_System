@@ -26,7 +26,7 @@ public class ProductCategory {
     @Column(name="Description",columnDefinition="Text")
     private String Description;
 
-  @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING)
     @Column(name="Unit_of_Measurement")
     private UnitOfMeasurement unitOfMeasurement = UnitOfMeasurement.SQUARE_FEET;
 

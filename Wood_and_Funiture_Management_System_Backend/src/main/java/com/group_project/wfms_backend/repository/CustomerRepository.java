@@ -16,7 +16,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     boolean existsByNic(String nic);
 
     Optional<Customer> findByEmail(String email);
-
+    Optional<Customer> findByCusIdAndIsActiveTrue(Integer cusId);
     Optional<Customer> findByMobile(String mobile);
 
     List<Customer> serchByName(String name);
