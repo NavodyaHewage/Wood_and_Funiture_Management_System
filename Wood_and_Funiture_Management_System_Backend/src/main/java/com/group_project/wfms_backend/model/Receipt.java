@@ -48,9 +48,9 @@ public class Receipt {
     private String remarks;
 
 
-//    @OneToMany(mappedBy = "receipt", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<ReceiptDetails> receiptDetails;
-//
+      @OneToMany(mappedBy = "receipt", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReceiptDetails> receiptDetails;
+
 //    @OneToOne(mappedBy = "receipt", cascade = CascadeType.ALL)
 //    private IncomeAccount incomeAccount;
 

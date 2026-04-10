@@ -12,7 +12,7 @@ public class CustomerOrderRequestDTO {
     private BigDecimal paidAmount;
     private String status;           // Optional override
     private LocalDate orderDate;
-    private Long createdById;
+    private Integer createdById;
     private List<OrderDetailDTO> orderDetails;
 
     @Data

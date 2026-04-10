@@ -26,9 +26,9 @@ public class QuotationService {
     private final QuotationDetailsRepository quotationDetailsRepository;
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
-    private final ProuctCategoryRepository productCategoryRepository;
+    private final ProductCategoryRepository productCategoryRepository;
 
-    // ─── CREATE ────────────────────────────────────────────────────────────────
+
 
     public QuotationResponseDTO createQuotation(QuotationRequestDTO requestDTO) {
         Customer customer = customerRepository.findById(requestDTO.getCustomerId())

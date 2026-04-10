@@ -18,7 +18,7 @@ public class CustomerOrderService {
 
     private final CustomerOrderRepository orderRepository;
     private final CustomerRepository customerRepository;
-    private final ProuctCategoryRepository productCategoryRepository;
+    private final ProductCategoryRepository productCategoryRepository;
     private final UserRepository userRepository;
 
     // ── CREATE ───────────────────────────────────────────────
