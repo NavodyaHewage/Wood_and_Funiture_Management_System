@@ -51,6 +51,9 @@ public class Receipt {
     @OneToMany(mappedBy = "receipt", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReceiptDetails> receiptDetails;
 
+//   @OneToOne(mappedBy = "receipt", cascade = CascadeType.ALL)
+//   private IncomeAccount incomeAccount;
+
 
 
 

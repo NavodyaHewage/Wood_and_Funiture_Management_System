@@ -6,18 +6,30 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
-public class CustomerOrderDetailsDTO {
+
+
+
+
     @Data
-    @AllArgsConstructor
     @NoArgsConstructor
-    public static class OrderDetailDTO {
-        private Long detailId;
+    @AllArgsConstructor
+    public class QuotationDetailsResponseDTO {
+
+        private Integer detailsId;
+
+        private Integer quotationId;
+
+        private Integer orderId;
+
         private Integer productCatId;
         private String productCatName;
+
         private String name;
+
         private BigDecimal quantity;
+
         private BigDecimal price;
+
         private BigDecimal lineTotal;
     }
-}
 
