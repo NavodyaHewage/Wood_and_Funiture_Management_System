@@ -1,5 +1,8 @@
 package com.group_project.wfms_backend.model;
 
+import lombok.Getter;
+
+@Getter
 public enum AttendanceStatus {
     PRESENT("Present"),
     ABSENT("Absent"),
@@ -10,10 +13,6 @@ public enum AttendanceStatus {
 
     AttendanceStatus(String displayName) {
         this.displayName = displayName;
-
-    }
-    public String getDisplayName() {
-        return displayName;
 
     }
 }

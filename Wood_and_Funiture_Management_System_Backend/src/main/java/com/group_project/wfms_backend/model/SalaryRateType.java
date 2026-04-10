@@ -1,5 +1,8 @@
 package com.group_project.wfms_backend.model;
 
+import lombok.Getter;
+
+@Getter
 public enum SalaryRateType {
     DAILY("Daily"),
     MONTHLY("Monthly"),
@@ -8,9 +11,5 @@ public enum SalaryRateType {
     private final String displayName;
     SalaryRateType(String displayName) {
         this.displayName = displayName;
-    }
-    public String getDisplayName() {
-        return displayName;
-
     }
 }

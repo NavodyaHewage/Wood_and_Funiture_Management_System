@@ -9,47 +9,48 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name="Employee_Loan")
+@Table(name="Employee_loan")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Employeeloan {
+public class Employee_loan {
     @Id
     @Column(name ="Loan_id")
     private Integer loanId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Employee_id", nullable = false)
     private Employee employee;
 
     @Column(name = "Loan_Amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal loanAmount;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "Loan_Type")
-    private LoanType loanType = LoanType.ADVANCE;
+    @Column(name = "Issued_Date", nullable = false)
+    private LocalDate issuedDate;
 
-    @Column(name = "Taken_Date", nullable = false)
-    private LocalDate takenDate;
+    @Column(name = "Reason", length = 255)
+    private String reason;
 
-    @Column(name = "Deduction_Amount", precision = 15, scale = 2)
-    private BigDecimal deductionAmount = BigDecimal.ZERO;
+    @Column(name = "Total_Deducted", precision = 15, scale = 2)
+    private BigDecimal totalDeducted = BigDecimal.ZERO;
 
-    @Column(name = "Number_Of_Months", nullable = false)
-    private Integer numberOfMonths;
+    // Generated column: Loan_Amount - Total_Deducted (read-only, managed by DB)
+    @Column(name = "Balance", insertable = false, updatable = false, precision = 15, scale = 2)
+    private BigDecimal balance;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "Status")
     private LoanStatus status = LoanStatus.ACTIVE;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Created_by")
+    private User createdBy;
+
     @Column(name = "Remarks", columnDefinition = "TEXT")
     private String remarks;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Salary_details_id")
-    private EmployeeSalaryDetails salaryDetails;
-
+   
 
 
 
