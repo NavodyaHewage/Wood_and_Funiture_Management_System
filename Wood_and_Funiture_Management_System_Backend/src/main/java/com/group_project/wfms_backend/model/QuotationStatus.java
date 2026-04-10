@@ -1,5 +1,8 @@
 package com.group_project.wfms_backend.model;
 
+import lombok.Getter;
+
+@Getter
 public enum QuotationStatus {
     PENDING("Pending"),       // Awaiting customer response
     APPROVED("Approved"),     // Customer approved the quotation
@@ -12,7 +15,4 @@ public enum QuotationStatus {
         this.displayName = displayName;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
 }
