@@ -47,8 +47,8 @@ public class CustomerOrder {
     @JoinColumn(name="created_by")
         private CustomerOrder createdBy;
 
-    @OneToMany(mappedBy = "customerOrder",cascade = CascadeType.ALL,orphanRemoval = true)
-    private List<CustomerOrderDetails> orderDetails;
+//    @OneToMany(mappedBy = "customerOrder",cascade = CascadeType.ALL,orphanRemoval = true)
+//    private List<CustomerOrderDetails> orderDetails;
 
     public enum orderStatus {
         pending,processing,complete,cancelled

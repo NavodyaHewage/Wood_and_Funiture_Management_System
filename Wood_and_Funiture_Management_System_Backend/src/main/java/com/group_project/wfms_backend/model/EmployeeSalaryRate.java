@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name ="Employee_Salary_Rate")
@@ -29,6 +30,11 @@ public class EmployeeSalaryRate {
     @Column(name = "Rate_Type")
     private SalaryRateType rateType =SalaryRateType.MONTHLY;
 
+    @Column(name = "Effective_From", nullable = false)
+    private LocalDate effectiveFrom;
 
-
+    @Column(name = "Is_active")
+    private Boolean isActive = true;
 }
+
+

@@ -1,17 +1,23 @@
 package com.group_project.wfms_backend.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Entity
 @Table(name="Employee_Attendance",uniqueConstraints={
         @UniqueConstraint(columnNames ={"Employee_id","Date"})
 
 })
+@Getter
+@Setter
+@ToString(
+        exclude = "employee"
+)
+@EqualsAndHashCode(exclude = "employee")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,9 +40,10 @@ public class EmployeeAttendance {
     private AttendanceStatus status=AttendanceStatus.PRESENT;
 
     @Column(name ="Check_In")
-    private String checkIn;
+    private LocalTime checkIn;
+
     @Column(name ="Check_Out")
-    private String checkOut;
+    private LocalTime checkOut;
 
     @Column(name="Remarks",columnDefinition = "TEXT")
     private String remarks;

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "Employee_Salary_payment")
@@ -40,4 +41,12 @@ public class EmployeeSalaryPayment{
 
     @Column(name = "Remarks", columnDefinition = "TEXT")
     private String remarks;
+//created date not in database
+    @Column(name = "Created_date", updatable = false)
+    private LocalDateTime createdDate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdDate = LocalDateTime.now();
+    }
 }

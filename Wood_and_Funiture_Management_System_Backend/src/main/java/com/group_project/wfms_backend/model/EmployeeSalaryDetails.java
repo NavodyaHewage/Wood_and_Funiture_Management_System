@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -23,10 +24,10 @@ public class EmployeeSalaryDetails {
         @Column(name = "Salary_details_id")
         private Integer salaryDetailsId;
 
-        /*Many salary records belong to one employee
-         @ManyToOne
+        //Many salary records belong to one employee
+        @ManyToOne
         @JoinColumn(name = "Employee_id", nullable = false)
-        private Employee employee;*/
+        private Employee employee;
 
         @Column(name = "Month", nullable = false)
         private Integer month;
@@ -34,36 +35,46 @@ public class EmployeeSalaryDetails {
         @Column(name = "Year", nullable = false)
         private Integer year;
 
+//        @Column(name = "Working_Days")
+//        private Integer workingDays = 0;
+//
+//        @Column(name = "Worked_Days")
+//        private Integer workedDays = 0;
+//
+//        @Column(name = "Basic_Salary", precision = 15, scale = 2)
+//        private BigDecimal basicSalary = BigDecimal.ZERO;
+//
+//        @Column(name = "Overtime_Amount", precision = 15, scale = 2)
+//        private BigDecimal overtimeAmount = BigDecimal.ZERO;
+//
+//        @Column(name = "Loan_Deduction", precision = 15, scale = 2)
+//        private BigDecimal loanDeduction = BigDecimal.ZERO;
+//
+//        @Column(name = "Other_Deduction", precision = 15, scale = 2)
+//        private BigDecimal otherDeduction = BigDecimal.ZERO;
         @Column(name = "Total_Amount",precision = 15,scale = 2)
         private BigDecimal totalAmount = BigDecimal.ZERO;
 
         @Column(name = "Paid_Amount",precision = 15,scale = 2)
         private BigDecimal paidAmount = BigDecimal.ZERO;
 
-        @Transient
+        // Balance_Amount = Total_Amount - Paid_Amount (generated column in DB)
+        @Column(name = "Balance_Amount", insertable = false, updatable = false, precision = 15, scale = 2)
         private BigDecimal balanceAmount;
-
 
         // ENUM mapping
         @Enumerated(EnumType.STRING)
         @Column(name = "Status")
         private Salary_details_Status status=Salary_details_Status.PENDING;
 
-        @OneToMany(mappedBy ="salaryDetails",cascade=CascadeType.ALL,fetch=FetchType.LAZY)
-        private List<Employeesalarypayment>payments;
+       @OneToMany(mappedBy ="salaryDetails",cascade=CascadeType.ALL,fetch=FetchType.LAZY)
+       private List<EmployeeSalaryPayment> payments = new ArrayList<>();
 
-        @OneToMany(mappedBy="salaryDetails",cascade =CascadeType.ALL,fetch= FetchType.LAZY)
-        private List<Employeeloan>loanDeductions;
 
-        @PostLoad
-        public void calculateBalance(){
-                if (this.totalAmount != null && this.paidAmount != null) {
-                        this.balanceAmount = this.totalAmount.add(this.paidAmount);
-                }
         }
 
 
 
-    }
+
 
 
