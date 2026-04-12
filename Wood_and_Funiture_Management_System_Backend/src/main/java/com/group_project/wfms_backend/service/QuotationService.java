@@ -222,7 +222,7 @@ public class QuotationService {
         dto.setLineTotal(detail.getQuantity().multiply(detail.getPrice()));
 
         if (detail.getProductCategory() != null) {
-            dto.setProductCatId(detail.getProductCategory().getProductCatid());
+            dto.setProductCatId(detail.getProductCategory().getId());
             dto.setProductCatName(detail.getProductCategory().getMaterialCategory());
         }
         return dto;

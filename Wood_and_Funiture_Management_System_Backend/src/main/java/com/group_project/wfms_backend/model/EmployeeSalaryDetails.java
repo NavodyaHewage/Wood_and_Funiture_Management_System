@@ -67,6 +67,9 @@ public class EmployeeSalaryDetails {
     @Column(name = "Status")
     private Salary_details_Status status=Salary_details_Status.PENDING;
 
+    @Column(name = "Is_Active")
+    private Boolean isActive;
+
     @OneToMany(mappedBy ="salaryDetails",cascade=CascadeType.ALL,fetch=FetchType.LAZY)
     private List<EmployeeSalaryPayment> payments = new ArrayList<>();
 
