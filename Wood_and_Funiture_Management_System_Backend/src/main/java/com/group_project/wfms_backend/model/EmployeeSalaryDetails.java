@@ -35,23 +35,6 @@ public class EmployeeSalaryDetails {
         @Column(name = "Year", nullable = false)
         private Integer year;
 
-//        @Column(name = "Working_Days")
-//        private Integer workingDays = 0;
-//
-//        @Column(name = "Worked_Days")
-//        private Integer workedDays = 0;
-//
-//        @Column(name = "Basic_Salary", precision = 15, scale = 2)
-//        private BigDecimal basicSalary = BigDecimal.ZERO;
-//
-//        @Column(name = "Overtime_Amount", precision = 15, scale = 2)
-//        private BigDecimal overtimeAmount = BigDecimal.ZERO;
-//
-//        @Column(name = "Loan_Deduction", precision = 15, scale = 2)
-//        private BigDecimal loanDeduction = BigDecimal.ZERO;
-//
-//        @Column(name = "Other_Deduction", precision = 15, scale = 2)
-//        private BigDecimal otherDeduction = BigDecimal.ZERO;
         @Column(name = "Total_Amount",precision = 15,scale = 2)
         private BigDecimal totalAmount = BigDecimal.ZERO;
 

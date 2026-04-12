@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "Expence_Account")
+@Table(name = "expence_account")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,27 +18,34 @@ public class Expenseaccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Expence_Id")
+    @Column(name = "expense_id")
     private Integer expenseId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Expence_Type_Id", nullable = false)
-    private ExpenseType expenseType;
-
-    @Column(name = "Date", nullable = false)
+    @Column(name = "date", nullable = false)
     private LocalDate date;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "GRN_ID")
-    private GRN grn;
-
-    @Column(name = "Amount", nullable = false, precision = 15, scale = 2)
+    @Column(name = "amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "Description", columnDefinition = "TEXT")
+    @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Column(name = "paid_to")
+    private String paidTo;
+
+    @Column(name = "remarks")
+    private String remarks;
+
+    // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "Created_by")
-    private User createdBy;
+    @JoinColumn(name = "expense_type_id", nullable = false)
+    private ExpenseType expenseType;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "grn_id") // මෙහි nullable = true (default) නිසා SQL එකේ NULL වලට ගැලපේ
+    private GRN grn;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 }
