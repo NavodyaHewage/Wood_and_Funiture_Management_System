@@ -152,7 +152,7 @@ public class CustomerOrderService {
             dto.setOrderDetails(order.getOrderDetails().stream().map(d -> {
                 CustomerOrderResponseDTO.OrderDetailDTO dd = new CustomerOrderResponseDTO.OrderDetailDTO();
                 dd.setDetailId(d.getId());
-                dd.setProductCatId(d.getProductCategory().getProductCatid());
+                dd.setProductCatId(d.getProductCategory().getId());
                 dd.setProductCatName(d.getProductCategory().getMaterialCategory());
                 dd.setName(d.getName());
                 dd.setQuantity(d.getQuantity());

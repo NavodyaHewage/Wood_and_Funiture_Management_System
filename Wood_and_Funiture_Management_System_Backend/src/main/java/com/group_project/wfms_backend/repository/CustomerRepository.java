@@ -19,10 +19,8 @@ public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     Optional<Customer> findByCusIdAndIsActiveTrue(Integer cusId);
     Optional<Customer> findByMobile(String mobile);
 
-    List<Customer> serchByName(String name);
-
     // 🔹 Search by name
-    @Query("SELECT c FROM Customer c WHERE LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))")
+    @Query("SELECT c FROM Customer c WHERE LOWER(c.cusName) LIKE LOWER(CONCAT('%', :name, '%'))")
     List<Customer> searchByName(@Param("name") String name);
 
 

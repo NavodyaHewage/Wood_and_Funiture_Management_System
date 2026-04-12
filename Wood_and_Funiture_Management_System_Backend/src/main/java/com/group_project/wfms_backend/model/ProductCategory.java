@@ -44,7 +44,7 @@ public class ProductCategory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Product_Cat_Id",nullable = false,length =150)
-    private int ProductCatid;
+    private int id;
 
     @Column(name="Material_Category", length =100)
     private String materialCategory;
