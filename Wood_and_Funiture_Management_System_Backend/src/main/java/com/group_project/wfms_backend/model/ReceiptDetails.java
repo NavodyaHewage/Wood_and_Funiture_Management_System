@@ -1,5 +1,6 @@
 package com.group_project.wfms_backend.model;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,7 +9,7 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 
 @Entity
-@Table(name="eceipt_Details")
+@Table(name="receipt_Details")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

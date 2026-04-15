@@ -1,7 +1,7 @@
 package com.group_project.wfms_backend.model;
 
 public enum OrderStatus {
-    Pending(PENDING),
+    PENDING,
     PROCESSING,
     COMPLETED,
     CANCELLED,

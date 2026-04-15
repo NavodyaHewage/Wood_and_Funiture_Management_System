@@ -13,6 +13,7 @@ public class JwtResponse {
 
     private String token;
     private String refreshToken;
+    @Builder.Default
     private String type = "Bearer";
     private Integer userId;
     private String username;
@@ -20,7 +21,8 @@ public class JwtResponse {
     private String role;
     private Long expiresIn; // in milliseconds
 
-    public JwtResponse(String token, String refreshToken, Integer userId, String username, String email, String role, Long expiresIn) {
+    public JwtResponse(String token, String refreshToken, Integer userId, String username, String email, String role,
+            Long expiresIn) {
         this.token = token;
         this.refreshToken = refreshToken;
         this.userId = userId;

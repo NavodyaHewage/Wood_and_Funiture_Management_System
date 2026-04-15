@@ -14,4 +14,5 @@ public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
 
     List<Employee> findByIsActiveTrue();
     boolean existsByNic(String nic);
+
 }
