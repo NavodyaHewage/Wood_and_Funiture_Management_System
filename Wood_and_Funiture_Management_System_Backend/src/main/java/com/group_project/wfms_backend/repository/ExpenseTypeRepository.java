@@ -1,10 +1,10 @@
 package com.group_project.wfms_backend.repository;
 
-import com.group_project.wfms_backend.model.Employee_loan;
+import com.group_project.wfms_backend.model.ExpenseType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface Employeeloanrepository extends JpaRepository<Employee_loan, Integer> {
+public interface ExpenseTypeRepository extends JpaRepository<ExpenseType, Integer> {
 
 }

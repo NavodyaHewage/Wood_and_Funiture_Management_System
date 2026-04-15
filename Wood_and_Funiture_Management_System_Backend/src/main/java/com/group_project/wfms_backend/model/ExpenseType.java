@@ -6,17 +6,20 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Expence_Type")
+@Table(name = "expence_type")
 @Getter
 @Setter
 @NoArgsConstructor
 public class ExpenseType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Expence_Type_Id")
+    @Column(name = "expence_type_id")
     private Integer expenseTypeId;
 
-    @Column(name = "Description", nullable = false, length = 200)
+    @Column(name = "type_name", nullable = false, length = 100)
+    private String typeName;
+
+    @Column(name = "description", nullable = false, length = 200)
     private String description;
 
 }

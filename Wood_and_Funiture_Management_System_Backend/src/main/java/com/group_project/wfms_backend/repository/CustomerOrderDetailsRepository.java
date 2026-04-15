@@ -29,8 +29,4 @@ public interface CustomerOrderDetailsRepository extends JpaRepository<CustomerOr
     BigDecimal getTotalQuantitySold(@Param("productId") Integer productId);
 
 
-
-
-
-
 }
