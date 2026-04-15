@@ -16,9 +16,4 @@ public class ReceiptRequestDTO {
     private String remarks;
     private List<ReceiptDetailDTO> receiptDetails;
 
-//    @Data
-//    public static class ReceiptDetailDTO {
-//        private Long customerOrderDetailsId;
-//        private BigDecimal amount;
-//    }
 }

@@ -18,11 +18,4 @@ public class ReceiptResponseDTO {
     private String remarks;
     private List<ReceiptDetailDTO> receiptDetails;
 
-//    @Data
-//    public static class ReceiptDetailDTO {
-//        private Long receiptDetailsId;
-//        private Long customerOrderDetailsId;
-//        private String productName;
-//        private BigDecimal amount;
-//    }
 }
