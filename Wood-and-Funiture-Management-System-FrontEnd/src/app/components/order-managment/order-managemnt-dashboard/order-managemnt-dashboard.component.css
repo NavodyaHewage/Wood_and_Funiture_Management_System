@@ -1,8 +1,22 @@
-/* ── PAGE WRAPPER ───────────────────────────────────────── */
-.order-page {
-  padding: 30px;
-  background: #f9f5f0;
+.dashboard-layout {
+  display: flex;
   min-height: 100vh;
+  background: #fdfce8;
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-left: 280px;
+  width: calc(100% - 280px);
+}
+
+.content-body {
+  padding: 30px;
+}
+
+.order-page {
+  padding: 0;
+  font-family: 'Inter', sans-serif;
 }
 
 /* ── ALERTS ─────────────────────────────────────────────── */

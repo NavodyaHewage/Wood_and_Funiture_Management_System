@@ -1,17 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { OrderService } from './order.service';
-import { CustomerOrderResponseDTO, CustomerOrderRequestDTO, OrderDetailDTO } from './order.model';
+import { OrderService } from '../../../service/order.service';
+import { CustomerOrderResponseDTO, CustomerOrderRequestDTO, OrderDetailDTO } from '../../../model/order.model';
+import { HeaderComponent } from '../../header/header.component';
+import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 
 @Component({
   selector: 'app-order-management',
   standalone: true,
-  imports: [CommonModule, FormsModule],
-  templateUrl: './order-management.component.html',
-  styleUrls: ['./order-management.component.css']
+  imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent],
+  templateUrl: './order-managemnt-dashboard.component.html',
+  styleUrls: ['./order-managemnt-dashboard.component.css']
 })
-export class OrderManagementComponent implements OnInit {
+export class OrderManagementDashboardComponent implements OnInit {
 
   orders: CustomerOrderResponseDTO[] = [];
   filteredOrders: CustomerOrderResponseDTO[] = [];
@@ -34,7 +36,7 @@ export class OrderManagementComponent implements OnInit {
   // Form model
   orderForm: CustomerOrderRequestDTO = this.getEmptyForm();
 
-  // Dropdown data (replace with real API calls as needed)
+  // Dropdown data
   customers: { id: number; name: string }[] = [
     { id: 1, name: 'John Silva' },
     { id: 2, name: 'Mary Fernando' },
@@ -58,12 +60,13 @@ export class OrderManagementComponent implements OnInit {
   loadOrders(): void {
     this.isLoading = true;
     this.orderService.getAllOrders().subscribe({
-      next: (data) => {
+      next: (data: CustomerOrderResponseDTO[]) => {
         this.orders = data;
         this.applyFilters();
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
+        console.error('Error loading orders', err);
         this.errorMessage = 'Failed to load orders.';
         this.isLoading = false;
       }
@@ -89,13 +92,19 @@ export class OrderManagementComponent implements OnInit {
     this.applyFilters();
   }
 
-  // ── VIEW ─────────────────────────────────────────────────
+  getTotalRevenue(): number {
+    return this.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+  }
+
+  orderStatusCount(status: string): number {
+    return this.orders.filter(order => order.status === status).length;
+  }
+
   viewOrder(order: CustomerOrderResponseDTO): void {
     this.selectedOrder = order;
     this.showViewModal = true;
   }
 
-  // ── CREATE ───────────────────────────────────────────────
   openCreateModal(): void {
     this.isEditMode = false;
     this.editOrderId = null;
@@ -103,7 +112,6 @@ export class OrderManagementComponent implements OnInit {
     this.showCreateModal = true;
   }
 
-  // ── EDIT ─────────────────────────────────────────────────
   openEditModal(order: CustomerOrderResponseDTO): void {
     this.isEditMode = true;
     this.editOrderId = order.orderId;
@@ -114,7 +122,7 @@ export class OrderManagementComponent implements OnInit {
       orderDate: order.orderDate,
       status: order.status,
       createdById: null,
-      orderDetails: order.orderDetails?.map(d => ({
+      orderDetails: order.orderDetails?.map((d: OrderDetailDTO) => ({
         productCatId: d.productCatId,
         name: d.name,
         quantity: d.quantity,
@@ -148,7 +156,6 @@ export class OrderManagementComponent implements OnInit {
     }
   }
 
-  // ── DELETE ───────────────────────────────────────────────
   confirmDelete(orderId: number): void {
     this.orderToDelete = orderId;
     this.showDeleteConfirm = true;
@@ -168,7 +175,6 @@ export class OrderManagementComponent implements OnInit {
     });
   }
 
-  // ── ORDER DETAIL ROWS ────────────────────────────────────
   addDetailRow(): void {
     this.orderForm.orderDetails.push({ productCatId: 0, name: '', quantity: 1, price: 0 });
   }
@@ -178,10 +184,9 @@ export class OrderManagementComponent implements OnInit {
   }
 
   getFormTotal(): number {
-    return this.orderForm.orderDetails.reduce((sum, d) => sum + (d.quantity * d.price), 0);
+    return this.orderForm.orderDetails.reduce((sum: number, d: OrderDetailDTO) => sum + (d.quantity * d.price), 0);
   }
 
-  // ── UTILITIES ────────────────────────────────────────────
   closeModal(): void {
     this.showCreateModal = false;
     this.showViewModal = false;

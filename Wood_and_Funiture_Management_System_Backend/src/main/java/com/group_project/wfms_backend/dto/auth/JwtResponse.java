@@ -13,6 +13,7 @@ public class JwtResponse {
 
     private String token;
     private String refreshToken;
+    @Builder.Default
     private String type = "Bearer";
     private Integer userId;
     private String username;

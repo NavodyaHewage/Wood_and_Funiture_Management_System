@@ -96,8 +96,13 @@ public class CustomerOrderService {
         if (dto.getPaidAmount() != null) order.setPaidAmount(dto.getPaidAmount());
         if (dto.getReceiptNumber() != null) order.setReceiptNumber(dto.getReceiptNumber());
         if (dto.getOrderDate() != null) order.setOrderDate(dto.getOrderDate());
-        if (dto.getStatus() != null)
-            order.setStatus(OrderStatus.valueOf(dto.getStatus()));
+        if (dto.getStatus() != null) {
+            try {
+                order.setStatus(OrderStatus.valueOf(dto.getStatus().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                order.setStatus(OrderStatus.PENDING);
+            }
+        }
 
         // Replace order details if provided
         if (dto.getOrderDetails() != null && !dto.getOrderDetails().isEmpty()) {
@@ -139,8 +144,12 @@ public class CustomerOrderService {
     private CustomerOrderResponseDTO toResponseDTO(CustomerOrder order) {
         CustomerOrderResponseDTO dto = new CustomerOrderResponseDTO();
         dto.setOrderId(order.getOrderId());
-        dto.setCustomerId(order.getCustomer().getCusId());
-        dto.setCustomerName(order.getCustomer().getCusName());
+        
+        if (order.getCustomer() != null) {
+            dto.setCustomerId(order.getCustomer().getCusId());
+            dto.setCustomerName(order.getCustomer().getCusName());
+        }
+        
         dto.setReceiptNumber(order.getReceiptNumber());
         dto.setTotalAmount(order.getTotalAmount());
         dto.setPaidAmount(order.getPaidAmount());
@@ -152,8 +161,10 @@ public class CustomerOrderService {
             dto.setOrderDetails(order.getOrderDetails().stream().map(d -> {
                 CustomerOrderResponseDTO.OrderDetailDTO dd = new CustomerOrderResponseDTO.OrderDetailDTO();
                 dd.setDetailId(d.getId());
-                dd.setProductCatId(d.getProductCategory().getId());
-                dd.setProductCatName(d.getProductCategory().getMaterialCategory());
+                if (d.getProductCategory() != null) {
+                    dd.setProductCatId(d.getProductCategory().getId());
+                    dd.setProductCatName(d.getProductCategory().getMaterialCategory());
+                }
                 dd.setName(d.getName());
                 dd.setQuantity(d.getQuantity());
                 dd.setPrice(d.getPrice());

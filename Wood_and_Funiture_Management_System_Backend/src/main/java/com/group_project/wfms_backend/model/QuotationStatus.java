@@ -9,10 +9,21 @@ public enum QuotationStatus {
     REJECTED("Rejected"),   // Customer rejected the quotation
     CONVERTED("Converted");   // Converted to an order
 
+    @com.fasterxml.jackson.annotation.JsonValue
     private final String displayName;
 
     QuotationStatus(String displayName) {
         this.displayName = displayName;
+    }
+
+    @com.fasterxml.jackson.annotation.JsonCreator
+    public static QuotationStatus fromString(String value) {
+        for (QuotationStatus status : QuotationStatus.values()) {
+            if (status.name().equalsIgnoreCase(value) || status.displayName.equalsIgnoreCase(value)) {
+                return status;
+            }
+        }
+        return PENDING;
     }
 
 }
