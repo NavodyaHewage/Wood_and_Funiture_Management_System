@@ -504,7 +504,7 @@ export class AttendanceListComponent implements OnInit {
 
   loadAttendance(): void {
     const formattedDate = this.filterDate ? this.filterDate.toISOString().split('T')[0] : undefined;
-    this.attendanceService.getFilteredAttendance(formattedDate, this.filterEmployeeId || undefined).subscribe((res: AttendanceResponseDTO[]) => {
+    this.attendanceService.getFilteredAttendance(formattedDate, formattedDate, this.filterEmployeeId || undefined).subscribe((res: AttendanceResponseDTO[]) => {
       this.attendanceRecords = res;
     });
   }
@@ -517,7 +517,7 @@ export class AttendanceListComponent implements OnInit {
 
   openMarkDialog(record?: AttendanceResponseDTO): void {
     const dialogRef = this.dialog.open(AttendanceDialogComponent, {
-      width: '450px',
+      width: '500px',
       height: '100vh',
       position: { right: '0', top: '0' },
       panelClass: 'side-drawer-panel',
@@ -531,7 +531,7 @@ export class AttendanceListComponent implements OnInit {
 
   openBulkMarkDialog(): void {
     const dialogRef = this.dialog.open(BulkAttendanceDialogComponent, {
-      width: '500px',
+      width: '1100px',
       height: '100vh',
       position: { right: '0', top: '0' },
       panelClass: 'side-drawer-panel'

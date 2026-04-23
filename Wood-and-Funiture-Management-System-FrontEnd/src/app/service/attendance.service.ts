@@ -9,7 +9,9 @@ export enum AttendanceStatus {
   PRESENT = 'PRESENT',
   ABSENT = 'ABSENT',
   HALF_DAY = 'HALF_DAY',
-  LEAVE = 'LEAVE'
+  LEAVE = 'LEAVE',
+  HOLIDAY = 'HOLIDAY',
+  WEEKEND = 'WEEKEND'
 }
 
 export interface AttendanceCreateDTO {
@@ -19,6 +21,7 @@ export interface AttendanceCreateDTO {
   checkIn?: string | null;
   checkOut?: string | null;
   remarks?: string;
+  overtimeHours?: number;
 }
 
 export interface AttendanceUpdateDTO {
@@ -26,6 +29,7 @@ export interface AttendanceUpdateDTO {
   checkIn?: string | null;
   checkOut?: string | null;
   remarks?: string;
+  overtimeHours?: number;
 }
 
 export interface AttendanceResponseDTO {
@@ -37,6 +41,7 @@ export interface AttendanceResponseDTO {
   checkIn?: string;
   checkOut?: string;
   remarks?: string;
+  overtimeHours?: number;
 }
 
 export interface AttendanceSummaryDTO {
@@ -79,13 +84,20 @@ export class AttendanceService {
     );
   }
 
-  getFilteredAttendance(date?: string, employeeId?: number): Observable<AttendanceResponseDTO[]> {
+  getFilteredAttendance(startDate?: string, endDate?: string, employeeId?: number): Observable<AttendanceResponseDTO[]> {
     let params = new HttpParams();
-    if (date) params = params.set('date', date);
+    if (startDate) params = params.set('startDate', startDate);
+    if (endDate) params = params.set('endDate', endDate);
     if (employeeId) params = params.set('employeeId', employeeId.toString());
 
     return this.http.get<AttendanceResponseDTO[]>(this.apiUrl, { params }).pipe(
       catchError(err => this.handleError(err))
+    );
+  }
+
+  checkExistingAttendance(date: string, employeeId: number): Observable<AttendanceResponseDTO | null> {
+    return this.getFilteredAttendance(date, date, employeeId).pipe(
+      map(records => records.length > 0 ? records[0] : null)
     );
   }
 
