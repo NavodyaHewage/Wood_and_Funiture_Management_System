@@ -604,3 +604,91 @@ a:hover {
         align-items: flex-start;
     }
 }
+
+/* ===================================
+   Side Drawer Panel Styles
+   =================================== */
+.side-drawer-panel {
+    border-radius: 0 !important;
+    position: absolute;
+    right: 0;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    animation: slideInRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    box-shadow: -5px 0 25px rgba(0,0,0,0.15) !important;
+    background-color: var(--background-light) !important;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0.8;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.drawer-header {
+    background: var(--gradient-primary);
+    color: var(--background-light);
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.drawer-header h2 {
+    color: var(--background-light);
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.drawer-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    height: calc(100vh - 150px);
+}
+
+.drawer-footer {
+    padding: 1rem 1.5rem;
+    background: white;
+    border-top: 1px solid rgba(113, 54, 0, 0.1);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.btn-admin-primary {
+    background: var(--gradient-primary);
+    color: var(--background-light);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all var(--transition-base);
+}
+.btn-admin-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(192, 88, 0, 0.3);
+    color: white;
+}
+
+.btn-admin-secondary {
+    background: white;
+    color: var(--primary-dark);
+    border: 1px solid rgba(113, 54, 0, 0.2);
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 600;
+    transition: all var(--transition-base);
+}
+.btn-admin-secondary:hover {
+    background: rgba(113, 54, 0, 0.05);
+}
