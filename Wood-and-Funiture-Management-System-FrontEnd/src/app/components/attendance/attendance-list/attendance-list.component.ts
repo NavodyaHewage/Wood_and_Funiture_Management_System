@@ -517,9 +517,9 @@ export class AttendanceListComponent implements OnInit {
 
   openMarkDialog(record?: AttendanceResponseDTO): void {
     const dialogRef = this.dialog.open(AttendanceDialogComponent, {
-      width: '500px',
-      height: '100vh',
-      position: { right: '0', top: '0' },
+      width: '450px',
+      height: 'calc(100vh - 80px)',
+      position: { right: '0', top: '80px' },
       panelClass: 'side-drawer-panel',
       data: { attendance: record }
     });
@@ -531,9 +531,9 @@ export class AttendanceListComponent implements OnInit {
 
   openBulkMarkDialog(): void {
     const dialogRef = this.dialog.open(BulkAttendanceDialogComponent, {
-      width: '1100px',
-      height: '100vh',
-      position: { right: '0', top: '0' },
+      width: '600px',
+      height: 'calc(100vh - 80px)',
+      position: { right: '0', top: '80px' },
       panelClass: 'side-drawer-panel'
     });
 

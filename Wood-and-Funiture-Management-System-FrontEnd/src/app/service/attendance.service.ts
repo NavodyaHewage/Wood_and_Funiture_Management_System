@@ -21,7 +21,6 @@ export interface AttendanceCreateDTO {
   checkIn?: string | null;
   checkOut?: string | null;
   remarks?: string;
-  overtimeHours?: number;
 }
 
 export interface AttendanceUpdateDTO {
@@ -29,7 +28,6 @@ export interface AttendanceUpdateDTO {
   checkIn?: string | null;
   checkOut?: string | null;
   remarks?: string;
-  overtimeHours?: number;
 }
 
 export interface AttendanceResponseDTO {
@@ -41,7 +39,6 @@ export interface AttendanceResponseDTO {
   checkIn?: string;
   checkOut?: string;
   remarks?: string;
-  overtimeHours?: number;
 }
 
 export interface AttendanceSummaryDTO {
@@ -53,6 +50,8 @@ export interface AttendanceSummaryDTO {
   absentDays: number;
   halfDays: number;
   leaveDays: number;
+  holidayDays: number;
+  weekendDays: number;
   totalWorkingDays: number;
 }
 

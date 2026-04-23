@@ -2,365 +2,324 @@ import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { MatIconModule } from '@angular/material/icon';
-import { MatTooltipModule } from '@angular/material/tooltip';
-import { AttendanceService, AttendanceStatus } from '../../../service/attendance.service';
+import { AttendanceService, AttendanceStatus, AttendanceCreateDTO, AttendanceUpdateDTO } from '../../../service/attendance.service';
 import { EmployeeService, Employee } from '../../../service/employee.service';
+import { ToastService } from '../../../service/toast.service';
 import { Observable, startWith, map, of } from 'rxjs';
 
 @Component({
   selector: 'app-attendance-dialog',
   standalone: true,
   imports: [
-    CommonModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatFormFieldModule,
-    MatInputModule,
+    CommonModule, 
+    ReactiveFormsModule, 
+    MatDialogModule, 
+    MatButtonModule, 
+    MatFormFieldModule, 
+    MatInputModule, 
+    MatDatepickerModule, 
     MatSelectModule,
-    MatDatepickerModule,
-    MatNativeDateModule,
-    MatAutocompleteModule,
-    MatIconModule,
-    MatTooltipModule
+    MatAutocompleteModule
   ],
   template: `
-    <div class="drawer-header">
-      <h2>
-        <i class="bi" [ngClass]="isEdit ? 'bi-pencil-square' : 'bi-plus-circle-fill'"></i>
-        {{ isEdit ? 'Edit Attendance Record' : 'Add Attendance' }}
-      </h2>
-      <button class="btn-close btn-close-white" (click)="onCancel()"></button>
-    </div>
+    <div class="drawer-container">
+      <div class="drawer-header">
+        <h2>
+          <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-person-plus-fill'"></i>
+          {{ isEditMode ? 'Edit Attendance' : 'Mark Attendance' }}
+        </h2>
+        <button class="btn-close btn-close-white" (click)="onCancel()"></button>
+      </div>
 
-    <form [formGroup]="attendanceForm" (ngSubmit)="onSave()" class="admin-form h-100 position-relative">
       <div class="drawer-body">
-        
-        <!-- Employee & Date Selection -->
-        <div class="form-section-title mt-2">
-            <i class="bi bi-person-badge-fill"></i> Employee & Date
-        </div>
-        
-        <div class="row g-4 mb-4">
+        <form [formGroup]="attendanceForm" class="admin-form">
           <!-- Employee Search -->
-          <div class="col-md-12">
-            <label class="admin-label">Search Employee <span class="text-danger">*</span></label>
-            <div class="admin-input-group" [class.border-danger]="isInvalid('employeeId')">
+          <div class="form-group mb-4" *ngIf="!isEditMode">
+            <label class="admin-label">Select Employee</label>
+            <div class="admin-input-group">
               <i class="bi bi-search"></i>
               <input type="text" 
-                     placeholder="Type employee name..." 
+                     placeholder="Search employee by name..." 
                      [matAutocomplete]="auto"
-                     formControlName="employeeSearch"
-                     [readonly]="isEdit">
-              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayEmployeeName" (optionSelected)="onEmployeeSelected($event.option.value)">
+                     formControlName="employeeSearch">
+              <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
                 <mat-option *ngFor="let emp of filteredEmployees | async" [value]="emp">
                   {{ emp.fullName }} (ID: {{ emp.id }})
                 </mat-option>
               </mat-autocomplete>
             </div>
-            <div class="text-danger small mt-1" *ngIf="isInvalid('employeeId')">Please select an employee</div>
           </div>
 
-          <!-- Date Picker -->
-          <div class="col-md-12">
-            <label class="admin-label">Attendance Date <span class="text-danger">*</span></label>
-            <div class="admin-input-group" [class.border-danger]="isInvalid('date')">
-              <i class="bi bi-calendar3"></i>
-              <input matInput [matDatepicker]="picker" formControlName="date" [max]="maxDate" (dateChange)="onDateChange()" [readonly]="isEdit">
-              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-              <mat-datepicker #picker></mat-datepicker>
-            </div>
-            <div class="text-danger small mt-1" *ngIf="isInvalid('date')">Valid date is required (no future dates)</div>
-          </div>
-        </div>
-
-        <!-- Attendance Details -->
-        <div class="form-section-title">
-            <i class="bi bi-clock-fill"></i> Status & Times
-        </div>
-        
-        <div class="row g-4 mb-4">
-          <!-- Status -->
-          <div class="col-md-12">
-            <label class="admin-label">Attendance Status <span class="text-danger">*</span></label>
-            <div class="admin-input-group" [class.border-danger]="isInvalid('status')">
-              <i class="bi bi-info-circle"></i>
-              <select formControlName="status" (change)="onStatusChange()">
-                <option value="PRESENT">Present</option>
-                <option value="ABSENT">Absent</option>
-                <option value="HALF_DAY">Half Day</option>
-                <option value="LEAVE">Leave</option>
-                <option value="HOLIDAY">Holiday</option>
-                <option value="WEEKEND">Weekend</option>
-              </select>
+          <!-- Read-only Employee Info (Edit Mode) -->
+          <div class="form-group mb-4" *ngIf="isEditMode">
+            <label class="admin-label">Employee</label>
+            <div class="read-only-box">
+              <i class="bi bi-person-check-fill me-2"></i>
+              {{ data.attendance?.employeeName }} (ID: {{ data.attendance?.employeeId }})
             </div>
           </div>
 
-          <!-- Check-in & Check-out -->
-          <div class="col-md-6" *ngIf="isTimeRequired()">
-            <label class="admin-label">Check-in</label>
+          <div class="row g-3 mb-4">
+            <!-- Date Picker -->
+            <div class="col-md-6">
+              <label class="admin-label">Attendance Date</label>
+              <div class="admin-input-group">
+                <i class="bi bi-calendar-event"></i>
+                <input [matDatepicker]="picker" formControlName="date" placeholder="Select date" [max]="maxDate">
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+              </div>
+            </div>
+
+            <!-- Status Selector -->
+            <div class="col-md-6">
+              <label class="admin-label">Attendance Status</label>
+              <mat-select formControlName="status" class="admin-select" (selectionChange)="onStatusChange()">
+                <mat-option *ngFor="let s of statuses" [value]="s">{{ s }}</mat-option>
+              </mat-select>
+            </div>
+          </div>
+
+          <!-- Check-in / Check-out (Conditional) -->
+          <div class="row g-3 mb-4" *ngIf="showTimeFields">
+            <div class="col-md-6">
+              <label class="admin-label">Check-In Time</label>
+              <div class="admin-input-group">
+                <i class="bi bi-clock-fill"></i>
+                <input type="time" formControlName="checkIn">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="admin-label">Check-Out Time</label>
+              <div class="admin-input-group">
+                <i class="bi bi-clock-history"></i>
+                <input type="time" formControlName="checkOut">
+              </div>
+            </div>
+          </div>
+
+          <!-- Remarks -->
+          <div class="form-group mb-4">
+            <label class="admin-label">Remarks / Notes</label>
             <div class="admin-input-group">
-              <i class="bi bi-box-arrow-in-right"></i>
-              <input type="time" formControlName="checkIn">
+              <i class="bi bi-chat-left-text"></i>
+              <textarea formControlName="remarks" rows="3" placeholder="Additional details..."></textarea>
+            </div>
+            <div class="text-end small text-muted mt-1">
+              {{ attendanceForm.get('remarks')?.value?.length || 0 }} / 255
             </div>
           </div>
 
-          <div class="col-md-6" *ngIf="isTimeRequired()">
-            <label class="admin-label">Check-out</label>
-            <div class="admin-input-group">
-              <i class="bi bi-box-arrow-left"></i>
-              <input type="time" formControlName="checkOut">
-            </div>
+          <!-- Duplicate Warning -->
+          <div class="alert alert-warning animate-fade-in" *ngIf="duplicateRecord">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>
+            A record already exists for this date. Saving will update it.
+            <button type="button" class="btn btn-sm btn-outline-warning ms-3" (click)="switchToEditMode()">
+              Switch to Edit
+            </button>
           </div>
-
-          <!-- Overtime Hours -->
-          <div class="col-md-12">
-            <label class="admin-label" [class.text-muted]="attendanceForm.get('overtimeHours')?.disabled">
-              Overtime Hours (Only for Present)
-            </label>
-            <div class="admin-input-group" [class.bg-light]="attendanceForm.get('overtimeHours')?.disabled">
-              <i class="bi bi-hourglass-split"></i>
-              <input type="number" formControlName="overtimeHours" min="0" max="12" step="0.5" placeholder="e.g. 2.5">
-            </div>
-          </div>
-        </div>
-
-        <!-- Remarks -->
-        <div class="form-section-title">
-            <i class="bi bi-card-text"></i> Additional Remarks
-        </div>
-        
-        <div class="row g-4 mb-5">
-          <div class="col-md-12">
-            <div class="d-flex justify-content-between align-items-center">
-              <label class="admin-label">Remarks</label>
-              <span class="small text-muted">{{ attendanceForm.get('remarks')?.value?.length || 0 }}/255</span>
-            </div>
-            <textarea formControlName="remarks" class="admin-control" rows="3" maxlength="255" placeholder="Any additional notes..."></textarea>
-          </div>
-        </div>
-
-      </div> <!-- end drawer-body -->
+        </form>
+      </div>
 
       <div class="drawer-footer">
-        <button type="button" class="btn btn-admin-secondary" (click)="onCancel()">Cancel</button>
-        <button type="submit" class="btn btn-admin-primary" [disabled]="loading">
-          <i class="bi" [ngClass]="loading ? 'bi-hourglass-split animate-spin' : 'bi-check-circle-fill'"></i>
-          {{ isEdit ? 'Update Record' : 'Save Record' }}
+        <button class="btn-admin-secondary" (click)="onCancel()">Cancel</button>
+        <button class="btn-admin-primary" (click)="onSubmit()" [disabled]="attendanceForm.invalid || isLoading">
+          <span class="spinner-border spinner-border-sm me-2" *ngIf="isLoading"></span>
+          {{ isEditMode ? 'Update Record' : 'Save Attendance' }}
         </button>
       </div>
-    </form>
+    </div>
   `,
   styles: [`
-    .admin-form { display: flex; flex-direction: column; }
-    .form-section-title {
-      font-size: 1.1rem; font-weight: 700; color: var(--primary-dark);
-      margin-bottom: 1rem; display: flex; align-items: center; gap: 10px;
-      padding-bottom: 8px; border-bottom: 2px solid rgba(113, 54, 0, 0.1);
+    .drawer-container { display: flex; flex-direction: column; height: 100%; background: white; }
+    .read-only-box { 
+      background: #f8f9fa; border: 1px solid rgba(113, 54, 0, 0.1); 
+      border-radius: 8px; padding: 12px; font-weight: 700; color: var(--primary-dark);
     }
-    .form-section-title i { color: var(--primary-orange); }
-    .admin-label { color: var(--primary-dark); font-weight: 600; font-size: 0.9rem; margin-bottom: 8px; display: block; }
-    .admin-input-group {
-      display: flex; align-items: center; background: white;
-      border: 1px solid rgba(113, 54, 0, 0.2); border-radius: 10px;
-      padding: 0 15px; height: 48px; transition: all var(--transition-fast);
+    .admin-label { display: block; font-size: 0.85rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 8px; }
+    .admin-input-group { 
+      display: flex; align-items: center; background: #f8f9fa; 
+      border: 1.5px solid rgba(113, 54, 0, 0.15); border-radius: 10px; padding: 0 12px;
+      transition: all 0.3s ease;
     }
-    .admin-input-group:focus-within { border-color: var(--primary-orange); box-shadow: 0 0 0 3px rgba(192, 88, 0, 0.1); }
-    .admin-input-group i { color: var(--primary-orange); font-size: 1.1rem; margin-right: 12px; }
-    .admin-input-group input, .admin-input-group select {
-      border: none; background: transparent; outline: none; flex: 1; height: 100%; color: var(--secondary-dark);
+    .admin-input-group:focus-within { border-color: var(--primary-orange); background: white; box-shadow: 0 0 0 3px rgba(192, 88, 0, 0.1); }
+    .admin-input-group i { color: var(--primary-orange); margin-right: 12px; }
+    .admin-input-group input, .admin-input-group textarea { 
+      border: none; background: transparent; padding: 12px 0; width: 100%; outline: none; font-weight: 500;
     }
-    .admin-control { width: 100%; border: 1px solid rgba(113, 54, 0, 0.2); border-radius: 10px; padding: 12px 15px; }
-    .admin-control:focus { border-color: var(--primary-orange); box-shadow: 0 0 0 3px rgba(192, 88, 0, 0.1); outline: none; }
-    .border-danger { border-color: #dc3545 !important; }
-    .bg-light { background-color: #f8f9fa !important; }
-    
-    ::ng-deep .mat-datepicker-content { background-color: white !important; }
-    ::ng-deep .mat-calendar-header { background-color: var(--primary-dark) !important; color: white !important; }
+    .admin-select { width: 100%; background: #f8f9fa; border: 1.5px solid rgba(113, 54, 0, 0.15); border-radius: 10px; padding: 10px; }
+    .animate-fade-in { animation: fadeIn 0.3s ease-out; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
   `]
 })
 export class AttendanceDialogComponent implements OnInit {
   attendanceForm: FormGroup;
-  isEdit: boolean = false;
-  submitAttempted: boolean = false;
-  maxDate: Date = new Date();
+  isEditMode = false;
+  isLoading = false;
+  duplicateRecord: any = null;
+  maxDate = new Date();
+  statuses = Object.values(AttendanceStatus);
   allEmployees: Employee[] = [];
-  filteredEmployees!: Observable<Employee[]>;
-  loading: boolean = false;
-  currentRecordId: number | null = null;
+  filteredEmployees: Observable<Employee[]> = of([]);
 
   constructor(
-    @Inject(FormBuilder) private fb: FormBuilder,
-    @Inject(AttendanceService) private attendanceService: AttendanceService,
-    @Inject(EmployeeService) private employeeService: EmployeeService,
+    private fb: FormBuilder,
+    private attendanceService: AttendanceService,
+    private employeeService: EmployeeService,
+    private toastService: ToastService,
     public dialogRef: MatDialogRef<AttendanceDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: { attendance?: any }
   ) {
-    this.isEdit = !!data.attendance;
+    this.isEditMode = !!data?.attendance;
+    
     this.attendanceForm = this.fb.group({
-      employeeId: ['', Validators.required],
       employeeSearch: [''],
+      employeeId: [null, Validators.required],
       date: [new Date(), Validators.required],
       status: [AttendanceStatus.PRESENT, Validators.required],
       checkIn: ['08:00'],
       checkOut: ['17:00'],
-      remarks: ['', Validators.maxLength(255)],
-      overtimeHours: [0]
+      remarks: ['', Validators.maxLength(255)]
     });
+
+    if (this.isEditMode) {
+      this.patchEditValues();
+    }
   }
 
   ngOnInit(): void {
-    this.loadEmployees();
-    
-    if (this.isEdit && this.data.attendance) {
-      this.currentRecordId = this.data.attendance.attendId;
-      this.patchForm(this.data.attendance);
-    }
+    this.loadActiveEmployees();
+    this.setupEmployeeAutocomplete();
+    this.onStatusChange();
 
-    this.filteredEmployees = this.attendanceForm.get('employeeSearch')!.valueChanges.pipe(
-      startWith(''),
-      map(value => typeof value === 'string' ? value : value?.fullName),
-      map(name => name ? this._filterEmployees(name) : this.allEmployees.slice())
-    );
+    this.attendanceForm.get('employeeId')?.valueChanges.subscribe(() => this.checkDuplicate());
+    this.attendanceForm.get('date')?.valueChanges.subscribe(() => this.checkDuplicate());
   }
 
-  loadEmployees(): void {
+  loadActiveEmployees(): void {
     this.employeeService.getAllEmployees().subscribe(emps => {
       this.allEmployees = emps.filter(e => e.isActive);
     });
   }
 
-  private _filterEmployees(name: string): Employee[] {
+  setupEmployeeAutocomplete(): void {
+    this.filteredEmployees = this.attendanceForm.get('employeeSearch')!.valueChanges.pipe(
+      startWith(''),
+      map(value => typeof value === 'string' ? value : value?.fullName),
+      map(name => name ? this._filter(name) : this.allEmployees.slice())
+    );
+
+    this.attendanceForm.get('employeeSearch')?.valueChanges.subscribe(val => {
+      if (val && typeof val === 'object') {
+        this.attendanceForm.patchValue({ employeeId: val.id }, { emitEvent: true });
+      } else {
+        this.attendanceForm.patchValue({ employeeId: null }, { emitEvent: true });
+      }
+    });
+  }
+
+  private _filter(name: string): Employee[] {
     const filterValue = name.toLowerCase();
     return this.allEmployees.filter(emp => emp.fullName.toLowerCase().includes(filterValue));
   }
 
-  displayEmployeeName(emp: Employee): string {
+  displayFn(emp: Employee): string {
     return emp ? emp.fullName : '';
   }
 
-  onEmployeeSelected(emp: Employee): void {
-    this.attendanceForm.get('employeeId')?.setValue(emp.id);
-    this.checkDuplicate();
-  }
-
-  onDateChange(): void {
-    this.checkDuplicate();
-  }
-
-  checkDuplicate(): void {
-    if (this.isEdit) return;
-
-    const empId = this.attendanceForm.get('employeeId')?.value;
-    const date = this.attendanceForm.get('date')?.value;
-
-    if (empId && date) {
-      const formattedDate = this.formatDate(date);
-      this.attendanceService.checkExistingAttendance(formattedDate, empId).subscribe(record => {
-        if (record) {
-          this.isEdit = true;
-          this.currentRecordId = record.attendId;
-          this.patchForm(record);
-        }
-      });
-    }
-  }
-
-  patchForm(record: any): void {
-    const dateObj = new Date(record.date);
+  patchEditValues(): void {
+    const record = this.data.attendance;
     this.attendanceForm.patchValue({
       employeeId: record.employeeId,
-      employeeSearch: { fullName: record.employeeName, id: record.employeeId },
-      date: dateObj,
+      date: new Date(record.date),
       status: record.status,
-      checkIn: record.checkIn || '',
-      checkOut: record.checkOut || '',
-      remarks: record.remarks || '',
-      overtimeHours: record.overtimeHours || 0
+      checkIn: record.checkIn,
+      checkOut: record.checkOut,
+      remarks: record.remarks
     });
-    this.onStatusChange();
   }
 
   onStatusChange(): void {
     const status = this.attendanceForm.get('status')?.value;
-    const otControl = this.attendanceForm.get('overtimeHours');
-    const inControl = this.attendanceForm.get('checkIn');
-    const outControl = this.attendanceForm.get('checkOut');
-
-    if (status === AttendanceStatus.PRESENT) {
-      otControl?.enable();
-      inControl?.setValidators([Validators.required]);
-      outControl?.setValidators([Validators.required]);
-    } else {
-      otControl?.setValue(0);
-      otControl?.disable();
-      inControl?.clearValidators();
-      outControl?.clearValidators();
-      
-      if (status === AttendanceStatus.ABSENT || status === AttendanceStatus.LEAVE || 
-          status === AttendanceStatus.HOLIDAY || status === AttendanceStatus.WEEKEND) {
-        inControl?.setValue('');
-        outControl?.setValue('');
-      }
+    if (status !== AttendanceStatus.PRESENT && status !== AttendanceStatus.HALF_DAY) {
+      this.attendanceForm.patchValue({ checkIn: null, checkOut: null });
+    } else if (!this.attendanceForm.get('checkIn')?.value) {
+      this.attendanceForm.patchValue({ checkIn: '08:00', checkOut: '17:00' });
     }
-    inControl?.updateValueAndValidity();
-    outControl?.updateValueAndValidity();
   }
 
-  isTimeRequired(): boolean {
+  get showTimeFields(): boolean {
     const status = this.attendanceForm.get('status')?.value;
     return status === AttendanceStatus.PRESENT || status === AttendanceStatus.HALF_DAY;
   }
 
-  isInvalid(controlName: string): boolean {
-    const control = this.attendanceForm.get(controlName);
-    return !!(control && control.invalid && (control.touched || this.submitAttempted));
-  }
-
-  formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  onSave(): void {
-    this.submitAttempted = true;
-    if (this.attendanceForm.invalid) {
-      this.attendanceForm.markAllAsTouched();
-      return;
+  checkDuplicate(): void {
+    if (this.isEditMode) return;
+    const empId = this.attendanceForm.get('employeeId')?.value;
+    const dateValue = this.attendanceForm.get('date')?.value;
+    
+    if (empId && dateValue) {
+      const formattedDate = new Date(dateValue).toISOString().split('T')[0];
+      this.attendanceService.checkExistingAttendance(formattedDate, empId).subscribe(record => {
+        this.duplicateRecord = record;
+      });
+    } else {
+      this.duplicateRecord = null;
     }
+  }
 
-    this.loading = true;
-    const formValue = this.attendanceForm.getRawValue();
-    const payload = {
-      ...formValue,
-      date: this.formatDate(formValue.date)
+  switchToEditMode(): void {
+    if (this.duplicateRecord) {
+      this.isEditMode = true;
+      this.data.attendance = this.duplicateRecord;
+      this.patchEditValues();
+      this.duplicateRecord = null;
+    }
+  }
+
+  onSubmit(): void {
+    if (this.attendanceForm.invalid) return;
+
+    this.isLoading = true;
+    const formVal = this.attendanceForm.value;
+    const dateStr = new Date(formVal.date).toISOString().split('T')[0];
+
+    const payload: any = {
+      employeeId: formVal.employeeId,
+      date: dateStr,
+      status: formVal.status,
+      checkIn: this.showTimeFields ? formVal.checkIn : null,
+      checkOut: this.showTimeFields ? formVal.checkOut : null,
+      remarks: formVal.remarks
     };
 
-    const action = this.isEdit && this.currentRecordId
-      ? this.attendanceService.updateAttendance(this.currentRecordId, payload)
-      : this.attendanceService.markAttendance(payload);
-
-    action.subscribe({
-      next: () => {
-        this.loading = false;
-        this.dialogRef.close(true);
-      },
-      error: () => {
-        this.loading = false;
-      }
-    });
+    if (this.isEditMode) {
+      const id = this.data.attendance.attendId || this.duplicateRecord?.attendId;
+      this.attendanceService.updateAttendance(id, payload).subscribe({
+        next: () => {
+          this.toastService.showSuccess('Attendance updated successfully');
+          this.dialogRef.close(true);
+        },
+        error: () => this.isLoading = false
+      });
+    } else {
+      this.attendanceService.markAttendance(payload).subscribe({
+        next: () => {
+          this.toastService.showSuccess('Attendance recorded successfully');
+          this.dialogRef.close(true);
+        },
+        error: () => this.isLoading = false
+      });
+    }
   }
 
   onCancel(): void {
-    this.dialogRef.close(false);
+    this.dialogRef.close();
   }
 }
-

@@ -1,15 +1,15 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray } from '@angular/forms';
-import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatNativeDateModule } from '@angular/material/core';
-import { MatIconModule } from '@angular/material/icon';
-import { AttendanceService, AttendanceStatus, AttendanceCreateDTO } from '../../../service/attendance.service';
+import { MatSelectModule } from '@angular/material/select';
+import { AttendanceService, AttendanceStatus } from '../../../service/attendance.service';
 import { EmployeeService, Employee } from '../../../service/employee.service';
+import { ToastService } from '../../../service/toast.service';
 
 @Component({
   selector: 'app-bulk-attendance-dialog',
@@ -17,253 +17,202 @@ import { EmployeeService, Employee } from '../../../service/employee.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
     MatDatepickerModule,
-    MatNativeDateModule,
-    MatIconModule
+    MatSelectModule
   ],
   template: `
-    <div class="drawer-header bulk-header">
-      <h2><i class="bi bi-people-fill me-2"></i> Bulk Attendance Entry</h2>
-      <button class="btn-close btn-close-white" (click)="onCancel()"></button>
-    </div>
+    <div class="drawer-container">
+      <div class="drawer-header">
+        <h2><i class="bi bi-people-fill me-2"></i> Bulk Attendance Entry</h2>
+        <button class="btn-close btn-close-white" (click)="onCancel()"></button>
+      </div>
 
-    <form [formGroup]="bulkForm" (ngSubmit)="onSave()" class="admin-form h-100 position-relative">
-      <div class="drawer-body p-0">
-        
-        <!-- Date Selection Header -->
-        <div class="bulk-date-bar p-3 sticky-top">
-          <div class="row align-items-center">
-            <div class="col-md-6">
-              <label class="admin-label mb-1">Attendance Date <span class="text-danger">*</span></label>
-              <div class="admin-input-group">
-                <i class="bi bi-calendar-event"></i>
-                <input matInput [matDatepicker]="picker" formControlName="date" [max]="maxDate">
-                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                <mat-datepicker #picker></mat-datepicker>
-              </div>
+      <div class="drawer-body">
+        <div class="row mb-4 align-items-end">
+          <div class="col-md-6">
+            <label class="admin-label">Attendance Date</label>
+            <div class="admin-input-group">
+              <i class="bi bi-calendar-check"></i>
+              <input [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange()" [max]="maxDate">
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
             </div>
-            <div class="col-md-6 text-end pt-4">
-              <span class="badge bg-primary-dark">Total Employees: {{ attendanceRows.length }}</span>
-            </div>
+          </div>
+          <div class="col-md-6 text-end">
+            <span class="badge bg-soft-primary">
+              {{ activeEmployees.length }} Active Employees
+            </span>
           </div>
         </div>
 
-        <!-- Grid Table -->
-        <div class="bulk-grid-container px-3 py-4">
-          <table class="bulk-table">
+        <div class="bulk-grid-container shadow-sm">
+          <table class="table bulk-table mb-0">
             <thead>
               <tr>
-                <th style="width: 200px;">Employee</th>
-                <th style="width: 150px;">Status</th>
-                <th style="width: 100px;">In</th>
-                <th style="width: 100px;">Out</th>
-                <th style="width: 80px;">OT</th>
+                <th>Employee</th>
+                <th width="150">Status</th>
+                <th width="120">In</th>
+                <th width="120">Out</th>
                 <th>Remarks</th>
               </tr>
             </thead>
-            <tbody formArrayName="attendanceRows">
-              <tr *ngFor="let row of attendanceRows.controls; let i = index" [formGroupName]="i" class="bulk-row">
-                <td>
-                  <div class="emp-info">
-                    <span class="emp-name">{{ row.get('employeeName')?.value }}</span>
-                    <span class="emp-id">ID: {{ row.get('employeeId')?.value }}</span>
-                  </div>
-                </td>
-                <td>
-                  <select formControlName="status" class="bulk-select" (change)="onStatusChange(i)">
-                    <option value="PRESENT">Present</option>
-                    <option value="ABSENT">Absent</option>
-                    <option value="HALF_DAY">Half Day</option>
-                    <option value="LEAVE">Leave</option>
-                    <option value="HOLIDAY">Holiday</option>
-                    <option value="WEEKEND">Weekend</option>
-                  </select>
-                </td>
-                <td>
-                  <input type="time" formControlName="checkIn" class="bulk-time" *ngIf="isTimeRequired(i)">
-                </td>
-                <td>
-                  <input type="time" formControlName="checkOut" class="bulk-time" *ngIf="isTimeRequired(i)">
-                </td>
-                <td>
-                  <input type="number" formControlName="overtimeHours" class="bulk-number" min="0" max="12" step="0.5" 
-                         [disabled]="row.get('status')?.value !== 'PRESENT'">
-                </td>
-                <td>
-                  <div class="remarks-cell">
-                    <input type="text" formControlName="remarks" class="bulk-text" placeholder="..." maxlength="255">
-                    <span class="char-count">{{ row.get('remarks')?.value?.length || 0 }}/255</span>
-                  </div>
-                </td>
-              </tr>
+            <tbody [formGroup]="bulkForm">
+              <ng-container formArrayName="attendanceList">
+                <tr *ngFor="let control of attendanceControls; let i = index" [formGroupName]="i">
+                  <td>
+                    <div class="emp-info" *ngIf="activeEmployees[i]">
+                      <div class="emp-avatar">{{ activeEmployees[i].fullName.charAt(0) }}</div>
+                      <div>
+                        <div class="emp-name">{{ activeEmployees[i].fullName }}</div>
+                        <div class="emp-id">ID: {{ activeEmployees[i].id }}</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <select formControlName="status" class="form-select status-select" (change)="onStatusChange(i)">
+                      <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+                    </select>
+                  </td>
+                  <td>
+                    <input type="time" formControlName="checkIn" class="form-control time-input" *ngIf="showTimeFields(i)">
+                  </td>
+                  <td>
+                    <input type="time" formControlName="checkOut" class="form-control time-input" *ngIf="showTimeFields(i)">
+                  </td>
+                  <td>
+                    <input type="text" formControlName="remarks" class="form-control remarks-input" placeholder="...">
+                  </td>
+                </tr>
+              </ng-container>
             </tbody>
           </table>
         </div>
-
       </div>
 
       <div class="drawer-footer">
-        <button type="button" class="btn btn-admin-secondary" (click)="onCancel()">Cancel</button>
-        <button type="submit" class="btn btn-admin-primary" [disabled]="loading || attendanceRows.length === 0">
-          <i class="bi" [ngClass]="loading ? 'bi-hourglass-split animate-spin' : 'bi-save-fill'"></i>
-          Mark Attendance
+        <button class="btn-admin-secondary" (click)="onCancel()">Cancel</button>
+        <button class="btn-admin-primary" (click)="onSubmit()" [disabled]="isLoading">
+          <span class="spinner-border spinner-border-sm me-2" *ngIf="isLoading"></span>
+          Submit All Records
         </button>
       </div>
-    </form>
+    </div>
   `,
   styles: [`
-    .bulk-header { background: var(--primary-dark); }
-    .bulk-date-bar { 
-      background: #fdfdfd; 
-      border-bottom: 2px solid rgba(113, 54, 0, 0.1);
-      z-index: 10;
+    .drawer-container { display: flex; flex-direction: column; height: 100%; background: white; }
+    .bulk-grid-container { 
+      border: 1px solid rgba(113, 54, 0, 0.1); border-radius: 12px; overflow: hidden; background: #fff;
     }
-    .bulk-grid-container { min-height: calc(100vh - 200px); }
-    .bulk-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
-    .bulk-table th { 
-      padding: 10px; color: var(--primary-dark); font-weight: 700; font-size: 0.8rem;
-      text-transform: uppercase; border-bottom: 2px solid rgba(113, 54, 0, 0.05);
-    }
-    .bulk-row { background: white; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-    .bulk-row td { padding: 12px 10px; vertical-align: middle; border-bottom: 1px solid #f0f0f0; }
+    .bulk-table thead { background: var(--primary-dark); color: white; }
+    .bulk-table thead th { padding: 12px 15px; font-size: 0.8rem; font-weight: 700; text-transform: uppercase; border: none; }
+    .bulk-table tbody tr { border-bottom: 1px solid rgba(113, 54, 0, 0.05); }
+    .bulk-table td { padding: 10px 15px; vertical-align: middle; }
     
-    .emp-info { display: flex; flex-direction: column; }
-    .emp-name { font-weight: 700; color: var(--secondary-dark); font-size: 0.9rem; }
+    .emp-info { display: flex; align-items: center; gap: 10px; }
+    .emp-avatar { width: 32px; height: 32px; background: var(--background-light); border-radius: 8px; 
+                  display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; color: var(--primary-dark); }
+    .emp-name { font-weight: 700; font-size: 0.85rem; color: var(--secondary-dark); }
     .emp-id { font-size: 0.75rem; color: #888; }
-    
-    .bulk-select, .bulk-time, .bulk-number, .bulk-text {
-      width: 100%; border: 1px solid rgba(113, 54, 0, 0.15); border-radius: 6px;
-      padding: 6px 8px; font-size: 0.85rem; outline: none; transition: all 0.2s;
-    }
-    .bulk-select:focus, .bulk-time:focus, .bulk-number:focus, .bulk-text:focus {
-      border-color: var(--primary-orange); box-shadow: 0 0 0 2px rgba(192, 88, 0, 0.1);
-    }
-    
-    .remarks-cell { position: relative; }
-    .char-count { 
-      position: absolute; right: 5px; bottom: -15px; font-size: 0.65rem; color: #999;
-    }
 
-    .admin-form { display: flex; flex-direction: column; }
-    .admin-label { color: var(--primary-dark); font-weight: 600; font-size: 0.85rem; }
-    .admin-input-group {
-      display: flex; align-items: center; background: white;
-      border: 1px solid rgba(113, 54, 0, 0.15); border-radius: 10px;
-      padding: 0 12px; height: 42px;
-    }
-    .admin-input-group i { color: var(--primary-orange); margin-right: 8px; }
-    .admin-input-group input { border: none; background: transparent; outline: none; flex: 1; height: 100%; }
-
-    .bg-primary-dark { background-color: var(--primary-dark) !important; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; }
-    
-    ::ng-deep .mat-datepicker-content { background-color: white !important; }
+    .status-select { font-size: 0.8rem; font-weight: 600; padding: 5px 10px; border-radius: 8px; border: 1px solid rgba(113, 54, 0, 0.1); }
+    .time-input { font-size: 0.8rem; padding: 5px; height: 34px; border-radius: 8px; }
+    .remarks-input { font-size: 0.8rem; height: 34px; border-radius: 8px; }
+    .bg-soft-primary { background: rgba(113, 54, 0, 0.1); color: var(--primary-dark); padding: 8px 15px; border-radius: 10px; font-weight: 700; }
   `]
 })
 export class BulkAttendanceDialogComponent implements OnInit {
   bulkForm: FormGroup;
-  loading: boolean = false;
-  maxDate: Date = new Date();
+  selectedDate: Date = new Date();
+  maxDate = new Date();
+  activeEmployees: Employee[] = [];
+  statuses = Object.values(AttendanceStatus);
+  isLoading = false;
 
   constructor(
-    @Inject(FormBuilder) private fb: FormBuilder,
-    @Inject(AttendanceService) private attendanceService: AttendanceService,
-    @Inject(EmployeeService) private employeeService: EmployeeService,
+    private fb: FormBuilder,
+    private attendanceService: AttendanceService,
+    private employeeService: EmployeeService,
+    private toastService: ToastService,
     public dialogRef: MatDialogRef<BulkAttendanceDialogComponent>
   ) {
     this.bulkForm = this.fb.group({
-      date: [new Date(), Validators.required],
-      attendanceRows: this.fb.array([])
+      attendanceList: this.fb.array([])
     });
-  }
-
-  get attendanceRows(): FormArray {
-    return this.bulkForm.get('attendanceRows') as FormArray;
   }
 
   ngOnInit(): void {
     this.loadActiveEmployees();
   }
 
+  get attendanceList(): FormArray {
+    return this.bulkForm.get('attendanceList') as FormArray;
+  }
+
+  get attendanceControls() {
+    return this.attendanceList.controls;
+  }
+
   loadActiveEmployees(): void {
-    this.loading = true;
-    this.employeeService.getAllEmployees().subscribe({
-      next: (emps) => {
-        const activeEmps = emps.filter(e => e.isActive);
-        activeEmps.forEach(emp => {
-          this.attendanceRows.push(this.fb.group({
-            employeeId: [emp.id],
-            employeeName: [emp.fullName],
-            status: [AttendanceStatus.PRESENT, Validators.required],
-            checkIn: ['08:00'],
-            checkOut: ['17:00'],
-            overtimeHours: [0],
-            remarks: ['', Validators.maxLength(255)]
-          }));
-        });
-        this.loading = false;
-      },
-      error: () => this.loading = false
+    this.employeeService.getAllEmployees().subscribe(emps => {
+      this.activeEmployees = emps.filter(e => e.isActive);
+      this.initForm();
     });
   }
 
-  onStatusChange(index: number): void {
-    const row = this.attendanceRows.at(index);
-    const status = row.get('status')?.value;
-    const otControl = row.get('overtimeHours');
-    const inControl = row.get('checkIn');
-    const outControl = row.get('checkOut');
+  initForm(): void {
+    const arr = this.activeEmployees.map(emp => this.fb.group({
+      employeeId: [emp.id],
+      status: [AttendanceStatus.PRESENT, Validators.required],
+      checkIn: ['08:00'],
+      checkOut: ['17:00'],
+      remarks: ['']
+    }));
+    this.bulkForm.setControl('attendanceList', this.fb.array(arr));
+  }
 
-    if (status === AttendanceStatus.PRESENT) {
-      otControl?.enable();
+  onDateChange(): void {
+    // Optional: Fetch existing records for this date and patch them?
+    // For now, just keep the form as is or re-init
+  }
+
+  onStatusChange(index: number): void {
+    const group = this.attendanceList.at(index) as FormGroup;
+    const status = group.get('status')?.value;
+    if (status !== AttendanceStatus.PRESENT && status !== AttendanceStatus.HALF_DAY) {
+      group.patchValue({ checkIn: null, checkOut: null });
     } else {
-      otControl?.setValue(0);
-      otControl?.disable();
-      
-      if (status === AttendanceStatus.ABSENT || status === AttendanceStatus.LEAVE || 
-          status === AttendanceStatus.HOLIDAY || status === AttendanceStatus.WEEKEND) {
-        inControl?.setValue('');
-        outControl?.setValue('');
-      }
+      group.patchValue({ checkIn: '08:00', checkOut: '17:00' });
     }
   }
 
-  isTimeRequired(index: number): boolean {
-    const status = this.attendanceRows.at(index).get('status')?.value;
+  showTimeFields(index: number): boolean {
+    const status = this.attendanceList.at(index).get('status')?.value;
     return status === AttendanceStatus.PRESENT || status === AttendanceStatus.HALF_DAY;
   }
 
-  formatDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const day = date.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  }
-
-  onSave(): void {
-    if (this.bulkForm.invalid) return;
-
-    this.loading = true;
-    const date = this.formatDate(this.bulkForm.get('date')?.value);
-    const dtos: AttendanceCreateDTO[] = this.attendanceRows.getRawValue().map(row => ({
-      ...row,
-      date: date
+  onSubmit(): void {
+    this.isLoading = true;
+    const dateStr = this.selectedDate.toISOString().split('T')[0];
+    const payload = this.attendanceList.value.map((item: any) => ({
+      ...item,
+      date: dateStr
     }));
 
-    this.attendanceService.markBulkAttendance(dtos).subscribe({
+    this.attendanceService.markBulkAttendance(payload).subscribe({
       next: () => {
-        this.loading = false;
+        this.toastService.showSuccess(`Attendance recorded for ${payload.length} employees`);
         this.dialogRef.close(true);
       },
-      error: () => this.loading = false
+      error: () => this.isLoading = false
     });
   }
 
   onCancel(): void {
-    this.dialogRef.close(false);
+    this.dialogRef.close();
   }
 }
-
