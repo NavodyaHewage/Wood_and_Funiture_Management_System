@@ -32,11 +32,13 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
                     toastService.showWarning('Session expired. Please login again.');
                 }
 
+                // Clear session and navigate. Don't wait for backend logout response to avoid unhandled errors or recursion
                 authService.logout().subscribe({
-                    complete: () => {
-                        router.navigate(['/login']);
-                    }
+                    next: () => console.log('Logged out successfully'),
+                    error: (err) => console.error('Logout error:', err),
+                    complete: () => router.navigate(['/login'])
                 });
+
             }
             return throwError(() => error);
         })

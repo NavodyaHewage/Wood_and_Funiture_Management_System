@@ -1,5 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { isPlatformBrowser } from '@angular/common';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../environment/environment';
@@ -61,24 +62,24 @@ export interface AttendanceSummaryDTO {
 export class AttendanceService {
   private apiUrl = `${environment.apiUrl}/attendance`;
 
-  constructor(private http: HttpClient, private toastr: ToastrService) { }
+  constructor(
+    private http: HttpClient, 
+    private toastr: ToastrService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) { }
+
+  private isBrowser(): boolean {
+    return isPlatformBrowser(this.platformId);
+  }
 
   markAttendance(dto: AttendanceCreateDTO): Observable<AttendanceResponseDTO> {
     return this.http.post<AttendanceResponseDTO>(this.apiUrl, dto).pipe(
-      map(res => {
-        this.toastr.success('Attendance marked successfully');
-        return res;
-      }),
       catchError(err => this.handleError(err))
     );
   }
 
   markBulkAttendance(dtos: AttendanceCreateDTO[]): Observable<AttendanceResponseDTO[]> {
     return this.http.post<AttendanceResponseDTO[]>(`${this.apiUrl}/bulk`, dtos).pipe(
-      map(res => {
-        this.toastr.success('Attendance marked successfully');
-        return res;
-      }),
       catchError(err => this.handleError(err))
     );
   }
@@ -102,19 +103,12 @@ export class AttendanceService {
 
   updateAttendance(id: number, dto: AttendanceUpdateDTO): Observable<AttendanceResponseDTO> {
     return this.http.put<AttendanceResponseDTO>(`${this.apiUrl}/${id}`, dto).pipe(
-      map(res => {
-        this.toastr.success('Attendance updated successfully');
-        return res;
-      }),
       catchError(err => this.handleError(err))
     );
   }
 
   deleteAttendance(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
-      map(() => {
-        this.toastr.success('Attendance record deleted successfully');
-      }),
       catchError(err => this.handleError(err))
     );
   }
@@ -158,9 +152,15 @@ export class AttendanceService {
         default:
           errorMessage = backendMessage || errorMessage;
       }
+    } else if (error.status === 0) {
+      errorMessage = 'Could not connect to the server';
     }
 
-    this.toastr.error(errorMessage);
+    if (this.isBrowser()) {
+      this.toastr.error(errorMessage);
+    }
+    
     return throwError(() => new Error(errorMessage));
   }
 }
+
