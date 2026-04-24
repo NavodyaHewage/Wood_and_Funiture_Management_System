@@ -4,7 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../environment/environment';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from './toast.service';
 
 export enum AttendanceStatus {
   PRESENT = 'PRESENT',
@@ -64,7 +64,7 @@ export class AttendanceService {
 
   constructor(
     private http: HttpClient, 
-    private toastr: ToastrService,
+    private toastService: ToastService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -136,15 +136,7 @@ export class AttendanceService {
           errorMessage = 'Attendance record already exists for this date';
           break;
         case 'INVALID_ATTENDANCE':
-          if (backendMessage.includes('future date')) {
-            errorMessage = 'Cannot mark attendance for a future date';
-          } else if (backendMessage.includes('check-out')) {
-            errorMessage = 'Check-out time must be after check-in time';
-          } else if (backendMessage.includes('inactive employee')) {
-            errorMessage = 'Cannot mark attendance for an inactive employee';
-          } else {
-            errorMessage = backendMessage;
-          }
+          errorMessage = backendMessage || 'Invalid attendance data';
           break;
         case 'EMPLOYEE_NOT_FOUND':
           errorMessage = 'Employee not found';
@@ -152,15 +144,19 @@ export class AttendanceService {
         default:
           errorMessage = backendMessage || errorMessage;
       }
+    } else if (error.status === 400 && error.error && error.error.message) {
+      errorMessage = error.error.message;
     } else if (error.status === 0) {
       errorMessage = 'Could not connect to the server';
     }
 
     if (this.isBrowser()) {
-      this.toastr.error(errorMessage);
+      this.toastService.showError(errorMessage, 'Attendance Error');
     }
     
     return throwError(() => new Error(errorMessage));
   }
 }
+
+
 

@@ -44,6 +44,12 @@
     }
 }
 
+@keyframes toastShake {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-5px); }
+    40%, 80% { transform: translateX(5px); }
+}
+
 .toast-icon {
     font-size: 1.5rem;
     display: flex;
@@ -57,8 +63,14 @@
 }
 
 .toast-card.error .toast-icon {
-    color: #dc3545;
+    color: #ff4d4d;
 }
+
+.toast-card.error {
+    border-left: 5px solid #ff4d4d;
+    animation: toastSlideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), toastShake 0.4s ease-in-out 0.3s;
+}
+
 
 .toast-card.warning .toast-icon {
     color: #ffc107;

@@ -10,6 +10,7 @@ import { SupplierManagementComponent } from './components/user-management/suppli
 import { CustomerManagementComponent } from './components/user-management/customer-management/customer-management.component';
 import { AttendanceListComponent } from './components/attendance/attendance-list/attendance-list.component';
 import { AdminLayoutComponent } from './components/shared/admin-layout/admin-layout.component';
+import { LoanComponent } from './components/loan/loan.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -25,6 +26,7 @@ export const routes: Routes = [
             { path: 'attendance-management', component: AttendanceListComponent, data: { title: 'Attendance Management' } },
             { path: 'supplier-management', component: SupplierManagementComponent, data: { title: 'Supplier Management' } },
             { path: 'customer-management', component: CustomerManagementComponent, data: { title: 'Customer Management' } },
+            { path: 'loan-management', component: LoanComponent, data: { title: 'Loan & Advance Management' } },
             { path: 'change-password', component: ChangePassword, data: { title: 'Change Password' } },
             { path: 'profile', component: ProfileComponent, data: { title: 'User Profile' } }
         ]

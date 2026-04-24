@@ -167,8 +167,21 @@ export class AttendanceDialogComponent implements OnInit {
   onSubmit(): void {
     if (this.attendanceForm.invalid) return;
 
-    this.isLoading = true;
     const formVal = this.attendanceForm.value;
+
+    // Validation
+    if (this.showTimeFields) {
+      if (!formVal.checkIn || !formVal.checkOut) {
+        this.toastService.showWarning('Check-in and Check-out times are required');
+        return;
+      }
+      if (formVal.checkOut <= formVal.checkIn) {
+        this.toastService.showWarning('Check-out time must be after check-in time', 'Invalid Time');
+        return;
+      }
+    }
+
+    this.isLoading = true;
     const d = new Date(formVal.date);
     const dateStr = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
 
@@ -200,6 +213,7 @@ export class AttendanceDialogComponent implements OnInit {
       });
     }
   }
+
 
   onCancel(): void {
     this.dialogRef.close();

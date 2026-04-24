@@ -105,9 +105,26 @@ export class BulkAttendanceDialogComponent implements OnInit {
   }
 
   onSubmit(): void {
+    const records = this.attendanceList.value;
+    
+    // Validation
+    for (let i = 0; i < records.length; i++) {
+      const record = records[i];
+      if (this.showTimeFields(i)) {
+        if (!record.checkIn || !record.checkOut) {
+          this.toastService.showWarning(`Check-in and Check-out times are required for ${this.activeEmployees[i].fullName}`);
+          return;
+        }
+        if (record.checkOut <= record.checkIn) {
+          this.toastService.showWarning(`Check-out time must be after check-in time for ${this.activeEmployees[i].fullName}`, 'Invalid Time');
+          return;
+        }
+      }
+    }
+
     this.isLoading = true;
     const dateStr = `${this.selectedDate.getFullYear()}-${(this.selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${this.selectedDate.getDate().toString().padStart(2, '0')}`;
-    const payload = this.attendanceList.value.map((item: any) => ({
+    const payload = records.map((item: any) => ({
       ...item,
       date: dateStr
     }));
@@ -120,6 +137,7 @@ export class BulkAttendanceDialogComponent implements OnInit {
       error: () => this.isLoading = false
     });
   }
+
 
   onCancel(): void {
     this.dialogRef.close();
