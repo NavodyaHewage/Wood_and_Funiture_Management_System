@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/income-account")
+@RequestMapping("/income-account")
 @CrossOrigin(origins = "http://localhost:4200")
 public class IncomeAccountController {
     @Autowired

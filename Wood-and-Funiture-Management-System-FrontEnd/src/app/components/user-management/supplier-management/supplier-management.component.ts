@@ -3,14 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { SuppliyerService, Supplier } from '../../../service/suppliyer.service';
 import { ToastService } from '../../../service/toast.service';
-import { HeaderComponent } from '../../header/header.component';
-import { AdminSideComponent } from '../admin-side/admin-side.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-supplier-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, AdminSideComponent],
+    imports: [CommonModule, FormsModule, RouterLink],
     templateUrl: './supplier-management.component.html',
     styleUrl: './supplier-management.component.css'
 })

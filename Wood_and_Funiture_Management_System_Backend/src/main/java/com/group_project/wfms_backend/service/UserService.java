@@ -3,6 +3,9 @@ package com.group_project.wfms_backend.service;
 import com.group_project.wfms_backend.dto.auth.MessageResponse;
 import com.group_project.wfms_backend.model.User;
 import com.group_project.wfms_backend.model.UserRole;
+import com.group_project.wfms_backend.model.Employee;
+import com.group_project.wfms_backend.model.Supplier;
+import com.group_project.wfms_backend.model.Customer;
 import com.group_project.wfms_backend.repository.CustomerRepository;
 import com.group_project.wfms_backend.repository.EmployeeRepository;
 import com.group_project.wfms_backend.repository.SupplierRepository;
@@ -358,18 +361,22 @@ public class UserService {
         // Fetch NIC from linked entities
         String nic = null;
         if (user.getEmail() != null) {
-            nic = employeeRepository.findByEmail(user.getEmail()).map(e -> e.getNic())
-                    .orElseGet(() -> supplierRepository.findByEmail(user.getEmail()).map(s -> s.getNic())
-                            .orElseGet(() -> customerRepository.findByEmail(user.getEmail()).map(c -> c.getNic())
-                                    .orElse(null)));
+            try {
+                nic = employeeRepository.findByEmail(user.getEmail()).map(e -> e.getNic())
+                        .orElseGet(() -> supplierRepository.findByEmail(user.getEmail()).map(s -> s.getNic())
+                                .orElseGet(() -> customerRepository.findByEmail(user.getEmail()).map(c -> c.getNic())
+                                        .orElse(null)));
+            } catch (Exception e) {
+                log.warn("Error fetching NIC for user {}: {}", user.getUsername(), e.getMessage());
+            }
         }
         response.put("nic", nic);
 
         response.put("userDetails", user.getUserDetails());
-        response.put("isActive", user.getIsActive());
+        response.put("isActive", Boolean.TRUE.equals(user.getIsActive()));
         response.put("createdDate", user.getCreatedDate());
         response.put("lastLogin", user.getLastLogin());
-        response.put("accountLocked", user.getAccountLocked());
+        response.put("accountLocked", Boolean.TRUE.equals(user.getAccountLocked()));
         return response;
     }
 }

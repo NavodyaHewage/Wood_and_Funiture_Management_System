@@ -1,0 +1,109 @@
+<div class="drawer-container">
+  <div class="drawer-header">
+    <h2>
+      <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-person-plus-fill'"></i>
+      {{ isEditMode ? 'Edit Attendance' : 'Mark Attendance' }}
+    </h2>
+    <button class="btn-close btn-close-white" (click)="onCancel()"></button>
+  </div>
+
+  <div class="drawer-body">
+    <form [formGroup]="attendanceForm" class="admin-form">
+      <!-- Employee Search -->
+      <div class="form-group mb-4" *ngIf="!isEditMode">
+        <label class="admin-label">Select Employee</label>
+        <div class="admin-input-group">
+          <i class="bi bi-search"></i>
+          <input type="text" 
+                 placeholder="Search employee by name..." 
+                 [matAutocomplete]="auto"
+                 formControlName="employeeSearch">
+          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
+            <mat-option *ngFor="let emp of filteredEmployees | async" [value]="emp">
+              {{ emp.fullName }} (ID: {{ emp.id }})
+            </mat-option>
+          </mat-autocomplete>
+        </div>
+      </div>
+
+      <!-- Read-only Employee Info (Edit Mode) -->
+      <div class="form-group mb-4" *ngIf="isEditMode">
+        <label class="admin-label">Employee</label>
+        <div class="read-only-box">
+          <i class="bi bi-person-check-fill me-2"></i>
+          {{ data.attendance?.employeeName }} (ID: {{ data.attendance?.employeeId }})
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <!-- Date Picker -->
+        <div class="col-md-6">
+          <label class="admin-label">Attendance Date</label>
+          <div class="admin-input-group">
+            <i class="bi bi-calendar-event"></i>
+            <input [matDatepicker]="picker" formControlName="date" placeholder="Select date" [max]="maxDate">
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </div>
+        </div>
+
+        <!-- Status Selector -->
+        <div class="col-md-6">
+          <label class="admin-label">Attendance Status</label>
+          <mat-select formControlName="status" class="admin-select" (selectionChange)="onStatusChange()">
+            <mat-option *ngFor="let s of statuses" [value]="s">
+              {{ formatStatusLabel(s) }}
+            </mat-option>
+          </mat-select>
+        </div>
+      </div>
+
+      <!-- Check-in / Check-out (Conditional) -->
+      <div class="row g-3 mb-4" *ngIf="showTimeFields">
+        <div class="col-md-6">
+          <label class="admin-label">Check-In Time</label>
+          <div class="admin-input-group">
+            <i class="bi bi-clock-fill"></i>
+            <input type="time" formControlName="checkIn">
+          </div>
+        </div>
+        <div class="col-md-6">
+          <label class="admin-label">Check-Out Time</label>
+          <div class="admin-input-group">
+            <i class="bi bi-clock-history"></i>
+            <input type="time" formControlName="checkOut">
+          </div>
+        </div>
+      </div>
+
+      <!-- Remarks -->
+      <div class="form-group mb-4">
+        <label class="admin-label">Remarks / Notes</label>
+        <div class="admin-input-group">
+          <i class="bi bi-chat-left-text"></i>
+          <textarea formControlName="remarks" rows="3" placeholder="Additional details..."></textarea>
+        </div>
+        <div class="text-end small text-muted mt-1">
+          {{ attendanceForm.get('remarks')?.value?.length || 0 }} / 255
+        </div>
+      </div>
+
+      <!-- Duplicate Warning -->
+      <div class="alert alert-warning animate-fade-in" *ngIf="duplicateRecord">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        A record already exists for this date. Saving will update it.
+        <button type="button" class="btn btn-sm btn-outline-warning ms-3" (click)="switchToEditMode()">
+          Switch to Edit
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <div class="drawer-footer">
+    <button class="btn-admin-secondary" (click)="onCancel()">Cancel</button>
+    <button class="btn-admin-primary" (click)="onSubmit()" [disabled]="attendanceForm.invalid || isLoading">
+      <span class="spinner-border spinner-border-sm me-2" *ngIf="isLoading"></span>
+      {{ isEditMode ? 'Update Record' : 'Save Attendance' }}
+    </button>
+  </div>
+</div>

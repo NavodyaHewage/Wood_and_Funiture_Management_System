@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/supply-raw-materials")
+@RequestMapping("/v1/supply-raw-materials")
 @RequiredArgsConstructor
 public class SupplyRawMaterialController {
 

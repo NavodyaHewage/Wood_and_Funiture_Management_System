@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/expenses")
+@RequestMapping("/expenses")
 @CrossOrigin(origins = "*") // Frontend එකත් එක්ක ලේසියෙන් Connect වෙන්න
 public class ExpenseController {
     @Autowired

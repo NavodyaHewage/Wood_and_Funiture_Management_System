@@ -6,8 +6,10 @@ import lombok.Getter;
 public enum AttendanceStatus {
     PRESENT("Present"),
     ABSENT("Absent"),
-    HALF_DAY("HAlf Day"),
-    LEAVE("Leave");
+    HALF_DAY("Half Day"),
+    LEAVE("Leave"),
+    HOLIDAY("Holiday"),
+    WEEKEND("Weekend");
     private final  String displayName;
 
 
