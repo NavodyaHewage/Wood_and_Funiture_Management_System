@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/assets")
+@RequestMapping("/api/assets")
 @CrossOrigin
 public class AssetAccountController {
     @Autowired

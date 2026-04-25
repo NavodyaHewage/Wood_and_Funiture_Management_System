@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/equity")
+@RequestMapping("/api/equity")
 @CrossOrigin
 public class EquityAccountController {
     @Autowired

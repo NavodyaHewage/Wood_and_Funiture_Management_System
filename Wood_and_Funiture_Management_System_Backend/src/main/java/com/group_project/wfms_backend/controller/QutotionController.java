@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/quotations")
+@RequestMapping("/api/quotations")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class QutotionController {

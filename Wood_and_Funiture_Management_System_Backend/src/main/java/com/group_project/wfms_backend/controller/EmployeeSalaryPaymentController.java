@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/salary-payments")
+@RequestMapping("/api/salary-payments")
 @CrossOrigin(origins = "http://localhost:4200")
 public class EmployeeSalaryPaymentController {
 

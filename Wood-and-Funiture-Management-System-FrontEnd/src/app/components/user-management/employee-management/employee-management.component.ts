@@ -3,12 +3,14 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { EmployeeService, Employee } from '../../../service/employee.service';
 import { ToastService } from '../../../service/toast.service';
+import { HeaderComponent } from '../../header/header.component';
+import { AdminSideComponent } from '../admin-side/admin-side.component';
 import { FormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-employee-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink],
+    imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, AdminSideComponent],
     templateUrl: './employee-management.component.html',
     styleUrl: './employee-management.component.css'
 })

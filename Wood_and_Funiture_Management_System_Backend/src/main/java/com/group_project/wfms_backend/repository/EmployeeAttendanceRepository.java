@@ -25,22 +25,15 @@ public interface EmployeeAttendanceRepository extends JpaRepository<EmployeeAtte
 
     @Query("SELECT COUNT(a) FROM EmployeeAttendance a WHERE a.employee.id = :empId " +
             "AND MONTH(a.date) = :month AND YEAR(a.date) = :year " +
-            "AND a.status IN ('PRESENT', 'HALF_DAY')")
+            "AND a.status IN ('Present', 'Half_Day')")
     long countPresentDays(@Param("empId") int empId, @Param("month") int month, @Param("year") int year);
 
-    boolean existsByEmployeeIdAndDate(Integer employeeId, LocalDate date);
-
-    @Query("SELECT a FROM EmployeeAttendance a WHERE " +
-            "(:startDate IS NULL OR a.date >= :startDate) AND " +
-            "(:endDate IS NULL OR a.date <= :endDate) AND " +
-            "(:employeeId IS NULL OR a.employee.id = :employeeId)")
-    List<EmployeeAttendance> findFilteredAttendance(
-            @Param("startDate") LocalDate startDate,
-            @Param("endDate") LocalDate endDate,
-            @Param("employeeId") Integer employeeId);
+    boolean existsByEmployeeAndDate(Employee employee, LocalDate date);
 
     @Query("SELECT a.status, COUNT(a) FROM EmployeeAttendance a " +
             "WHERE a.employee.id = :empId AND MONTH(a.date) = :month AND YEAR(a.date) = :year " +
             "GROUP BY a.status")
     List<Object[]> getAttendanceSummary(@Param("empId") int empId, @Param("month") int month, @Param("year") int year);
+
+
 }

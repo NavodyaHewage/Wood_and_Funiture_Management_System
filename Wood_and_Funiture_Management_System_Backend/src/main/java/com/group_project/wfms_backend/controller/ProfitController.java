@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/profit")
+@RequestMapping("/api/profit")
 @CrossOrigin
 public class ProfitController {
     @Autowired

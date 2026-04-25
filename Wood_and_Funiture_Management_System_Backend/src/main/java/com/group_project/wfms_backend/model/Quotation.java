@@ -45,20 +45,4 @@ public class Quotation {
 
     @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<QuotationDetails> details;
-
-    public Integer getQuotationId() {
-        return quotationId;
-    }
-
-    public void setQuotationId(Integer quotationId) {
-        this.quotationId = quotationId;
-    }
-
-    public BigDecimal getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(BigDecimal totalAmount) {
-        this.totalAmount = totalAmount;
-    }
 }

@@ -1,3 +1,20 @@
+.dashboard-layout {
+    display: flex;
+    min-height: 100vh;
+    background: #fdfce8;
+    /* Very light wood background */
+}
+
+.main-content {
+    flex-grow: 1;
+    margin-left: 280px;
+    width: calc(100% - 280px);
+}
+
+.content-body {
+    padding: 30px;
+}
+
 .dashboard-controls {
     display: flex;
     justify-content: space-between;
@@ -175,4 +192,17 @@
 .btn-action.delete:hover {
     background: #dc3545;
     color: white;
-}
+}
+
+@media (max-width: 992px) {
+    .main-content {
+        margin-left: 80px;
+        width: calc(100% - 80px);
+    }
+}
+
+@media (max-width: 768px) {
+    .content-body {
+        padding: 15px;
+    }
+}

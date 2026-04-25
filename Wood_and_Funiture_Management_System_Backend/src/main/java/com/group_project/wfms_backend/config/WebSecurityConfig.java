@@ -70,8 +70,6 @@ public class WebSecurityConfig {
                         .requestMatchers("/users/change-password").permitAll()
                         .requestMatchers("/users/me").permitAll()
                         .requestMatchers("/users/**", "/users").hasRole("ADMIN")
-                        .requestMatchers("/api/attendance/**").permitAll()
-
                         .requestMatchers("/api/employees/**", "/api/suppliers/**", "/api/customers/**")
                         .hasAnyRole("ADMIN", "MANAGER")
 

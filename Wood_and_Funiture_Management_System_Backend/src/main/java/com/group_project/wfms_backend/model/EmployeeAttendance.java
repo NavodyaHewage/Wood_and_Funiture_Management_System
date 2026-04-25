@@ -10,7 +10,14 @@ import java.time.LocalTime;
 @Entity
 @Table(name="Employee_Attendance",uniqueConstraints={
         @UniqueConstraint(columnNames ={"Employee_id","Date"})
+
 })
+@Getter
+@Setter
+@ToString(
+        exclude = "employee"
+)
+@EqualsAndHashCode(exclude = "employee")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

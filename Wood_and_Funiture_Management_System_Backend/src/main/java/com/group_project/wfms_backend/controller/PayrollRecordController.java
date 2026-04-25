@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/payroll-records")
+@RequestMapping("/api/payroll-records")
 @CrossOrigin(origins = "http://localhost:4200") // Angular port එකට අවසර දීම
 public class PayrollRecordController {
 
