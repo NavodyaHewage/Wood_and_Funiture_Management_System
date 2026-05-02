@@ -15,7 +15,7 @@ export class AdminSideComponent {
     { name: 'User Management', icon: 'bi-people-fill', route: '/user-management' },
     { name: 'Employees', icon: 'bi-person-badge-fill', route: '/employee-management' },
     { name: 'Attendance', icon: 'bi-calendar-check-fill', route: '/attendance-management' },
-    { name: 'Loans & Advances', icon: 'bi-bank', route: '/loan-management' },
+    { name: 'Loans And Advances', icon: 'bi-bank', route: '/loan-management' },
     { name: 'Suppliers', icon: 'bi-truck', route: '/supplier-management' },
     { name: 'Customers', icon: 'bi-person-heart', route: '/customer-management' },
     { name: 'Inventory', icon: 'bi-box-seam-fill', route: '/inventory' },

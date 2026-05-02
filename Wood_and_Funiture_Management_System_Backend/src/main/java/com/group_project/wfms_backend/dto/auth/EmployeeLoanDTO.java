@@ -9,6 +9,7 @@ import java.time.LocalDate;
 public class EmployeeLoanDTO {
     private Integer loanId;
     private Integer employeeId; // Reference by ID
+    private String employeeName; // For display convenience
     private BigDecimal loanAmount;
     private LocalDate issuedDate;
     private String reason;

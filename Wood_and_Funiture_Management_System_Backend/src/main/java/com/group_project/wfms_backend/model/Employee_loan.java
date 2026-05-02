@@ -16,8 +16,10 @@ import java.time.LocalDate;
 
 public class Employee_loan {
     @Id
-    @Column(name ="Loan_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Meka ekathu wenna ona
+    @Column(name = "Loan_ID")
     private Integer loanId;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Employee_id", nullable = false)
