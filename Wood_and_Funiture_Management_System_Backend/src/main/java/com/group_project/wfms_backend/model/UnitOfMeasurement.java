@@ -1,11 +1,8 @@
 package com.group_project.wfms_backend.model;
 
 public enum UnitOfMeasurement {
-    
-        CUBIC_FEET("Cubic Feet"),
-        SQUARE_FEET("Square Feet"),
-        PIECES("Pieces"),
-        KG("Kg");
+    SQUARE_FEET("Square Feet"),
+    LENGTH_FEET("Length Feet");
 
     UnitOfMeasurement(String s) {
     }

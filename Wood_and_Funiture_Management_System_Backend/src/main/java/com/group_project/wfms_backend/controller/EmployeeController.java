@@ -11,6 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/employees")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -39,5 +40,10 @@ public class EmployeeController {
     public ResponseEntity<?> deleteEmployee(@PathVariable Integer id) {
         employeeService.deleteEmployee(id);
         return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/toggle-status")
+    public ResponseEntity<Employee> toggleEmployeeStatus(@PathVariable Integer id) {
+        return ResponseEntity.ok(employeeService.toggleEmployeeStatus(id));
     }
 }

@@ -147,6 +147,16 @@ td {
 .btn-primary:hover { background: #713600; }
 .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
 
+.bg-primary {
+    background-color: #C05800 !important;
+}
+
+.category-card {
+    border: none;
+    border-radius: 1rem;
+    overflow: hidden;
+}
+
 .btn-secondary {
     background: #fdfce8;
     color: #713600;

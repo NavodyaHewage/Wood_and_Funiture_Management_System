@@ -3,25 +3,26 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { QuotationService } from '../../../service/quotation.service';
 import { CustomerService } from '../../../service/customer.service';
+import { AuthService } from '../../../service/auth.service';
+import { ToastService } from '../../../service/toast.service';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
+import { ProductCategoryService } from '../../../service/product-category.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-quotation-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HeaderComponent, AdminSideComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HeaderComponent, AdminSideComponent],
   templateUrl: './quotation-management.component.html',
   styleUrls: ['./quotation-management.component.css']
 })
 export class QuotationManagementComponent implements OnInit {
   quotations: any[] = [];
   customers: any[] = [];
-  productCategories: any[] = [
-    { id: 1, name: 'Timber Planks' },
-    { id: 2, name: 'Logs' },
-    { id: 3, name: 'Processed Wood' },
-    { id: 4, name: 'Furniture Parts' }
-  ];
+  productCategories: any[] = [];
+  filteredCategories: any[] = [];
+  categorySearchTerm: string = '';
 
   quotationForm!: FormGroup;
   showModal = false;
@@ -33,7 +34,10 @@ export class QuotationManagementComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private quotationService: QuotationService,
-    private customerService: CustomerService
+    private customerService: CustomerService,
+    private authService: AuthService,
+    private productCategoryService: ProductCategoryService,
+    private toastService: ToastService
   ) {
     this.initForm();
   }
@@ -41,23 +45,28 @@ export class QuotationManagementComponent implements OnInit {
   ngOnInit(): void {
     this.loadQuotations();
     this.loadCustomers();
+    this.loadProductCategories();
   }
 
   initForm(): void {
+    const currentUserId = this.authService.currentUserValue?.userId || null;
     this.quotationForm = this.fb.group({
       customerId: ['', Validators.required],
       quotationDate: [new Date().toISOString().split('T')[0], Validators.required],
       validUntil: [''],
       remarks: ['', Validators.maxLength(500)],
       status: ['PENDING'],
-      createdBy: [1], 
+      createdBy: [currentUserId], 
       details: this.fb.array([this.createItemRow()])
     });
   }
 
+
   createItemRow(): FormGroup {
     return this.fb.group({
-      productCatId: [1, Validators.required],
+      productCatId: [null, Validators.required],
+      searchTerm: [''],
+      showDropdown: [false],
       name: ['', Validators.required],
       quantity: [1, [Validators.required, Validators.min(0.01)]],
       price: [0, [Validators.required, Validators.min(0)]]
@@ -113,13 +122,56 @@ export class QuotationManagementComponent implements OnInit {
     });
   }
 
+  loadProductCategories(): void {
+    this.productCategoryService.getAll().subscribe({
+      next: (data) => {
+        this.productCategories = data.map(c => ({ 
+          id: c.productCatId, 
+          name: c.materialCategory, 
+          price: c.unitPrice,
+          description: c.description
+        }));
+        this.filteredCategories = [...this.productCategories];
+      },
+      error: (err) => console.error('Error loading categories', err)
+    });
+  }
+
+  filterCategories(index: number): void {
+    const term = this.details.at(index).get('searchTerm')?.value?.toLowerCase() || '';
+    this.filteredCategories = this.productCategories.filter(c => 
+      c.name.toLowerCase().includes(term)
+    );
+  }
+
+  onCategorySelect(index: number, category: any): void {
+    const row = this.details.at(index);
+    row.patchValue({
+      productCatId: category.id,
+      price: category.price,
+      searchTerm: category.name,
+      name: `${category.name} (${category.description || ''})`
+    });
+    row.get('showDropdown')?.setValue(false);
+    this.calculateTotals();
+  }
+
+  toggleDropdown(index: number, show: boolean): void {
+    // Timeout to allow click event to fire on dropdown items
+    setTimeout(() => {
+      this.details.at(index).get('showDropdown')?.setValue(show);
+      if (show) this.filterCategories(index);
+    }, 200);
+  }
+
   openCreateModal(): void {
     this.isEditMode = false;
     this.editId = null;
+    const currentUserId = this.authService.currentUserValue?.userId || null;
     this.quotationForm.reset({
       quotationDate: new Date().toISOString().split('T')[0],
       status: 'PENDING',
-      createdBy: 1
+      createdBy: currentUserId
     });
     this.details.clear();
     this.details.push(this.createItemRow());
@@ -140,8 +192,10 @@ export class QuotationManagementComponent implements OnInit {
 
     this.details.clear();
     q.details.forEach((d: any) => {
+      const categoryName = this.productCategories.find(c => c.id === d.productCatId)?.name || '';
       this.details.push(this.fb.group({
         productCatId: [d.productCatId, Validators.required],
+        searchTerm: [categoryName],
         name: [d.name, Validators.required],
         quantity: [d.quantity, [Validators.required, Validators.min(0.01)]],
         price: [d.price, [Validators.required, Validators.min(0)]]
@@ -176,11 +230,11 @@ export class QuotationManagementComponent implements OnInit {
       this.quotationService.deleteQuotation(id).subscribe({
         next: () => {
           this.loadQuotations();
-          alert('Quotation deleted successfully');
+          this.toastService.show('Quotation deleted successfully', 'success');
         },
         error: (err) => {
             console.error('Error deleting quotation', err);
-            alert(err.error?.message || 'Error deleting quotation');
+            this.toastService.show(err.error?.message || 'Error deleting quotation', 'error');
         }
       });
     }
@@ -194,13 +248,13 @@ export class QuotationManagementComponent implements OnInit {
     this.isLoading = false;
     this.showModal = false;
     this.loadQuotations();
-    alert(msg);
+    this.toastService.show(msg, 'success');
   }
 
   handleError(msg: string, err: any): void {
     this.isLoading = false;
     console.error(msg, err);
-    alert(err.error?.message || msg);
+    this.toastService.show(err.error?.message || msg, 'error');
   }
 
   closeModal(): void {

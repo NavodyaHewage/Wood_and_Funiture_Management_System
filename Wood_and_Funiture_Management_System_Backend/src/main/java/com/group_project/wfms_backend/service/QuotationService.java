@@ -33,8 +33,12 @@ public class QuotationService {
 
         User createdBy = null;
         if (requestDTO.getCreatedBy() != null) {
-            createdBy = userRepository.findById(requestDTO.getCreatedBy())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + requestDTO.getCreatedBy()));
+           createdBy = userRepository.findById(requestDTO.getCreatedBy())
+                   .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + requestDTO.getCreatedBy()));//==== quatation create (id eka 1 weela fix)krnkota ena erorr ekaka nisa meka ordelsethrow maru kara
+
+
+
+
         }
 
         Quotation quotation = new Quotation();
@@ -157,7 +161,7 @@ public class QuotationService {
     private QuotationDetailsResponseDTO mapDetailToResponseDTO(QuotationDetails d) {
         QuotationDetailsResponseDTO dto = new QuotationDetailsResponseDTO();
         dto.setDetailsId(d.getDetailsId());
-        dto.setProductCatId(d.getProductCategory().getId());
+        dto.setProductCatId(d.getProductCategory().getProductCatId());
         dto.setProductCatName(d.getProductCategory().getMaterialCategory());
         dto.setName(d.getName());
         dto.setQuantity(d.getQuantity());

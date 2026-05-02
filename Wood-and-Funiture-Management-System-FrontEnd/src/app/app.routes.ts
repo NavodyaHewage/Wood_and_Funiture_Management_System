@@ -11,6 +11,7 @@ import { SupplierManagementComponent } from './components/user-management/suppli
 import { CustomerManagementComponent } from './components/user-management/customer-management/customer-management.component';
 import { OrderManagementDashboardComponent } from './components/order-managment/order-managemnt-dashboard/order-managemnt-dashboard.component';
 import { QuotationManagementComponent } from './components/order-managment/quotation-management/quotation-management.component';
+import { ProductCategoryComponent } from './components/order-managment/product-category/product-category.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -24,5 +25,6 @@ export const routes: Routes = [
     { path: 'change-password', component: ChangePassword, data: { title: 'Change Password' } },
     { path: 'profile', component: ProfileComponent, data: { title: 'User Profile' } },
     { path: 'order-management', component: OrderManagementDashboardComponent, data: { title: 'Order Management' } },
-    { path: 'quotation-management', component: QuotationManagementComponent, data: { title: 'Quotation Management' } }
+    { path: 'quotation-management', component: QuotationManagementComponent, data: { title: 'Quotation Management' } },
+    { path: 'product-category', component: ProductCategoryComponent, data: { title: 'Product Category' } }
 ];

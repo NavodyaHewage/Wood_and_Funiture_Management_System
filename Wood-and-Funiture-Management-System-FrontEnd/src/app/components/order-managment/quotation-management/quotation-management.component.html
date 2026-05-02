@@ -165,9 +165,19 @@
               <tbody formArrayName="details">
                 <tr *ngFor="let item of details.controls; let i=index" [formGroupName]="i">
                   <td>
-                    <select formControlName="productCatId" class="form-control">
-                      <option *ngFor="let cat of productCategories" [value]="cat.id">{{ cat.name }}</option>
-                    </select>
+                    <div class="searchable-select">
+                      <input type="text" formControlName="searchTerm" class="form-control" 
+                             (input)="filterCategories(i)" 
+                             (focus)="toggleDropdown(i, true)"
+                             (blur)="toggleDropdown(i, false)"
+                             placeholder="Search category...">
+                      <div class="dropdown-list" *ngIf="details.at(i).get('showDropdown')?.value && filteredCategories.length > 0">
+                        <div class="dropdown-item" *ngFor="let cat of filteredCategories" 
+                             (mousedown)="onCategorySelect(i, cat)">
+                          {{ cat.name }} - <small>Rs. {{ cat.price }}</small>
+                        </div>
+                      </div>
+                    </div>
                   </td>
                   <td><input type="text" formControlName="name" class="form-control" placeholder="Item name"></td>
                   <td><input type="number" formControlName="quantity" class="form-control" min="0.01" (input)="calculateTotals()"></td>

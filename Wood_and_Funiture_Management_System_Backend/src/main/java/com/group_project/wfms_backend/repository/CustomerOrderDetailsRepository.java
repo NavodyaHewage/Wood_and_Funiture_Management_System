@@ -25,7 +25,7 @@ public interface CustomerOrderDetailsRepository extends JpaRepository<CustomerOr
     void deleteByOrderId(@Param("orderId") Long orderId);
 
     // 🔹 Get total quantity of a product sold
-    @Query("SELECT SUM(d.quantity) FROM CustomerOrderDetails d WHERE d.productCategory.id = :productId")
+    @Query("SELECT SUM(d.quantity) FROM CustomerOrderDetails d WHERE d.productCategory.productCatId = :productId")
     BigDecimal getTotalQuantitySold(@Param("productId") Integer productId);
 
 
