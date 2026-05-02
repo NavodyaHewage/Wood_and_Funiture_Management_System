@@ -2,13 +2,19 @@ package com.group_project.wfms_backend.service;
 
 import com.group_project.wfms_backend.dto.auth.EmployeeLoanDTO;
 import com.group_project.wfms_backend.model.Employee_loan;
+import com.group_project.wfms_backend.model.Employee;
+import com.group_project.wfms_backend.model.EmployeeSalaryRate;
 import com.group_project.wfms_backend.repository.EmployeeRepository;
 import com.group_project.wfms_backend.repository.Employeeloanrepository;
+import com.group_project.wfms_backend.repository.EmployeeSalaryRateRepository;
 import com.group_project.wfms_backend.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,19 +31,68 @@ public class EmployeeLoanService {
     @Autowired
     private UserRepository userRepository;
 
-    // READ ALL
+    @Autowired
+    private EmployeeSalaryRateRepository salaryRateRepository;
+
+    @Autowired
+    private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
+
+    // READ ALL - Using JdbcTemplate to bypass "Unknown column 'Balance'" error
     public List<EmployeeLoanDTO> getAllLoans() {
-        return loanRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        String sql = "SELECT l.Loan_ID, l.Employee_id, e.Full_Name as Employee_Name, l.Loan_Amount, l.Issued_Date, l.Reason, l.Total_Deducted, l.Status, l.Remarks " +
+                     "FROM Employee_loan l " +
+                     "JOIN Employee e ON l.Employee_id = e.Id";
+        
+        return jdbcTemplate.query(sql, (rs, rowNum) -> {
+            EmployeeLoanDTO dto = new EmployeeLoanDTO();
+            dto.setLoanId(rs.getInt("Loan_ID"));
+            dto.setEmployeeId(rs.getInt("Employee_id"));
+            dto.setEmployeeName(rs.getString("Employee_Name"));
+            
+            BigDecimal amount = rs.getBigDecimal("Loan_Amount");
+            dto.setLoanAmount(amount);
+            
+            java.sql.Date sqlDate = rs.getDate("Issued_Date");
+            dto.setIssuedDate(sqlDate != null ? sqlDate.toLocalDate() : null);
+            
+            dto.setReason(rs.getString("Reason"));
+            
+            BigDecimal totalDeducted = rs.getBigDecimal("Total_Deducted");
+            dto.setTotalDeducted(totalDeducted != null ? totalDeducted : BigDecimal.ZERO);
+            
+            // Manually calculate balance to avoid DB column dependency
+            dto.setBalance(amount.subtract(dto.getTotalDeducted()));
+            
+            dto.setStatus(rs.getString("Status"));
+            dto.setRemarks(rs.getString("Remarks"));
+            return dto;
+        });
     }
 
     // READ BY ID
     public EmployeeLoanDTO getLoanById(Integer id) {
-        Employee_loan loan = loanRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Loan not found with id: " + id));
-        return convertToDTO(loan);
+        String sql = "SELECT l.Loan_ID, l.Employee_id, e.Full_Name as Employee_Name, l.Loan_Amount, l.Issued_Date, l.Reason, l.Total_Deducted, l.Status, l.Remarks " +
+                     "FROM Employee_loan l " +
+                     "JOIN Employee e ON l.Employee_id = e.Id " +
+                     "WHERE l.Loan_ID = ?";
+        
+        return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> {
+            EmployeeLoanDTO dto = new EmployeeLoanDTO();
+            dto.setLoanId(rs.getInt("Loan_ID"));
+            dto.setEmployeeId(rs.getInt("Employee_id"));
+            dto.setEmployeeName(rs.getString("Employee_Name"));
+            BigDecimal amount = rs.getBigDecimal("Loan_Amount");
+            dto.setLoanAmount(amount);
+            java.sql.Date sqlDate = rs.getDate("Issued_Date");
+            dto.setIssuedDate(sqlDate != null ? sqlDate.toLocalDate() : null);
+            dto.setReason(rs.getString("Reason"));
+            BigDecimal totalDeducted = rs.getBigDecimal("Total_Deducted");
+            dto.setTotalDeducted(totalDeducted != null ? totalDeducted : BigDecimal.ZERO);
+            dto.setBalance(amount.subtract(dto.getTotalDeducted()));
+            dto.setStatus(rs.getString("Status"));
+            dto.setRemarks(rs.getString("Remarks"));
+            return dto;
+        }, id);
     }
 
     // CREATE
@@ -46,22 +101,30 @@ public class EmployeeLoanService {
         Employee_loan loan = new Employee_loan();
 
         // Map simple fields
-        loan.setLoanId(dto.getLoanId());
         loan.setLoanAmount(dto.getLoanAmount());
         loan.setIssuedDate(dto.getIssuedDate());
         loan.setReason(dto.getReason());
         loan.setRemarks(dto.getRemarks());
+        loan.setTotalDeducted(BigDecimal.ZERO);
+        loan.setStatus(com.group_project.wfms_backend.model.LoanStatus.ACTIVE);
 
         // Resolve Relationships
-        loan.setEmployee(employeeRepository.findById(dto.getEmployeeId())
-                .orElseThrow(() -> new RuntimeException("Employee not found")));
+        Employee employee = employeeRepository.findById(dto.getEmployeeId())
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        loan.setEmployee(employee);
 
         if (dto.getCreatedById() != null) {
             loan.setCreatedBy(userRepository.findById(dto.getCreatedById()).orElse(null));
         }
 
+        // Hibernate save works as long as 'balance' is insertable=false
         Employee_loan savedLoan = loanRepository.save(loan);
-        return convertToDTO(savedLoan);
+        
+        // Return DTO with manually calculated balance
+        EmployeeLoanDTO result = convertToDTO(savedLoan);
+        result.setEmployeeName(employee.getFullName());
+        result.setBalance(savedLoan.getLoanAmount()); // Initial balance is full amount
+        return result;
     }
 
     // UPDATE
@@ -73,12 +136,9 @@ public class EmployeeLoanService {
         existingLoan.setLoanAmount(dto.getLoanAmount());
         existingLoan.setReason(dto.getReason());
         existingLoan.setRemarks(dto.getRemarks());
-        // Status updates (e.g., from ACTIVE to CLOSED)
-        if(dto.getStatus() != null) {
-            // existingLoan.setStatus(LoanStatus.valueOf(dto.getStatus()));
-        }
 
-        return convertToDTO(loanRepository.save(existingLoan));
+        Employee_loan saved = loanRepository.save(existingLoan);
+        return convertToDTO(saved);
     }
 
     // DELETE
@@ -86,17 +146,35 @@ public class EmployeeLoanService {
         loanRepository.deleteById(id);
     }
 
+    // GET MAX LOAN LIMIT (3x monthly salary based on designation)
+    public BigDecimal getMaxLoanLimit(Integer employeeId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new EntityNotFoundException("Employee not found with id: " + employeeId));
+        
+        if (employee.getDesignation() == null || employee.getDesignation().isEmpty()) {
+            return BigDecimal.ZERO;
+        }
+
+        return salaryRateRepository.findByRateNameAndIsActiveTrue(employee.getDesignation())
+                .map(rate -> rate.getAmount().multiply(new BigDecimal("3")))
+                .orElse(BigDecimal.ZERO);
+    }
+
     // MAPPING HELPER
     private EmployeeLoanDTO convertToDTO(Employee_loan loan) {
         EmployeeLoanDTO dto = new EmployeeLoanDTO();
         dto.setLoanId(loan.getLoanId());
         dto.setEmployeeId(loan.getEmployee().getId());
+        dto.setEmployeeName(loan.getEmployee().getFullName());
         dto.setLoanAmount(loan.getLoanAmount());
         dto.setIssuedDate(loan.getIssuedDate());
         dto.setReason(loan.getReason());
-        dto.setTotalDeducted(loan.getTotalDeducted());
-        dto.setBalance(loan.getBalance()); // Calculated by DB
-        dto.setStatus(loan.getStatus().toString());
+        dto.setTotalDeducted(loan.getTotalDeducted() != null ? loan.getTotalDeducted() : BigDecimal.ZERO);
+        
+        // Manual balance calculation for the DTO
+        dto.setBalance(dto.getLoanAmount().subtract(dto.getTotalDeducted()));
+        
+        dto.setStatus(loan.getStatus() != null ? loan.getStatus().toString() : "ACTIVE");
         dto.setRemarks(loan.getRemarks());
         return dto;
     }

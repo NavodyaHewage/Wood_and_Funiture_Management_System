@@ -33,6 +33,11 @@ export class LoanComponent implements OnInit, OnDestroy {
   loans: EmployeeLoanDTO[] = [];
   loading = false;
   
+  // Tracking selected employee state
+  selectedEmployeeBalance: number = 0;
+  selectedEmployeeMaxLoan: number = 0;
+  hasActiveLoanWarning: boolean = false;
+  
   // Dashboard Metrics
   metrics = {
     totalActive: 0,
@@ -72,6 +77,39 @@ export class LoanComponent implements OnInit, OnDestroy {
           }
         }
       });
+
+    // Employee Selection Listener
+    this.loanForm.get('employeeId')?.valueChanges
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(empId => {
+        if (empId) {
+          this.handleEmployeeSelection(+empId);
+        } else {
+          this.resetEmployeeState();
+        }
+      });
+  }
+
+  private handleEmployeeSelection(empId: number): void {
+    // 1. Calculate Active Balance
+    const activeLoanStatuses = [LoanStatus.ACTIVE, LoanStatus.PARTIALLY_PAID];
+    const activeLoans = this.loans.filter(l => l.employeeId === empId && activeLoanStatuses.includes(l.status as LoanStatus));
+    
+    this.selectedEmployeeBalance = activeLoans.reduce((sum, l) => sum + l.balance, 0);
+    this.hasActiveLoanWarning = this.selectedEmployeeBalance > 0;
+
+    // 2. Fetch Max Loan Limit
+    this.loanService.getMaxLoanLimit(empId)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(maxLimit => {
+        this.selectedEmployeeMaxLoan = maxLimit;
+      });
+  }
+
+  private resetEmployeeState(): void {
+    this.selectedEmployeeBalance = 0;
+    this.hasActiveLoanWarning = false;
+    this.selectedEmployeeMaxLoan = 0;
   }
 
   private loadInitialData(): void {
@@ -139,16 +177,22 @@ export class LoanComponent implements OnInit, OnDestroy {
     }
 
     const payload = this.loanForm.value;
+
+    // Business Logic: Block exceeding max amount
+    if (this.selectedEmployeeMaxLoan > 0 && payload.loanAmount > this.selectedEmployeeMaxLoan) {
+      this.toastr.error(`Loan amount cannot exceed the maximum limit of LKR ${this.selectedEmployeeMaxLoan}`, 'Amount Exceeded');
+      return;
+    }
     
-    // Business Logic: Block multiple active loans unless confirmed
+    // Business Logic: Strictly block multiple active loans for the same employee
     const hasActive = this.loans.some(l => 
       l.employeeId === +payload.employeeId && 
       [LoanStatus.ACTIVE, LoanStatus.PARTIALLY_PAID].includes(l.status as LoanStatus)
     );
 
     if (hasActive) {
-      const confirmOverride = confirm('Warning: This employee has an outstanding loan balance. Proceed with this new advance?');
-      if (!confirmOverride) return;
+      this.toastr.error('This employee already has an active loan. System policy allows only one loan per employee.', 'Action Denied');
+      return;
     }
 
     this.executeLoanCreation(payload);

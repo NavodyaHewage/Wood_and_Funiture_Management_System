@@ -1,6 +1,7 @@
 export interface EmployeeLoanDTO {
   loanId?: number;
   employeeId: number;
+  employeeName?: string;
   loanAmount: number;
   issuedDate: string; // LocalDate as ISO string
   reason: string;

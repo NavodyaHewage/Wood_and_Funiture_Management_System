@@ -44,6 +44,12 @@ export class LoanService {
     );
   }
 
+  getMaxLoanLimit(employeeId: number): Observable<number> {
+    return this.http.get<number>(`${this.loanUrl}/max-limit/${employeeId}`).pipe(
+      catchError(err => this.handleError(err, 'Failed to load max loan limit'))
+    );
+  }
+
   // --- Deduction Rule Endpoints ---
 
   getAllRules(): Observable<LoanDeductionRuleDTO[]> {
