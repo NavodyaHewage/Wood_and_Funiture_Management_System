@@ -1,6 +1,5 @@
 package com.group_project.wfms_backend.service;
 
-
 import com.group_project.wfms_backend.dto.auth.QuotationDetailsRequestDTO;
 import com.group_project.wfms_backend.dto.auth.QuotationDetailsResponseDTO;
 import com.group_project.wfms_backend.dto.auth.QuotationRequestDTO;
@@ -28,32 +27,30 @@ public class QuotationService {
     private final UserRepository userRepository;
     private final ProductCategoryRepository productCategoryRepository;
 
-
-
     public QuotationResponseDTO createQuotation(QuotationRequestDTO requestDTO) {
         Customer customer = customerRepository.findById(requestDTO.getCustomerId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Customer not found with ID: " + requestDTO.getCustomerId()));
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + requestDTO.getCustomerId()));
 
         User createdBy = null;
         if (requestDTO.getCreatedBy() != null) {
-            createdBy = userRepository.findById(requestDTO.getCreatedBy())
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "User not found with ID: " + requestDTO.getCreatedBy()));
+           createdBy = userRepository.findById(requestDTO.getCreatedBy())
+                   .orElseThrow(() -> new EntityNotFoundException("User not found with ID: " + requestDTO.getCreatedBy()));//==== quatation create (id eka 1 weela fix)krnkota ena erorr ekaka nisa meka ordelsethrow maru kara
+
+
+
+
         }
 
         Quotation quotation = new Quotation();
         quotation.setCustomer(customer);
         quotation.setQuotationDate(requestDTO.getQuotationDate());
         quotation.setValidUntil(requestDTO.getValidUntil());
-        quotation.setStatus(requestDTO.getStatus() != null
-                ? requestDTO.getStatus() : QuotationStatus.PENDING);
+        quotation.setStatus(requestDTO.getStatus() != null ? requestDTO.getStatus() : QuotationStatus.PENDING);
         quotation.setRemarks(requestDTO.getRemarks());
         quotation.setCreatedBy(createdBy);
 
         if (requestDTO.getDetails() != null && !requestDTO.getDetails().isEmpty()) {
-            List<QuotationDetails> detailsList = mapToDetailEntities(
-                    requestDTO.getDetails(), quotation);
+            List<QuotationDetails> detailsList = mapToDetailEntities(requestDTO.getDetails(), quotation);
             quotation.setDetails(detailsList);
             quotation.setTotalAmount(calculateTotal(detailsList));
         } else {
@@ -63,8 +60,6 @@ public class QuotationService {
         return mapToResponseDTO(quotationRepository.save(quotation));
     }
 
-    // ─── READ ──────────────────────────────────────────────────────────────────
-
     @Transactional(readOnly = true)
     public QuotationResponseDTO getQuotationById(Integer quotationId) {
         return mapToResponseDTO(findQuotationById(quotationId));
@@ -72,106 +67,63 @@ public class QuotationService {
 
     @Transactional(readOnly = true)
     public List<QuotationResponseDTO> getAllQuotations() {
-        return quotationRepository.findAllOrderByDateDesc()
+        return quotationRepository.findAll()
                 .stream().map(this::mapToResponseDTO).collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
-    public List<QuotationResponseDTO> getQuotationsByCustomer(Integer customerId) {
-        return quotationRepository.findByCustomer_CusId(customerId)
-                .stream().map(this::mapToResponseDTO).collect(Collectors.toList());
-    }
+    public QuotationResponseDTO updateQuotation(Integer id, QuotationRequestDTO requestDTO) {
+        Quotation existing = findQuotationById(id);
 
-    @Transactional(readOnly = true)
-    public List<QuotationResponseDTO> getQuotationsByStatus(QuotationStatus status) {
-        return quotationRepository.findByStatus(status)
-                .stream().map(this::mapToResponseDTO).collect(Collectors.toList());
-    }
-
-    @Transactional(readOnly = true)
-    public List<QuotationResponseDTO> getQuotationsByDateRange(
-            LocalDate startDate, LocalDate endDate) {
-        return quotationRepository.findByQuotationDateBetween(startDate, endDate)
-                .stream().map(this::mapToResponseDTO).collect(Collectors.toList());
-    }
-
-    // ─── UPDATE ────────────────────────────────────────────────────────────────
-
-    public QuotationResponseDTO updateQuotation(
-            Integer quotationId, QuotationRequestDTO requestDTO) {
-
-        Quotation quotation = findQuotationById(quotationId);
+        if (existing.getStatus() == QuotationStatus.CONVERTED) {
+            throw new IllegalStateException("Cannot update a quotation that has already been converted to an order.");
+        }
 
         Customer customer = customerRepository.findById(requestDTO.getCustomerId())
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Customer not found with ID: " + requestDTO.getCustomerId()));
+                .orElseThrow(() -> new EntityNotFoundException("Customer not found with ID: " + requestDTO.getCustomerId()));
 
-        quotation.setCustomer(customer);
-        quotation.setQuotationDate(requestDTO.getQuotationDate());
-        quotation.setValidUntil(requestDTO.getValidUntil());
-        quotation.setStatus(requestDTO.getStatus());
-        quotation.setRemarks(requestDTO.getRemarks());
-
-        if (requestDTO.getCreatedBy() != null) {
-            User user = userRepository.findById(requestDTO.getCreatedBy())
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "User not found with ID: " + requestDTO.getCreatedBy()));
-            quotation.setCreatedBy(user);
+        existing.setCustomer(customer);
+        existing.setQuotationDate(requestDTO.getQuotationDate());
+        existing.setValidUntil(requestDTO.getValidUntil());
+        if (requestDTO.getStatus() != null) {
+            existing.setStatus(requestDTO.getStatus());
         }
+        existing.setRemarks(requestDTO.getRemarks());
 
-        quotation.getDetails().clear();
-        if (requestDTO.getDetails() != null && !requestDTO.getDetails().isEmpty()) {
-            List<QuotationDetails> detailsList = mapToDetailEntities(
-                    requestDTO.getDetails(), quotation);
-            quotation.getDetails().addAll(detailsList);
-            quotation.setTotalAmount(calculateTotal(detailsList));
+        existing.getDetails().clear();
+        if (requestDTO.getDetails() != null) {
+            List<QuotationDetails> newDetails = mapToDetailEntities(requestDTO.getDetails(), existing);
+            existing.getDetails().addAll(newDetails);
+            existing.setTotalAmount(calculateTotal(newDetails));
         } else {
-            quotation.setTotalAmount(BigDecimal.ZERO);
+            existing.setTotalAmount(BigDecimal.ZERO);
         }
 
-        return mapToResponseDTO(quotationRepository.save(quotation));
+        return mapToResponseDTO(quotationRepository.save(existing));
     }
 
-    public QuotationResponseDTO updateQuotationStatus(
-            Integer quotationId, QuotationStatus status) {
-        Quotation quotation = findQuotationById(quotationId);
-        quotation.setStatus(status);
-        return mapToResponseDTO(quotationRepository.save(quotation));
-    }
-
-    // ─── CONVERT TO ORDER ──────────────────────────────────────────────────────
-
-    public QuotationResponseDTO convertQuotationToOrder(Integer quotationId) {
-        Quotation quotation = findQuotationById(quotationId);
-        if (quotation.getStatus() != QuotationStatus.APPROVED) {
-            throw new IllegalStateException(
-                    "Only Approved quotations can be converted to an order.");
+    public void deleteQuotation(Integer id) {
+        Quotation existing = findQuotationById(id);
+        if (existing.getStatus() == QuotationStatus.CONVERTED) {
+            throw new IllegalStateException("Cannot delete a quotation that has already been converted to an order.");
         }
-        quotation.setStatus(QuotationStatus.CONVERTED);
-        return mapToResponseDTO(quotationRepository.save(quotation));
+        quotationRepository.delete(existing);
     }
 
-    // ─── DELETE ────────────────────────────────────────────────────────────────
-
-    public void deleteQuotation(Integer quotationId) {
-        quotationRepository.delete(findQuotationById(quotationId));
+    public QuotationResponseDTO updateQuotationStatus(Integer id, QuotationStatus status) {
+        Quotation existing = findQuotationById(id);
+        existing.setStatus(status);
+        return mapToResponseDTO(quotationRepository.save(existing));
     }
 
-    // ─── PRIVATE HELPERS ───────────────────────────────────────────────────────
-
-    private Quotation findQuotationById(Integer quotationId) {
-        return quotationRepository.findById(quotationId)
-                .orElseThrow(() -> new EntityNotFoundException(
-                        "Quotation not found with ID: " + quotationId));
+    private Quotation findQuotationById(Integer id) {
+        return quotationRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Quotation not found with ID: " + id));
     }
 
-    private List<QuotationDetails> mapToDetailEntities(
-            List<QuotationDetailsRequestDTO> dtoList, Quotation quotation) {
-        return dtoList.stream().map(dto -> {
-            ProductCategory category = productCategoryRepository
-                    .findById(dto.getProductCatId())
-                    .orElseThrow(() -> new EntityNotFoundException(
-                            "Product category not found with ID: " + dto.getProductCatId()));
+    private List<QuotationDetails> mapToDetailEntities(List<QuotationDetailsRequestDTO> detailsDTO, Quotation quotation) {
+        return detailsDTO.stream().map(dto -> {
+            ProductCategory category = productCategoryRepository.findById(dto.getProductCatId())
+                    .orElseThrow(() -> new EntityNotFoundException("Product Category not found with ID: " + dto.getProductCatId()));
             QuotationDetails detail = new QuotationDetails();
             detail.setQuotation(quotation);
             detail.setProductCategory(category);
@@ -188,43 +140,33 @@ public class QuotationService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    private QuotationResponseDTO mapToResponseDTO(Quotation quotation) {
+    private QuotationResponseDTO mapToResponseDTO(Quotation q) {
         QuotationResponseDTO dto = new QuotationResponseDTO();
-        dto.setQuotationId(quotation.getQuotationId());
-        dto.setTotalAmount(quotation.getTotalAmount());
-        dto.setStatus(quotation.getStatus());
-        dto.setQuotationDate(quotation.getQuotationDate());
-        dto.setValidUntil(quotation.getValidUntil());
-        dto.setRemarks(quotation.getRemarks());
+        dto.setQuotationId(q.getQuotationId());
+        dto.setCustomerId(q.getCustomer().getCusId());
+        dto.setCustomerName(q.getCustomer().getCusName());
+        dto.setTotalAmount(q.getTotalAmount());
+        dto.setStatus(q.getStatus());
+        dto.setQuotationDate(q.getQuotationDate());
+        dto.setValidUntil(q.getValidUntil());
+        dto.setRemarks(q.getRemarks());
+        dto.setCreatedBy(q.getCreatedBy() != null ? q.getCreatedBy().getUserId() : null);
 
-        if (quotation.getCustomer() != null) {
-            dto.setCustomerId(quotation.getCustomer().getCusId());
-            dto.setCustomerName(quotation.getCustomer().getCusName());
-        }
-        if (quotation.getCreatedBy() != null) {
-            dto.setCreatedBy(quotation.getCreatedBy().getUserId());
-            dto.setCreatedByName(quotation.getCreatedBy().getUsername());
-        }
-        if (quotation.getDetails() != null) {
-            dto.setDetails(quotation.getDetails().stream()
-                    .map(this::mapDetailToResponseDTO).collect(Collectors.toList()));
+        if (q.getDetails() != null) {
+            dto.setDetails(q.getDetails().stream().map(this::mapDetailToResponseDTO).collect(Collectors.toList()));
         }
         return dto;
     }
 
-    private QuotationDetailsResponseDTO mapDetailToResponseDTO(QuotationDetails detail) {
+    private QuotationDetailsResponseDTO mapDetailToResponseDTO(QuotationDetails d) {
         QuotationDetailsResponseDTO dto = new QuotationDetailsResponseDTO();
-        dto.setDetailsId(detail.getDetailsId());
-        dto.setQuotationId(detail.getQuotation().getQuotationId());
-        dto.setName(detail.getName());
-        dto.setQuantity(detail.getQuantity());
-        dto.setPrice(detail.getPrice());
-        dto.setLineTotal(detail.getQuantity().multiply(detail.getPrice()));
-
-        if (detail.getProductCategory() != null) {
-            dto.setProductCatId(detail.getProductCategory().getId());
-            dto.setProductCatName(detail.getProductCategory().getMaterialCategory());
-        }
+        dto.setDetailsId(d.getDetailsId());
+        dto.setProductCatId(d.getProductCategory().getProductCatId());
+        dto.setProductCatName(d.getProductCategory().getMaterialCategory());
+        dto.setName(d.getName());
+        dto.setQuantity(d.getQuantity());
+        dto.setPrice(d.getPrice());
+        dto.setLineTotal(d.getQuantity().multiply(d.getPrice()));
         return dto;
     }
 }

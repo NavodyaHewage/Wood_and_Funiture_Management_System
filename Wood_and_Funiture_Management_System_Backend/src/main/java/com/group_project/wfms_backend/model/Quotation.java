@@ -26,7 +26,6 @@ public class Quotation {
     @Column(name = "Total_Amount")
     private BigDecimal totalAmount;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "Status")
     private QuotationStatus status;
 

@@ -1,0 +1,217 @@
+<div class="dashboard-layout">
+  <!-- Sidebar Navigation -->
+  <app-admin-side></app-admin-side>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <app-header></app-header>
+
+    <div class="content-body">
+      <div class="quotation-container">
+        <!-- Header -->
+        <div class="header-section">
+          <div class="title-group">
+            <h1>Quotation Management</h1>
+            <p>Create and manage customer quotations</p>
+          </div>
+          <button class="btn-primary" (click)="openCreateModal()">
+            <i class="bi bi-plus-lg"></i> New Quotation
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Quotations</div>
+            <div class="stat-value">{{ quotations.length }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pending Approval</div>
+            <div class="stat-value text-amber-600">{{ getStatusCount('PENDING') }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Converted to Orders</div>
+            <div class="stat-value text-indigo-600">{{ getStatusCount('CONVERTED') }}</div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total Amount</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let q of quotations">
+                <td>#Q-{{ q.quotationId }}</td>
+                <td>{{ q.customerName || 'Customer #' + q.customerId }}</td>
+                <td>{{ q.quotationDate | date:'mediumDate' }}</td>
+                <td>{{ q.totalAmount | currency:'LKR ':'symbol':'1.2-2' }}</td>
+                <td>
+                  <span class="badge" [ngClass]="getStatusClass(q.status)">
+                    {{ q.status }}
+                  </span>
+                </td>
+                <td class="action-btns">
+                  <button class="btn-icon" (click)="viewQuotation(q)" title="View">
+                    <i class="bi bi-eye"></i>
+                  </button>
+                  <button class="btn-icon" (click)="openEditModal(q)" [disabled]="q.status === 'CONVERTED'" title="Edit">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                  <button class="btn-icon text-red-600" (click)="confirmDelete(q.quotationId)"
+                    [disabled]="q.status === 'CONVERTED'" title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="quotations.length === 0 && !isLoading">
+                <td colspan="6" class="text-center py-5">
+                  <p class="text-muted">No quotations found.</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Create/Edit Modal -->
+  <div class="modal-overlay" *ngIf="showModal">
+    <div class="modal-content">
+      <div class="header-section">
+        <h2>{{ isEditMode ? 'Edit' : 'Create' }} Quotation</h2>
+        <button class="btn-icon" (click)="closeModal()"><i class="bi bi-x-lg"></i></button>
+      </div>
+
+      <form [formGroup]="quotationForm" (ngSubmit)="onSubmit()">
+        <div class="form-grid">
+          <!-- Customer -->
+          <div class="form-group">
+            <label>Customer</label>
+            <select formControlName="customerId" class="form-control"
+              [ngClass]="{'is-invalid': f['customerId'].touched && f['customerId'].errors}">
+              <option value="">Select Customer</option>
+              <option *ngFor="let c of customers" [value]="c.id">{{ c.name }}</option>
+            </select>
+            <div *ngIf="f['customerId'].touched && f['customerId'].errors" class="error-msg">
+              Customer is required
+            </div>
+          </div>
+
+          <!-- Date -->
+          <div class="form-group">
+            <label>Quotation Date</label>
+            <input type="date" formControlName="quotationDate" class="form-control"
+              [ngClass]="{'is-invalid': f['quotationDate'].touched && f['quotationDate'].errors}">
+            <div *ngIf="f['quotationDate'].touched && f['quotationDate'].errors" class="error-msg">
+              Date is required
+            </div>
+          </div>
+
+          <!-- Valid Until -->
+          <div class="form-group">
+            <label>Valid Until</label>
+            <input type="date" formControlName="validUntil" class="form-control">
+          </div>
+
+          <!-- Status (Only in edit mode) -->
+          <div class="form-group" *ngIf="isEditMode">
+            <label>Status</label>
+            <select formControlName="status" class="form-control">
+              <option value="PENDING">Pending</option>
+              <option value="APPROVED">Approved</option>
+              <option value="REJECTED">Rejected</option>
+              <option value="CONVERTED" disabled>Converted</option>
+            </select>
+          </div>
+
+          <!-- Remarks -->
+          <div class="form-group full-width">
+            <label>Remarks</label>
+            <textarea formControlName="remarks" class="form-control" rows="2" maxlength="500"></textarea>
+          </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="items-section">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3>Quotation Items</h3>
+            <button type="button" class="btn-secondary" (click)="addItem()">
+              <i class="bi bi-plus-circle"></i> Add Item
+            </button>
+          </div>
+          
+          <div class="items-table-wrapper">
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th style="width: 25%;">Category</th>
+                  <th style="width: 30%;">Product Name</th>
+                  <th style="width: 15%;">Qty</th>
+                  <th style="width: 15%;">Price</th>
+                  <th style="width: 10%;">Total</th>
+                  <th style="width: 5%;"></th>
+                </tr>
+              </thead>
+              <tbody formArrayName="details">
+                <tr *ngFor="let item of details.controls; let i=index" [formGroupName]="i">
+                  <td>
+                    <div class="searchable-select">
+                      <input type="text" formControlName="searchTerm" class="form-control" 
+                             (input)="filterCategories(i)" 
+                             (focus)="toggleDropdown(i, true)"
+                             (blur)="toggleDropdown(i, false)"
+                             placeholder="Search category...">
+                      <div class="dropdown-list" *ngIf="details.at(i).get('showDropdown')?.value && filteredCategories.length > 0">
+                        <div class="dropdown-item" *ngFor="let cat of filteredCategories" 
+                             (mousedown)="onCategorySelect(i, cat)">
+                          {{ cat.name }} - <small>Rs. {{ cat.price }}</small>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td><input type="text" formControlName="name" class="form-control" placeholder="Item name"></td>
+                  <td><input type="number" formControlName="quantity" class="form-control" min="0.01" (input)="calculateTotals()"></td>
+                  <td><input type="number" formControlName="price" class="form-control" min="0" (input)="calculateTotals()"></td>
+                  <td class="line-total text-end">
+                    {{ (item.get('quantity')?.value * item.get('price')?.value) | currency:'LKR ':'symbol':'1.2-2' }}
+                  </td>
+                  <td>
+                    <button type="button" class="btn-icon text-red-500" (click)="removeItem(i)" [disabled]="details.length === 1">
+                      <i class="bi bi-dash-circle"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Totals -->
+        <div class="grand-total-section">
+          <div class="grand-total-box">
+            <div class="grand-total-label">Grand Total</div>
+            <div class="grand-total-value">{{ grandTotal | currency:'LKR ':'symbol':'1.2-2' }}</div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary px-4" (click)="closeModal()">Cancel</button>
+          <button type="submit" class="btn-primary px-5" [disabled]="quotationForm.invalid || isLoading">
+            {{ isLoading ? 'Processing...' : (isEditMode ? 'Update' : 'Create') }} Quotation
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -50,4 +50,11 @@ public class EmployeeService {
         Employee employee = getEmployeeById(id);
         employeeRepository.delete(employee);
     }
+
+    @Transactional
+    public Employee toggleEmployeeStatus(Integer id) {
+        Employee employee = getEmployeeById(id);
+        employee.setIsActive(employee.getIsActive() == null ? true : !employee.getIsActive());
+        return employeeRepository.save(employee);
+    }
 }

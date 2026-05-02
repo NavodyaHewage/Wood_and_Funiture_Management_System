@@ -18,8 +18,10 @@ export class AdminSideComponent {
     { name: 'Loans & Advances', icon: 'bi-bank', route: '/loan-management' },
     { name: 'Suppliers', icon: 'bi-truck', route: '/supplier-management' },
     { name: 'Customers', icon: 'bi-person-heart', route: '/customer-management' },
+    { name: 'Product Category', icon: 'bi-tags-fill', route: '/product-category' },
+    { name: 'Quotations', icon: 'bi-file-earmark-text-fill', route: '/quotation-management' },
+    { name: 'Orders', icon: 'bi-cart-fill', route: '/order-management' },
     { name: 'Inventory', icon: 'bi-box-seam-fill', route: '/inventory' },
-    { name: 'Orders', icon: 'bi-cart-fill', route: '/orders' },
     { name: 'Settings', icon: 'bi-gear-fill', route: '/settings' }
   ];
 }

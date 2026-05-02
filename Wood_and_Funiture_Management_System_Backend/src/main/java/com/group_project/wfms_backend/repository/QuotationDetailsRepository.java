@@ -15,6 +15,6 @@ public interface QuotationDetailsRepository extends JpaRepository<QuotationDetai
 
     void deleteByQuotation_QuotationId(Integer quotationId);
 
-    //@Query("SELECT qd FROM QuotationDetails qd WHERE qd.productCategory.productCatId = :catId")
-    List<QuotationDetails> findByProductCategoryId(Integer productCatId);
+    @Query("SELECT qd FROM QuotationDetails qd WHERE qd.productCategory.productCatId = :productCatId")
+    List<QuotationDetails> findByProductCategoryId(@Param("productCatId") Integer productCatId);
 }

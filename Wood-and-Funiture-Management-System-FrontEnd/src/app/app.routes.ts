@@ -11,25 +11,26 @@ import { CustomerManagementComponent } from './components/user-management/custom
 import { AttendanceListComponent } from './components/attendance/attendance-list/attendance-list.component';
 import { AdminLayoutComponent } from './components/shared/admin-layout/admin-layout.component';
 import { LoanComponent } from './components/loan/loan.component';
+import { OrderManagementDashboardComponent } from './components/order-managment/order-managemnt-dashboard/order-managemnt-dashboard.component';
+import { QuotationManagementComponent } from './components/order-managment/quotation-management/quotation-management.component';
+import { ProductCategoryComponent } from './components/order-managment/product-category/product-category.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login, data: { title: 'User Login' } },
     { path: 'register', component: Register, data: { title: 'Register New User' } },
-    {
-        path: '',
-        component: AdminLayoutComponent,
-        children: [
-            { path: 'admin-dashboard', component: AdminDashComponent, data: { title: 'Admin Dashboard' } },
-            { path: 'user-management', component: UserManagementDashboardComponent, data: { title: 'User Management' } },
-            { path: 'employee-management', component: EmployeeManagementComponent, data: { title: 'Employee Management' } },
-            { path: 'attendance-management', component: AttendanceListComponent, data: { title: 'Attendance Management' } },
-            { path: 'supplier-management', component: SupplierManagementComponent, data: { title: 'Supplier Management' } },
-            { path: 'customer-management', component: CustomerManagementComponent, data: { title: 'Customer Management' } },
-            { path: 'loan-management', component: LoanComponent, data: { title: 'Loan & Advance Management' } },
-            { path: 'change-password', component: ChangePassword, data: { title: 'Change Password' } },
-            { path: 'profile', component: ProfileComponent, data: { title: 'User Profile' } }
-        ]
-    }
+    { path: 'admin-dashboard', component: AdminDashComponent, data: { title: 'Admin Dashboard' } },
+    { path: 'user-management', component: UserManagementDashboardComponent, data: { title: 'User Management' } },
+    { path: 'employee-management', component: EmployeeManagementComponent, data: { title: 'Employee Management' } },
+    { path: 'supplier-management', component: SupplierManagementComponent, data: { title: 'Supplier Management' } },
+    { path: 'customer-management', component: CustomerManagementComponent, data: { title: 'Customer Management' } },
+    { path: 'change-password', component: ChangePassword, data: { title: 'Change Password' } },
+    { path: 'profile', component: ProfileComponent, data: { title: 'User Profile' } },
+    { path: 'order-management', component: OrderManagementDashboardComponent, data: { title: 'Order Management' } },
+    { path: 'quotation-management', component: QuotationManagementComponent, data: { title: 'Quotation Management' } },
+    { path: 'product-category', component: ProductCategoryComponent, data: { title: 'Product Category' } },
+    { path: 'attendance-management', component: AttendanceListComponent, data: { title: 'Attendance Management' } },
+    { path: 'loan-management', component: LoanComponent, data: { title: 'Loan & Advance Management' } },
+
 ];
 

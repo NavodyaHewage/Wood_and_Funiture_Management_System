@@ -21,7 +21,7 @@ public class CustomerOrderService {
     private final ProductCategoryRepository productCategoryRepository;
     private final UserRepository userRepository;
 
-    // ── CREATE ───────────────────────────────────────────────
+
     @Transactional
     public CustomerOrderResponseDTO createOrder(CustomerOrderRequestDTO dto) {
         Customer customer = customerRepository.findById(dto.getCustomerId())
@@ -39,7 +39,7 @@ public class CustomerOrderService {
             order.setCreatedBy(user);
         }
 
-        // Map order details
+        // Map krnwa order details
         List<CustomerOrderDetails> details = dto.getOrderDetails().stream().map(d -> {
             ProductCategory cat = productCategoryRepository.findById(d.getProductCatId())
                     .orElseThrow(() -> new RuntimeException("Product category not found: " + d.getProductCatId()));
@@ -63,7 +63,7 @@ public class CustomerOrderService {
         return toResponseDTO(orderRepository.save(order));
     }
 
-    // ── READ ALL ─────────────────────────────────────────────
+
     @Transactional(readOnly = true)
     public List<CustomerOrderResponseDTO> getAllOrders() {
         return orderRepository.findAll().stream()
@@ -71,7 +71,7 @@ public class CustomerOrderService {
                 .collect(Collectors.toList());
     }
 
-    // ── READ BY ID ───────────────────────────────────────────
+
     @Transactional(readOnly = true)
     public CustomerOrderResponseDTO getOrderById(Long id) {
         CustomerOrder order = orderRepository.findByIdWithDetails(id)
@@ -79,7 +79,7 @@ public class CustomerOrderService {
         return toResponseDTO(order);
     }
 
-    // ── READ BY CUSTOMER ─────────────────────────────────────
+
     @Transactional(readOnly = true)
     public List<CustomerOrderResponseDTO> getOrdersByCustomer(Integer customerId) {
         return orderRepository.findByCustomer_CusId(customerId).stream()
@@ -87,7 +87,7 @@ public class CustomerOrderService {
                 .collect(Collectors.toList());
     }
 
-    // ── UPDATE ───────────────────────────────────────────────
+   //update krgnnwa
     @Transactional
     public CustomerOrderResponseDTO updateOrder(Long id, CustomerOrderRequestDTO dto) {
         CustomerOrder order = orderRepository.findById(id)
@@ -96,8 +96,13 @@ public class CustomerOrderService {
         if (dto.getPaidAmount() != null) order.setPaidAmount(dto.getPaidAmount());
         if (dto.getReceiptNumber() != null) order.setReceiptNumber(dto.getReceiptNumber());
         if (dto.getOrderDate() != null) order.setOrderDate(dto.getOrderDate());
-        if (dto.getStatus() != null)
-            order.setStatus(OrderStatus.valueOf(dto.getStatus()));
+        if (dto.getStatus() != null) {
+            try {
+                order.setStatus(OrderStatus.valueOf(dto.getStatus().toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                order.setStatus(OrderStatus.PENDING);
+            }
+        }
 
         // Replace order details if provided
         if (dto.getOrderDetails() != null && !dto.getOrderDetails().isEmpty()) {
@@ -126,7 +131,6 @@ public class CustomerOrderService {
         return toResponseDTO(orderRepository.save(order));
     }
 
-    // ── DELETE ───────────────────────────────────────────────
     @Transactional
     public void deleteOrder(Long id) {
         if (!orderRepository.existsById(id)) {
@@ -135,12 +139,16 @@ public class CustomerOrderService {
         orderRepository.deleteById(id);
     }
 
-    // ── MAPPER ───────────────────────────────────────────────
+    //mpping
     private CustomerOrderResponseDTO toResponseDTO(CustomerOrder order) {
         CustomerOrderResponseDTO dto = new CustomerOrderResponseDTO();
         dto.setOrderId(order.getOrderId());
-        dto.setCustomerId(order.getCustomer().getCusId());
-        dto.setCustomerName(order.getCustomer().getCusName());
+
+        if (order.getCustomer() != null) {
+            dto.setCustomerId(order.getCustomer().getCusId());
+            dto.setCustomerName(order.getCustomer().getCusName());
+        }
+
         dto.setReceiptNumber(order.getReceiptNumber());
         dto.setTotalAmount(order.getTotalAmount());
         dto.setPaidAmount(order.getPaidAmount());
@@ -152,8 +160,10 @@ public class CustomerOrderService {
             dto.setOrderDetails(order.getOrderDetails().stream().map(d -> {
                 CustomerOrderResponseDTO.OrderDetailDTO dd = new CustomerOrderResponseDTO.OrderDetailDTO();
                 dd.setDetailId(d.getId());
-                dd.setProductCatId(d.getProductCategory().getId());
-                dd.setProductCatName(d.getProductCategory().getMaterialCategory());
+                if (d.getProductCategory() != null) {
+                    dd.setProductCatId(d.getProductCategory().getProductCatId());
+                    dd.setProductCatName(d.getProductCategory().getMaterialCategory());
+                }
                 dd.setName(d.getName());
                 dd.setQuantity(d.getQuantity());
                 dd.setPrice(d.getPrice());
