@@ -18,13 +18,6 @@ import { Subject, takeUntil, forkJoin } from 'rxjs';
   styleUrls: ['./loan.component.css']
 })
 export class LoanComponent implements OnInit, OnDestroy {
-  // Dependency Injection using modern inject() pattern
-  private fb = inject(FormBuilder);
-  private loanService = inject(LoanService);
-  private employeeService = inject(EmployeeService);
-  private toastr = inject(ToastrService);
-  @Inject(PLATFORM_ID) private platformId: Object = inject(PLATFORM_ID);
-
   private destroy$ = new Subject<void>();
   
   // State
@@ -44,6 +37,14 @@ export class LoanComponent implements OnInit, OnDestroy {
     expectedCollection: 0,
     pendingCount: 0
   };
+
+  constructor(
+    private fb: FormBuilder,
+    private loanService: LoanService,
+    private employeeService: EmployeeService,
+    private toastr: ToastrService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit(): void {
     this.initForm();

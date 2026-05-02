@@ -43,8 +43,8 @@ export class AttendanceListComponent implements OnInit {
   filterEmployeeId: number | null = null;
 
   constructor(
-    @Inject(AttendanceService) private attendanceService: AttendanceService,
-    @Inject(EmployeeService) private employeeService: EmployeeService,
+    private attendanceService: AttendanceService,
+    private employeeService: EmployeeService,
     private dialog: MatDialog
   ) {}
 
@@ -92,7 +92,7 @@ export class AttendanceListComponent implements OnInit {
       data: { attendance: record }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result: boolean | undefined) => {
       if (result) this.loadAttendance();
     });
   }
@@ -105,7 +105,7 @@ export class AttendanceListComponent implements OnInit {
       panelClass: 'standard-modal-panel'
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result: boolean | undefined) => {
       if (result) this.loadAttendance();
     });
   }
@@ -126,7 +126,7 @@ export class AttendanceListComponent implements OnInit {
       }
     });
 
-    dialogRef.afterClosed().subscribe(result => {
+    dialogRef.afterClosed().subscribe((result: boolean | undefined) => {
       if (result) {
         this.attendanceService.deleteAttendance(record.attendId).subscribe(() => {
           this.loadAttendance();
