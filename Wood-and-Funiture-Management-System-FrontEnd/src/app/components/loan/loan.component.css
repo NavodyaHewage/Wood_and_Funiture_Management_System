@@ -7,7 +7,7 @@
   --amber-primary: #f59e0b;
   --amber-dark: #d97706;
   --blue-primary: #3b82f6;
-  --green-primary: #10b981;
+  --green-primary: #516e22;
   --red-primary: #ef4444;
   --text-main: #0f172a;
   --white: #ffffff;
@@ -16,17 +16,22 @@
 .loan-container {
   padding: 24px;
   background-color: var(--stone-light);
-  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   color: var(--text-main);
   font-family: 'Inter', sans-serif;
+  box-sizing: border-box;
 }
 
 /* Header Summary Widgets */
 .summary-header {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
+  flex-shrink: 0;
 }
 
 .widget {
@@ -59,9 +64,24 @@
 /* Main Layout */
 .main-layout {
   display: grid;
-  grid-template-columns: 380px 1fr;
+  grid-template-columns: 400px 1fr;
   gap: 24px;
-  align-items: start;
+  flex: 1;
+  min-height: 0;
+}
+
+.left-panel, .right-panel {
+  height: 100%;
+  overflow-y: auto;
+  padding-right: 8px;
+}
+
+.left-panel::-webkit-scrollbar, .right-panel::-webkit-scrollbar {
+  width: 6px;
+}
+.left-panel::-webkit-scrollbar-thumb, .right-panel::-webkit-scrollbar-thumb {
+  background: var(--stone-medium);
+  border-radius: 10px;
 }
 
 /* Panel Styles */
@@ -159,6 +179,20 @@ label {
 
 .custom-table tr:hover {
   background-color: var(--stone-light);
+}
+
+.custom-table tr.settled-row {
+  opacity: 0.6;
+  background-color: var(--stone-light);
+}
+
+.custom-table tr.settled-row td {
+  color: var(--slate-medium);
+  text-decoration: line-through;
+}
+
+.custom-table tr.settled-row .status-chip {
+  text-decoration: none;
 }
 
 /* Status Chips */

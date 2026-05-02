@@ -33,4 +33,9 @@ public class EmployeeLoanController {
         loanService.deleteLoan(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/max-limit/{employeeId}")
+    public ResponseEntity<java.math.BigDecimal> getMaxLimit(@PathVariable Integer employeeId) {
+        return ResponseEntity.ok(loanService.getMaxLoanLimit(employeeId));
+    }
 }

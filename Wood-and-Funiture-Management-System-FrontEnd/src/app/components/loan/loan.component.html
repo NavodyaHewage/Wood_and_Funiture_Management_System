@@ -19,7 +19,10 @@
     <!-- Left Panel: Loan Application Form -->
     <aside class="left-panel">
       <div class="card elevated">
-        <h2 class="card-title">New Loan Application</h2>
+        <h2 class="card-title">Manager Approved Loan Entry</h2>
+        <div class="alert alert-info" style="font-size: 0.85rem; padding: 10px; margin-bottom: 20px;">
+          <i class="bi bi-info-circle-fill me-1"></i> Data entered here is immediately set to <strong>ACTIVE</strong> status and cannot be modified later.
+        </div>
         <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
           
           <div class="form-group">
@@ -30,6 +33,11 @@
                 {{ emp.fullName }} ({{ emp.designation }})
               </option>
             </select>
+            <!-- Warning Badge -->
+            <div class="alert alert-warning mt-2 mb-0 d-flex align-items-center" *ngIf="hasActiveLoanWarning">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              <strong>Warning: </strong> Employee has an active outstanding balance of LKR {{ selectedEmployeeBalance | number:'1.2-2' }}
+            </div>
           </div>
 
           <div class="row">
@@ -37,6 +45,9 @@
               <div class="form-group">
                 <label for="loanAmount">Loan Amount (LKR)</label>
                 <input type="number" id="loanAmount" formControlName="loanAmount" class="form-control monospace" placeholder="0.00">
+                <small class="text-primary mt-1 d-block" *ngIf="selectedEmployeeMaxLoan > 0">
+                  <i class="bi bi-info-circle"></i> Max Limit (3x Salary): <strong>LKR {{ selectedEmployeeMaxLoan | number:'1.2-2' }}</strong>
+                </small>
               </div>
             </div>
             <div class="col">
@@ -87,7 +98,7 @@
             <thead>
               <tr>
                 <th>Loan ID</th>
-                <th>Employee ID</th>
+                <th>Employee Name</th>
                 <th>Amount</th>
                 <th>Balance</th>
                 <th>Progress</th>
@@ -96,9 +107,9 @@
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let loan of loans">
+              <tr *ngFor="let loan of loans" [class.settled-row]="loan.status === 'COMPLETED'">
                 <td class="monospace">#{{ loan.loanId }}</td>
-                <td class="monospace">{{ loan.employeeId }}</td>
+                <td>{{ loan.employeeName }}</td>
                 <td class="monospace text-end">{{ loan.loanAmount | number:'1.2-2' }}</td>
                 <td class="monospace text-end fw-bold">{{ loan.balance | number:'1.2-2' }}</td>
                 <td style="min-width: 120px;">
