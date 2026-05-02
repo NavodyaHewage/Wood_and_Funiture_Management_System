@@ -1,14 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatSelectModule } from '@angular/material/select';
-import { MatAutocompleteModule } from '@angular/material/autocomplete';
-import { AttendanceService, AttendanceStatus, AttendanceCreateDTO, AttendanceUpdateDTO } from '../../../service/attendance.service';
+import { AttendanceService, AttendanceStatus } from '../../../service/attendance.service';
 import { EmployeeService, Employee } from '../../../service/employee.service';
 import { ToastService } from '../../../service/toast.service';
 import { Observable, startWith, map, of } from 'rxjs';
@@ -18,24 +11,20 @@ import { Observable, startWith, map, of } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule, 
-    ReactiveFormsModule, 
-    MatDialogModule, 
-    MatButtonModule, 
-    MatFormFieldModule, 
-    MatInputModule, 
-    MatDatepickerModule, 
-    MatSelectModule,
-    MatAutocompleteModule
+    ReactiveFormsModule
   ],
   templateUrl: './attendance-dialog.component.html',
   styleUrls: ['./attendance-dialog.component.css']
 })
 export class AttendanceDialogComponent implements OnInit {
+  @Input() attendance: any = null;
+  @Output() closeDialog = new EventEmitter<boolean>();
+
   attendanceForm: FormGroup;
   isEditMode = false;
   isLoading = false;
   duplicateRecord: any = null;
-  maxDate = new Date();
+  maxDate = new Date().toISOString().split('T')[0];
   statuses = Object.values(AttendanceStatus);
   allEmployees: Employee[] = [];
   filteredEmployees: Observable<Employee[]> = of([]);
@@ -44,28 +33,25 @@ export class AttendanceDialogComponent implements OnInit {
     private fb: FormBuilder,
     private attendanceService: AttendanceService,
     private employeeService: EmployeeService,
-    private toastService: ToastService,
-    public dialogRef: MatDialogRef<AttendanceDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { attendance?: any }
+    private toastService: ToastService
   ) {
-    this.isEditMode = !!data?.attendance;
-    
     this.attendanceForm = this.fb.group({
       employeeSearch: [''],
       employeeId: [null, Validators.required],
-      date: [new Date(), Validators.required],
+      date: [new Date().toISOString().split('T')[0], Validators.required],
       status: [AttendanceStatus.PRESENT, Validators.required],
       checkIn: ['08:00'],
       checkOut: ['17:00'],
       remarks: ['', Validators.maxLength(255)]
     });
-
-    if (this.isEditMode) {
-      this.patchEditValues();
-    }
   }
 
   ngOnInit(): void {
+    this.isEditMode = !!this.attendance;
+    if (this.isEditMode) {
+      this.patchEditValues();
+    }
+
     this.loadActiveEmployees();
     this.setupEmployeeAutocomplete();
     this.onStatusChange();
@@ -91,9 +77,10 @@ export class AttendanceDialogComponent implements OnInit {
       map(name => name ? this._filter(name) : this.allEmployees.slice())
     );
 
-    this.attendanceForm.get('employeeSearch')?.valueChanges.subscribe(val => {
-      if (val && typeof val === 'object') {
-        this.attendanceForm.patchValue({ employeeId: val.id }, { emitEvent: true });
+    this.attendanceForm.get('employeeSearch')?.valueChanges.subscribe(name => {
+      const emp = this.allEmployees.find(e => e.fullName === name);
+      if (emp) {
+        this.attendanceForm.patchValue({ employeeId: emp.id }, { emitEvent: true });
       } else {
         this.attendanceForm.patchValue({ employeeId: null }, { emitEvent: true });
       }
@@ -110,10 +97,10 @@ export class AttendanceDialogComponent implements OnInit {
   }
 
   patchEditValues(): void {
-    const record = this.data.attendance;
+    const record = this.attendance;
     this.attendanceForm.patchValue({
       employeeId: record.employeeId,
-      date: new Date(record.date),
+      date: record.date.split('T')[0],
       status: record.status,
       checkIn: record.checkIn,
       checkOut: record.checkOut,
@@ -141,9 +128,7 @@ export class AttendanceDialogComponent implements OnInit {
     const dateValue = this.attendanceForm.get('date')?.value;
     
     if (empId && dateValue) {
-      const d = new Date(dateValue);
-      const formattedDate = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
-      this.attendanceService.checkExistingAttendance(formattedDate, empId).subscribe({
+      this.attendanceService.checkExistingAttendance(dateValue, empId).subscribe({
         next: record => {
           this.duplicateRecord = record;
         },
@@ -158,7 +143,7 @@ export class AttendanceDialogComponent implements OnInit {
   switchToEditMode(): void {
     if (this.duplicateRecord) {
       this.isEditMode = true;
-      this.data.attendance = this.duplicateRecord;
+      this.attendance = this.duplicateRecord;
       this.patchEditValues();
       this.duplicateRecord = null;
     }
@@ -182,12 +167,9 @@ export class AttendanceDialogComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const d = new Date(formVal.date);
-    const dateStr = `${d.getFullYear()}-${(d.getMonth() + 1).toString().padStart(2, '0')}-${d.getDate().toString().padStart(2, '0')}`;
-
     const payload: any = {
       employeeId: formVal.employeeId,
-      date: dateStr,
+      date: formVal.date,
       status: formVal.status,
       checkIn: this.showTimeFields ? formVal.checkIn : null,
       checkOut: this.showTimeFields ? formVal.checkOut : null,
@@ -195,11 +177,11 @@ export class AttendanceDialogComponent implements OnInit {
     };
 
     if (this.isEditMode) {
-      const id = this.data.attendance.attendId || this.duplicateRecord?.attendId;
+      const id = this.attendance.attendId || this.duplicateRecord?.attendId;
       this.attendanceService.updateAttendance(id, payload).subscribe({
         next: () => {
           this.toastService.showSuccess('Attendance updated successfully');
-          this.dialogRef.close(true);
+          this.closeDialog.emit(true);
         },
         error: () => this.isLoading = false
       });
@@ -207,7 +189,7 @@ export class AttendanceDialogComponent implements OnInit {
       this.attendanceService.markAttendance(payload).subscribe({
         next: () => {
           this.toastService.showSuccess('Attendance recorded successfully');
-          this.dialogRef.close(true);
+          this.closeDialog.emit(true);
         },
         error: () => this.isLoading = false
       });
@@ -216,7 +198,7 @@ export class AttendanceDialogComponent implements OnInit {
 
 
   onCancel(): void {
-    this.dialogRef.close();
+    this.closeDialog.emit(false);
   }
 
   formatStatusLabel(status: string): string {

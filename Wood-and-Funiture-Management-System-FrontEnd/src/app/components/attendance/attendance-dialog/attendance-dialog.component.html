@@ -16,13 +16,13 @@
           <i class="bi bi-search"></i>
           <input type="text" 
                  placeholder="Search employee by name..." 
-                 [matAutocomplete]="auto"
+                 list="employeeList"
                  formControlName="employeeSearch">
-          <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayFn">
-            <mat-option *ngFor="let emp of filteredEmployees | async" [value]="emp">
-              {{ emp.fullName }} (ID: {{ emp.id }})
-            </mat-option>
-          </mat-autocomplete>
+          <datalist id="employeeList">
+            <option *ngFor="let emp of allEmployees" [value]="emp.fullName">
+              ID: {{ emp.id }}
+            </option>
+          </datalist>
         </div>
       </div>
 
@@ -31,7 +31,7 @@
         <label class="admin-label">Employee</label>
         <div class="read-only-box">
           <i class="bi bi-person-check-fill me-2"></i>
-          {{ data.attendance?.employeeName }} (ID: {{ data.attendance?.employeeId }})
+          {{ attendance?.employeeName }} (ID: {{ attendance?.employeeId }})
         </div>
       </div>
 
@@ -41,20 +41,18 @@
           <label class="admin-label">Attendance Date</label>
           <div class="admin-input-group">
             <i class="bi bi-calendar-event"></i>
-            <input [matDatepicker]="picker" formControlName="date" placeholder="Select date" [max]="maxDate">
-            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-            <mat-datepicker #picker></mat-datepicker>
+            <input type="date" formControlName="date" [max]="maxDate">
           </div>
         </div>
 
         <!-- Status Selector -->
         <div class="col-md-6">
           <label class="admin-label">Attendance Status</label>
-          <mat-select formControlName="status" class="admin-select" (selectionChange)="onStatusChange()">
-            <mat-option *ngFor="let s of statuses" [value]="s">
+          <select formControlName="status" class="form-select admin-select" (change)="onStatusChange()">
+            <option *ngFor="let s of statuses" [value]="s">
               {{ formatStatusLabel(s) }}
-            </mat-option>
-          </mat-select>
+            </option>
+          </select>
         </div>
       </div>
 
