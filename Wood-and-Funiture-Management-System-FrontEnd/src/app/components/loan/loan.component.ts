@@ -5,26 +5,19 @@ import { HttpClientModule } from '@angular/common/http';
 import { LoanService } from '../../service/loan.service';
 import { EmployeeService, Employee } from '../../service/employee.service';
 import { EmployeeLoanDTO, LoanDeductionRuleDTO, LoanStatus } from '../../models/loan.model';
-import { ToastrService } from 'ngx-toastr';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatChipsModule } from '@angular/material/chips';
+import { ToastService } from '../../service/toast.service';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
+import { AdminSideComponent } from '../user-management/admin-side/admin-side.component';
+import { HeaderComponent } from '../header/header.component';
 
 @Component({
   selector: 'app-loan',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, MatProgressBarModule, MatChipsModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, AdminSideComponent, HeaderComponent],
   templateUrl: './loan.component.html',
   styleUrls: ['./loan.component.css']
 })
 export class LoanComponent implements OnInit, OnDestroy {
-  // Dependency Injection using modern inject() pattern
-  private fb = inject(FormBuilder);
-  private loanService = inject(LoanService);
-  private employeeService = inject(EmployeeService);
-  private toastr = inject(ToastrService);
-  @Inject(PLATFORM_ID) private platformId: Object = inject(PLATFORM_ID);
-
   private destroy$ = new Subject<void>();
   
   // State
@@ -44,6 +37,14 @@ export class LoanComponent implements OnInit, OnDestroy {
     expectedCollection: 0,
     pendingCount: 0
   };
+
+  constructor(
+    private fb: FormBuilder,
+    private loanService: LoanService,
+    private employeeService: EmployeeService,
+    private toastr: ToastService,
+    @Inject(PLATFORM_ID) private platformId: Object
+  ) {}
 
   ngOnInit(): void {
     this.initForm();
@@ -171,7 +172,7 @@ export class LoanComponent implements OnInit, OnDestroy {
 
   onSubmit(): void {
     if (this.loanForm.invalid) {
-      this.toastr.warning('Please complete the form with valid data', 'Validation Error');
+      this.toastr.showWarning('Please complete the form with valid data', 'Validation Error');
       this.loanForm.markAllAsTouched();
       return;
     }
@@ -180,7 +181,7 @@ export class LoanComponent implements OnInit, OnDestroy {
 
     // Business Logic: Block exceeding max amount
     if (this.selectedEmployeeMaxLoan > 0 && payload.loanAmount > this.selectedEmployeeMaxLoan) {
-      this.toastr.error(`Loan amount cannot exceed the maximum limit of LKR ${this.selectedEmployeeMaxLoan}`, 'Amount Exceeded');
+      this.toastr.showError(`Loan amount cannot exceed the maximum limit of LKR ${this.selectedEmployeeMaxLoan}`, 'Amount Exceeded');
       return;
     }
     
@@ -191,7 +192,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     );
 
     if (hasActive) {
-      this.toastr.error('This employee already has an active loan. System policy allows only one loan per employee.', 'Action Denied');
+      this.toastr.showError('This employee already has an active loan. System policy allows only one loan per employee.', 'Action Denied');
       return;
     }
 
@@ -233,7 +234,7 @@ export class LoanComponent implements OnInit, OnDestroy {
 
     this.loanService.createRule(ruleDto).subscribe({
       next: () => {
-        this.toastr.success('New Loan & Recovery Rule successfully established', 'System Success');
+        this.toastr.showSuccess('New Loan & Recovery Rule successfully established', 'System Success');
         this.resetWorkflow();
       },
       error: () => this.loading = false

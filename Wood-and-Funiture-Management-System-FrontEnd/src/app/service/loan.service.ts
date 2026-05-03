@@ -5,7 +5,7 @@ import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../environment/environment';
 import { EmployeeLoanDTO, LoanDeductionRuleDTO } from '../models/loan.model';
-import { ToastrService } from 'ngx-toastr';
+import { ToastService } from './toast.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +16,7 @@ export class LoanService {
 
   constructor(
     private http: HttpClient,
-    private toastr: ToastrService,
+    private toastService: ToastService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
 
@@ -74,7 +74,7 @@ export class LoanService {
     }
 
     if (this.isBrowser()) {
-      this.toastr.error(errorMessage, 'System Error');
+      this.toastService.show(errorMessage, 'error');
     }
     
     return throwError(() => new Error(errorMessage));

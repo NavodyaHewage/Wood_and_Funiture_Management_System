@@ -1,23 +1,23 @@
 <div class="summary-container">
   <div class="summary-header">
     <h2><i class="bi bi-bar-chart-fill me-2"></i> Attendance Analytics</h2>
-    <button class="btn-close btn-close-white" mat-dialog-close></button>
+    <button class="btn-close btn-close-white" (click)="onClose()"></button>
   </div>
 
-  <div mat-dialog-content class="p-4">
+  <div class="summary-body p-4">
     <!-- Date Selection -->
     <div class="row g-3 mb-4">
       <div class="col-md-6">
         <label class="admin-label">Analysis Month</label>
-        <mat-select [value]="selectedMonth" (selectionChange)="onMonthChange($event.value)" class="admin-select">
-          <mat-option *ngFor="let m of months; let i = index" [value]="i+1">{{ m }}</mat-option>
-        </mat-select>
+        <select class="form-select admin-select" [ngModel]="selectedMonth" (ngModelChange)="onMonthChange($event)">
+          <option *ngFor="let m of months; let i = index" [value]="i+1">{{ m }}</option>
+        </select>
       </div>
       <div class="col-md-6">
         <label class="admin-label">Analysis Year</label>
-        <mat-select [value]="selectedYear" (selectionChange)="onYearChange($event.value)" class="admin-select">
-          <mat-option *ngFor="let y of years" [value]="y">{{ y }}</mat-option>
-        </mat-select>
+        <select class="form-select admin-select" [ngModel]="selectedYear" (ngModelChange)="onYearChange($event)">
+          <option *ngFor="let y of years" [value]="y">{{ y }}</option>
+        </select>
       </div>
     </div>
 
@@ -89,6 +89,6 @@
   </div>
 
   <div class="p-3 text-end">
-    <button class="btn-admin-secondary" mat-dialog-close>Close Report</button>
+    <button class="btn-admin-secondary" (click)="onClose()">Close Report</button>
   </div>
 </div>

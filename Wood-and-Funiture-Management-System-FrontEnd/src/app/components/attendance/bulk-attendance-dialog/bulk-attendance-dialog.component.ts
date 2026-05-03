@@ -1,12 +1,6 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatDatepickerModule } from '@angular/material/datepicker';
-import { MatSelectModule } from '@angular/material/select';
 import { AttendanceService, AttendanceStatus } from '../../../service/attendance.service';
 import { EmployeeService, Employee } from '../../../service/employee.service';
 import { ToastService } from '../../../service/toast.service';
@@ -17,21 +11,17 @@ import { ToastService } from '../../../service/toast.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatDatepickerModule,
-    MatSelectModule
+    FormsModule
   ],
   templateUrl: './bulk-attendance-dialog.component.html',
   styleUrls: ['./bulk-attendance-dialog.component.css']
 })
 export class BulkAttendanceDialogComponent implements OnInit {
+  @Output() closeDialog = new EventEmitter<boolean>();
+
   bulkForm: FormGroup;
-  selectedDate: Date = new Date();
-  maxDate = new Date();
+  selectedDate: string = new Date().toISOString().split('T')[0];
+  maxDate = new Date().toISOString().split('T')[0];
   activeEmployees: Employee[] = [];
   statuses = Object.values(AttendanceStatus);
   isLoading = false;
@@ -40,8 +30,7 @@ export class BulkAttendanceDialogComponent implements OnInit {
     private fb: FormBuilder,
     private attendanceService: AttendanceService,
     private employeeService: EmployeeService,
-    private toastService: ToastService,
-    public dialogRef: MatDialogRef<BulkAttendanceDialogComponent>
+    private toastService: ToastService
   ) {
     this.bulkForm = this.fb.group({
       attendanceList: this.fb.array([])
@@ -123,16 +112,15 @@ export class BulkAttendanceDialogComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const dateStr = `${this.selectedDate.getFullYear()}-${(this.selectedDate.getMonth() + 1).toString().padStart(2, '0')}-${this.selectedDate.getDate().toString().padStart(2, '0')}`;
     const payload = records.map((item: any) => ({
       ...item,
-      date: dateStr
+      date: this.selectedDate
     }));
 
     this.attendanceService.markBulkAttendance(payload).subscribe({
       next: () => {
         this.toastService.showSuccess(`Attendance recorded for ${payload.length} employees`);
-        this.dialogRef.close(true);
+        this.closeDialog.emit(true);
       },
       error: () => this.isLoading = false
     });
@@ -140,7 +128,7 @@ export class BulkAttendanceDialogComponent implements OnInit {
 
 
   onCancel(): void {
-    this.dialogRef.close();
+    this.closeDialog.emit(false);
   }
 
   formatStatusLabel(status: string): string {

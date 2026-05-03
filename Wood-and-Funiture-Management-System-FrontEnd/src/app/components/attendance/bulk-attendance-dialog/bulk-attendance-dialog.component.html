@@ -10,9 +10,7 @@
         <label class="admin-label">Attendance Date</label>
         <div class="admin-input-group">
           <i class="bi bi-calendar-check"></i>
-          <input [matDatepicker]="picker" [(ngModel)]="selectedDate" (dateChange)="onDateChange()" [max]="maxDate">
-          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-          <mat-datepicker #picker></mat-datepicker>
+          <input type="date" class="form-control" [(ngModel)]="selectedDate" (change)="onDateChange()" [max]="maxDate">
         </div>
       </div>
       <div class="col-md-6 text-end">
