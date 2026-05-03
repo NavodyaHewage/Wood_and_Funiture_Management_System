@@ -27,13 +27,14 @@ import { HeaderComponent } from '../../header/header.component';
 export class AttendanceListComponent implements OnInit {
   attendanceRecords: AttendanceResponseDTO[] = [];
   activeEmployees: Employee[] = [];
-  filterDate: string | null = new Date().toISOString().split('T')[0];
+
+  filterDate: string = '';
   filterEmployeeId: number | null = null;
 
-  // Modal States
   showMarkDialog = false;
   showBulkDialog = false;
   showSummaryDialog = false;
+
   selectedRecord: AttendanceResponseDTO | null = null;
   selectedEmployeeId: number | null = null;
 
@@ -57,23 +58,28 @@ export class AttendanceListComponent implements OnInit {
   }
 
   loadAttendance(): void {
-    this.attendanceService.getFilteredAttendance(this.filterDate || undefined, this.filterDate || undefined, this.filterEmployeeId || undefined).subscribe({
-      next: (res: AttendanceResponseDTO[]) => {
-        this.attendanceRecords = res;
-      },
-      error: (err) => {
-        console.error('Error loading attendance:', err);
-        this.attendanceRecords = [];
-      }
-    });
+    this.attendanceService
+      .getFilteredAttendance(
+        this.filterDate || undefined,
+        this.filterDate || undefined,
+        this.filterEmployeeId || undefined
+      )
+      .subscribe({
+        next: (res: AttendanceResponseDTO[]) => {
+          this.attendanceRecords = res;
+        },
+        error: (err) => {
+          console.error('Error loading attendance:', err);
+          this.attendanceRecords = [];
+        }
+      });
   }
 
   resetFilters(): void {
-    this.filterDate = null;
+    this.filterDate = '';
     this.filterEmployeeId = null;
     this.loadAttendance();
   }
-
 
   openMarkDialog(record?: AttendanceResponseDTO): void {
     this.selectedRecord = record || null;
@@ -107,24 +113,28 @@ export class AttendanceListComponent implements OnInit {
 
   deleteAttendance(record: AttendanceResponseDTO): void {
     if (confirm('Are you sure you want to delete this attendance record?')) {
-      this.attendanceService.deleteAttendance(record.attendId).subscribe(() => {
-        this.loadAttendance();
+      this.attendanceService.deleteAttendance(record.attendId).subscribe({
+        next: () => this.loadAttendance(),
+        error: (err) => console.error('Error deleting attendance:', err)
       });
     }
   }
 
   getStatusBadgeClass(status: string): string {
     switch (status) {
-      case 'PRESENT': return 'bg-success';
-      case 'ABSENT': return 'bg-danger';
-      case 'HALF_DAY': return 'bg-warning text-dark';
-      case 'LEAVE': return 'bg-info';
-      default: return 'bg-secondary';
+      case 'PRESENT':  return 'badge-present';
+      case 'ABSENT':   return 'badge-absent';
+      case 'HALF_DAY': return 'badge-halfday';
+      case 'LEAVE':    return 'badge-leave';
+      default:         return 'badge-default';
     }
   }
 
   formatStatus(status: string): string {
     if (!status) return '-';
-    return status.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+    return status
+      .replace(/_/g, ' ')
+      .toLowerCase()
+      .replace(/\b\w/g, (c) => c.toUpperCase());
   }
 }

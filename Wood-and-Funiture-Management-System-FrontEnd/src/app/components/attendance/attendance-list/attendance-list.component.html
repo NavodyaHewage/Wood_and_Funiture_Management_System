@@ -1,15 +1,14 @@
 <div class="dashboard-layout">
-  <!-- Navigation Sidebar -->
+  <!-- Sidebar -->
   <app-admin-side></app-admin-side>
 
-  <!-- Main Content Area -->
+  <!-- Main Content -->
   <main class="main-content">
-    <!-- Dynamic Header -->
     <app-header></app-header>
 
-    <!-- Dashboard Body -->
     <div class="content-body">
       <div class="attendance-container animate-fade-in">
+
         <!-- Page Header -->
         <div class="dashboard-controls">
           <div class="title-section">
@@ -28,36 +27,53 @@
           </div>
         </div>
 
-        <!-- Filters Section -->
+        <!-- Filters -->
         <div class="filter-container card mb-4">
           <div class="card-body py-4">
             <div class="row g-3 align-items-end">
+
               <div class="col-md-3">
                 <label class="form-label wood-label">Search by Date</label>
-                <input type="date" class="form-control wood-input" [(ngModel)]="filterDate" (change)="loadAttendance()">
+                <input
+                  type="date"
+                  class="form-control wood-input"
+                  [(ngModel)]="filterDate"
+                  (change)="loadAttendance()"
+                />
               </div>
+
               <div class="col-md-4">
                 <label class="form-label wood-label">Filter by Employee</label>
-                <select class="form-select wood-select" [(ngModel)]="filterEmployeeId" (change)="loadAttendance()">
-                  <option [value]="null">All Employees</option>
-                  <option *ngFor="let emp of activeEmployees" [value]="emp.id">
+                <select
+                  class="form-select wood-select"
+                  [(ngModel)]="filterEmployeeId"
+                  (change)="loadAttendance()"
+                >
+                  <option [ngValue]="null">All Employees</option>
+                  <option *ngFor="let emp of activeEmployees" [ngValue]="emp.id">
                     {{ emp.fullName }}
                   </option>
                 </select>
               </div>
+
               <div class="col-md-5 d-flex gap-2">
                 <button class="btn btn-search" (click)="loadAttendance()">
                   <i class="bi bi-search me-2"></i> Filter Records
                 </button>
-                <button class="btn btn-reset" (click)="resetFilters()" [disabled]="!filterDate && !filterEmployeeId">
+                <button
+                  class="btn btn-reset"
+                  (click)="resetFilters()"
+                  [disabled]="!filterDate && !filterEmployeeId"
+                >
                   <i class="bi bi-arrow-counterclockwise"></i>
                 </button>
               </div>
+
             </div>
           </div>
         </div>
 
-        <!-- Content Section -->
+        <!-- Table -->
         <div class="table-container card">
           <div class="table-responsive">
             <table class="table custom-table table-hover">
@@ -66,33 +82,44 @@
                   <th class="ps-4">Employee Details</th>
                   <th>Attendance Date</th>
                   <th>Status</th>
-                  <th>Check In/Out</th>
+                  <th>Check In / Out</th>
                   <th>Remarks</th>
                   <th class="text-center pe-4">Actions</th>
                 </tr>
               </thead>
               <tbody>
+
                 <tr *ngFor="let record of attendanceRecords" class="attendance-row">
+
+                  <!-- Employee -->
                   <td class="ps-4">
                     <div class="user-info-cell">
-                      <div class="user-avatar-mini">{{ record.employeeName.charAt(0) }}</div>
+                      <div class="user-avatar-mini">
+                        {{ record.employeeName.charAt(0) }}
+                      </div>
                       <div class="user-details">
                         <div class="user-username">{{ record.employeeName }}</div>
                         <div class="user-email">ID: {{ record.employeeId }}</div>
                       </div>
                     </div>
                   </td>
+
+                  <!-- Date -->
                   <td>
                     <div class="date-cell">
                       <i class="bi bi-calendar3 me-2 text-muted"></i>
                       {{ record.date | date: 'MMM d, y' }}
                     </div>
                   </td>
+
+                  <!-- Status -->
                   <td>
                     <span class="status-badge" [ngClass]="getStatusBadgeClass(record.status)">
                       {{ formatStatus(record.status) }}
                     </span>
                   </td>
+
+                  <!-- Check In/Out -->
                   <td>
                     <div class="time-info">
                       <span class="text-success" *ngIf="record.checkIn">
@@ -101,58 +128,103 @@
                       <span class="text-danger" *ngIf="record.checkOut">
                         <i class="bi bi-box-arrow-left"></i> {{ record.checkOut }}
                       </span>
-                      <span class="text-muted small" *ngIf="!record.checkIn && !record.checkOut">Not recorded</span>
+                      <span
+                        class="text-muted small"
+                        *ngIf="!record.checkIn && !record.checkOut"
+                      >Not recorded</span>
                     </div>
                   </td>
+
+                  <!-- Remarks -->
                   <td>
-                    <span class="remarks-text" [title]="record.remarks" *ngIf="record.remarks">{{ record.remarks }}</span>
-                    <span class="text-muted italic small" *ngIf="!record.remarks">-</span>
+                    <span
+                      class="remarks-text"
+                      [title]="record.remarks"
+                      *ngIf="record.remarks"
+                    >{{ record.remarks }}</span>
+                    <span class="text-muted fst-italic small" *ngIf="!record.remarks">-</span>
                   </td>
+
+                  <!-- Actions -->
                   <td class="text-center pe-4">
                     <div class="action-group">
-                      <button class="btn-action edit" (click)="openMarkDialog(record)" title="Edit Record">
+                      <button
+                        class="btn-action edit"
+                        (click)="openMarkDialog(record)"
+                        title="Edit Record"
+                      >
                         <i class="bi bi-pencil-square"></i>
                       </button>
-                      <button class="btn-action summary" (click)="openSummaryDialog(record.employeeId)" title="Monthly Summary">
+                      <button
+                        class="btn-action summary"
+                        (click)="openSummaryDialog(record.employeeId)"
+                        title="Monthly Summary"
+                      >
                         <i class="bi bi-bar-chart-fill"></i>
                       </button>
-                      <button class="btn-action delete" (click)="deleteAttendance(record)" title="Delete Record">
+                      <button
+                        class="btn-action delete"
+                        (click)="deleteAttendance(record)"
+                        title="Delete Record"
+                      >
                         <i class="bi bi-trash3"></i>
                       </button>
                     </div>
                   </td>
+
                 </tr>
+
                 <!-- Empty State -->
                 <tr *ngIf="attendanceRecords.length === 0">
                   <td colspan="6" class="text-center py-5">
                     <div class="empty-state">
                       <i class="bi bi-calendar-x fs-1 text-muted"></i>
                       <h4 class="mt-3 text-dark">No Attendance Logs</h4>
-                      <p class="text-muted">No records found matching your current filter criteria.</p>
-                      <button class="btn btn-reset-large" (click)="resetFilters()">Clear All Filters</button>
+                      <p class="text-muted">
+                        No records found matching your current filter criteria.
+                      </p>
+                      <button class="btn btn-reset-large" (click)="resetFilters()">
+                        Clear All Filters
+                      </button>
                     </div>
                   </td>
                 </tr>
+
               </tbody>
             </table>
           </div>
         </div>
+
       </div>
     </div>
   </main>
 </div>
 
-<!-- Custom Modals -->
-<div class="custom-modal-backdrop" *ngIf="showMarkDialog || showBulkDialog || showSummaryDialog"></div>
+<!-- Modal Backdrop -->
+<div
+  class="custom-modal-backdrop"
+  *ngIf="showMarkDialog || showBulkDialog || showSummaryDialog"
+></div>
 
+<!-- Mark / Edit Dialog -->
 <div class="custom-modal-content" *ngIf="showMarkDialog">
-  <app-attendance-dialog [attendance]="selectedRecord" (closeDialog)="onMarkDialogClose($event)"></app-attendance-dialog>
+  <app-attendance-dialog
+    [attendance]="selectedRecord"
+    (closeDialog)="onMarkDialogClose($event)"
+  ></app-attendance-dialog>
 </div>
 
+<!-- Bulk Dialog -->
 <div class="custom-modal-content bulk-modal" *ngIf="showBulkDialog">
-  <app-bulk-attendance-dialog (closeDialog)="onBulkDialogClose($event)"></app-bulk-attendance-dialog>
+  <app-bulk-attendance-dialog
+    (closeDialog)="onBulkDialogClose($event)"
+  ></app-bulk-attendance-dialog>
 </div>
 
+<!-- Summary Dialog -->
 <div class="custom-modal-content" *ngIf="showSummaryDialog">
-  <app-attendance-summary-dialog [employeeId]="selectedEmployeeId!" (closeDialog)="onSummaryDialogClose()"></app-attendance-summary-dialog>
+  <app-attendance-summary-dialog
+    [employeeId]="selectedEmployeeId!"
+    (closeDialog)="onSummaryDialogClose()"
+  ></app-attendance-summary-dialog>
 </div>
