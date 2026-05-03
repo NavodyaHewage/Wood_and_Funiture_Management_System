@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
 import { ToastService } from '../../../service/toast.service';
 
@@ -35,8 +35,19 @@ export class ChangePassword {
     constructor(
         private authService: AuthService,
         private router: Router,
+        private route: ActivatedRoute,
         private toastService: ToastService
     ) { }
+
+    ngOnInit() {
+        this.route.queryParams.subscribe(params => {
+            if (params['username']) {
+                this.passwordData.username = params['username'];
+                // If username is provided, auto-fill old password with default to help user
+                this.passwordData.oldPassword = 'password123';
+            }
+        });
+    }
 
     checkPasswordStrength() {
         const password = this.passwordData.newPassword;

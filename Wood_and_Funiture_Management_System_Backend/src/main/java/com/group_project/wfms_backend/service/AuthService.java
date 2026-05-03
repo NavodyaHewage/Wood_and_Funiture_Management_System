@@ -81,6 +81,9 @@ public class AuthService {
             // Calculate token expiration time
             long expiresIn = jwtUtils.getRemainingTimeInMs(jwt);
 
+            // Check if password is the default one
+            boolean passwordResetRequired = passwordEncoder.matches("password123", user.getPassword());
+
             return new JwtResponse(
                     jwt,
                     refreshToken,
@@ -88,7 +91,8 @@ public class AuthService {
                     userDetails.getUsername(),
                     userDetails.getEmail(),
                     userDetails.getRole(),
-                    expiresIn);
+                    expiresIn,
+                    passwordResetRequired);
 
         } catch (BadCredentialsException e) {
             userService.handleFailedLogin(loginRequest.getUsername());
@@ -288,6 +292,13 @@ public class AuthService {
         }
 
         throw new RuntimeException("Invalid token");
+    }
+
+    /**
+     * Forgot password - delegating to UserService
+     */
+    public MessageResponse forgotPassword(String username) {
+        return userService.forgotPassword(username);
     }
 
     /**

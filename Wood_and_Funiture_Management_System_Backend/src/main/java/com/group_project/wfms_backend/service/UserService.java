@@ -268,6 +268,34 @@ public class UserService {
     /**
      * Reset password by admin
      */
+    /**
+     * Forgot password - reset to default 'password123' (public access)
+     */
+    @Transactional
+    public MessageResponse forgotPassword(String username) {
+        if (username == null || username.isEmpty()) {
+            throw new RuntimeException("Username is required");
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with username: " + username));
+
+        // Reset password to default
+        user.setPassword(passwordEncoder.encode("password123"));
+        
+        // Unlock and activate account
+        user.setFailedLoginAttempts(0);
+        user.setAccountLocked(false);
+        user.setLockTime(null);
+        user.setIsActive(true);
+        
+        userRepository.save(user);
+
+        log.info("Password reset to default for user: {} via forgot password", username);
+
+        return new MessageResponse("Password has been reset to 'password123'. Please login and change your password.");
+    }
+
     @Transactional
     public MessageResponse resetPassword(Integer userId, String newPassword) {
         if (newPassword == null || newPassword.length() < 6) {
