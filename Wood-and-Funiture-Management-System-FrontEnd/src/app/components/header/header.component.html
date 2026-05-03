@@ -12,10 +12,10 @@
                 <input type="text" placeholder="Search anything...">
             </div>
 
-            <div class="user-profile" (click)="toggleDropdown($event)" tabindex="0">
+            <div class="user-profile" (click)="toggleDropdown($event)" tabindex="0" *ngIf="currentUser$ | async as user">
                 <div class="user-info d-none d-lg-block">
-                    <span class="user-name">Welcome, Admin</span>
-                    <span class="user-role">System Administrator</span>
+                    <span class="user-name">Welcome, {{ user.username }}</span>
+                    <span class="user-role">{{ isSupplier(user) ? 'Authorized Partner' : (user.role === 'Admin' ? 'System Administrator' : user.role) }}</span>
                 </div>
                 <div class="avatar-container">
                     <img src="/logo.jpg" alt="Profile" class="user-avatar">
@@ -26,8 +26,8 @@
                 <!-- Profile Dropdown -->
                 <div class="profile-dropdown" [class.show]="isDropdownOpen">
                     <div class="dropdown-header">
-                        <p class="m-0 fw-bold">Admin Account</p>
-                        <p class="m-0 text-muted small">admin&#64;wfms.com</p>
+                        <p class="m-0 fw-bold">{{ user.username }} Account</p>
+                        <p class="m-0 text-muted small">{{ user.email }}</p>
                     </div>
                     <div class="dropdown-divider"></div>
                     <a [routerLink]="'/profile'" class="dropdown-item">

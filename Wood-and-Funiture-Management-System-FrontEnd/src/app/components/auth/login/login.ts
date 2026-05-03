@@ -45,8 +45,16 @@ export class Login {
 
         // Show success message briefly before redirecting
         setTimeout(() => {
-          // Navigate to dashboard or home page
-          this.router.navigate(['/admin-dashboard']);
+          // Role-based routing
+          const userRole = response.role ? response.role.toLowerCase() : '';
+          if (userRole === 'supplier') {
+            this.router.navigate(['/supplier-dashboard']);
+          } else if (userRole === 'manager') {
+            this.router.navigate(['/manager-dashboard']);
+          } else {
+            // Admin or fallback
+            this.router.navigate(['/admin-dashboard']);
+          }
         }, 800);
       },
       error: (error) => {
