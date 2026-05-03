@@ -44,6 +44,10 @@ export class EmployeeManagementComponent implements OnInit {
         });
     }
 
+    getStatusCount(isActive: boolean): number {
+        return this.employees.filter(e => e.isActive === isActive).length;
+    }
+
     onToggleStatus(employee: Employee) {
         this.employeeService.toggleEmployeeStatus(employee.id).subscribe({
             next: (res) => {

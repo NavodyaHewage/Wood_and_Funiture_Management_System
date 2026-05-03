@@ -1,26 +1,38 @@
 <div class="dashboard-layout">
-    <!-- Navigation Sidebar -->
     <app-admin-side></app-admin-side>
 
-    <!-- Main Content Area -->
     <main class="main-content">
-        <!-- Dynamic Header -->
         <app-header></app-header>
 
-        <div class="dashboard-controls">
-            <div class="title-section">
-                <h1>User Management</h1>
-                <p class="text-muted">Manage system users, roles, and access status</p>
+        <div class="content-body">
+            <div class="header-section">
+                <div class="title-group">
+                    <h1>User Management</h1>
+                    <p>Manage system users, roles, and access status</p>
+                </div>
+                <button class="btn-primary" (click)="onAddUser()">
+                    <i class="bi bi-person-plus-fill"></i>
+                    Add New User
+                </button>
             </div>
-            <button class="btn btn-add" (click)="onAddUser()">
-                <i class="bi bi-person-plus-fill me-2"></i>
-                Add New User
-            </button>
-        </div>
 
-        <div class="table-container card">
-            <div class="table-responsive">
-                <table class="table custom-table">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">System Users</div>
+                    <div class="stat-value">{{ users.length }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Access</div>
+                    <div class="stat-value" style="color: #065f46;">{{ getStatusCount(true) }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Restricted/Deactivated</div>
+                    <div class="stat-value" style="color: #991b1b;">{{ getStatusCount(false) }}</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
                     <thead>
                         <tr>
                             <th>#ID</th>
@@ -50,7 +62,7 @@
                                 <span class="nic-badge">{{ user.nic || 'N/A' }}</span>
                             </td>
                             <td>
-                                <select class="form-select role-select" [value]="user.role"
+                                <select class="role-select" [value]="user.role"
                                     (change)="onUpdateRole(user, $any($event.target).value)">
                                     <option value="ADMIN">Admin</option>
                                     <option value="MANAGER">Manager</option>
@@ -58,31 +70,21 @@
                                 </select>
                             </td>
                             <td>
-                                <span class="status-badge" [ngClass]="user.isActive ? 'active' : 'inactive'">
+                                <span class="badge" [ngClass]="user.isActive ? 'badge-approved' : 'badge-rejected'">
                                     {{ user.isActive ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
                             <td>{{ user.lastLogin ? (user.lastLogin | date:'MMM d, y, h:mm a') : 'Never' }}</td>
                             <td class="text-center">
-                                <div class="action-group">
-                                    <button class="btn-action toggle"
-                                        [title]="user.isActive ? 'Deactivate' : 'Activate'"
+                                <div class="action-btns">
+                                    <button class="btn-icon" [title]="user.isActive ? 'Deactivate' : 'Activate'"
                                         (click)="onToggleStatus(user)">
-                                        <i class="bi"
-                                            [ngClass]="user.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
+                                        <i class="bi" [ngClass]="user.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
                                     </button>
-                                    <button class="btn-action delete" title="Delete User"
+                                    <button class="btn-icon" title="Delete User"
                                         (click)="onDelete(user.userId, user.username)">
                                         <i class="bi bi-trash3"></i>
                                     </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="users.length === 0 && !isLoading">
-                            <td colspan="6" class="text-center py-5">
-                                <div class="empty-state">
-                                    <i class="bi bi-people fs-1 text-muted"></i>
-                                    <p class="mt-2">No users found in the system.</p>
                                 </div>
                             </td>
                         </tr>

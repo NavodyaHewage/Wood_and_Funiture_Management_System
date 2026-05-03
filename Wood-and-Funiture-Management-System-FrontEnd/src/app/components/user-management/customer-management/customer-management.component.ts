@@ -44,6 +44,10 @@ export class CustomerManagementComponent implements OnInit {
         });
     }
 
+    getStatusCount(isActive: boolean): number {
+        return this.customers.filter(c => c.isActive === isActive).length;
+    }
+
     onToggleStatus(customer: Customer) {
         this.customerService.toggleCustomerStatus(customer.cusId).subscribe({
             next: (res) => {

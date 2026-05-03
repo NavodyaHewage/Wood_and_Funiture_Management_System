@@ -1,32 +1,45 @@
 <div class="dashboard-layout">
-    <!-- Navigation Sidebar -->
     <app-admin-side></app-admin-side>
 
-    <!-- Main Content Area -->
     <main class="main-content">
-        <!-- Dynamic Header -->
         <app-header></app-header>
 
-        <div class="dashboard-controls">
-            <div class="title-section">
-                <h1>Employee Management</h1>
-                <p class="text-muted">Maintain staff records and designations</p>
+        <div class="content-body">
+            <div class="header-section">
+                <div class="title-group">
+                    <h1>Employee Management</h1>
+                    <p>Maintain staff records and designations</p>
+                </div>
+                <button class="btn-primary" routerLink="/register">
+                    <i class="bi bi-person-plus-fill"></i>
+                    Add New Employee
+                </button>
             </div>
-            <button class="btn btn-add" routerLink="/register">
-                <i class="bi bi-person-plus-fill me-2"></i>
-                Add New Employee
-            </button>
-        </div>
 
-        <div class="table-container card">
-            <div class="table-responsive">
-                <table class="table custom-table">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Workforce</div>
+                    <div class="stat-value">{{ employees.length }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Active Staff</div>
+                    <div class="stat-value" style="color: #065f46;">{{ getStatusCount(true) }}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">On Leave/Inactive</div>
+                    <div class="stat-value" style="color: #991b1b;">{{ getStatusCount(false) }}</div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
                     <thead>
                         <tr>
                             <th>#ID</th>
-                            <th>Name & Designation</th>
-                            <th>Contact Info</th>
+                            <th>Employee Info</th>
                             <th>NIC</th>
+                            <th>Designation</th>
+                            <th>Mobile</th>
                             <th>Joined Date</th>
                             <th>Status</th>
                             <th class="text-center">Actions</th>
@@ -42,48 +55,32 @@
                                     </div>
                                     <div class="user-details">
                                         <div class="user-username">{{ emp.fullName }}</div>
-                                        <div class="user-email">{{ emp.designation }}</div>
+                                        <div class="user-email">{{ emp.email }}</div>
                                     </div>
                                 </div>
                             </td>
-                            <td>
-                                <div class="info-stack">
-                                    <div><i class="bi bi-telephone-fill me-2 small text-muted"></i>{{
-                                        emp.mobileNumber }}</div>
-                                    <div class="small text-muted"><i class="bi bi-envelope-fill me-2"></i>{{
-                                        emp.email }}</div>
-                                </div>
-                            </td>
                             <td>{{ emp.nic }}</td>
+                            <td><span class="badge">{{ emp.designation }}</span></td>
+                            <td>{{ emp.mobileNumber }}</td>
                             <td>{{ emp.dateJoined | date:'MMM d, y' }}</td>
                             <td>
-                                <span class="status-badge" [ngClass]="emp.isActive ? 'active' : 'inactive'">
+                                <span class="badge" [ngClass]="emp.isActive ? 'badge-approved' : 'badge-rejected'">
                                     {{ emp.isActive ? 'Active' : 'Inactive' }}
                                 </span>
                             </td>
                             <td class="text-center">
-                                <div class="action-group">
-                                    <button class="btn-action edit" title="Edit Details" (click)="onEdit(emp)">
+                                <div class="action-btns">
+                                    <button class="btn-icon" title="Edit Details" (click)="onEdit(emp)">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="btn-action toggle"
-                                        [title]="emp.isActive ? 'Deactivate' : 'Activate'"
+                                    <button class="btn-icon" [title]="emp.isActive ? 'Deactivate' : 'Activate'"
                                         (click)="onToggleStatus(emp)">
-                                        <i class="bi"
-                                            [ngClass]="emp.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
+                                        <i class="bi" [ngClass]="emp.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
                                     </button>
-                                    <button class="btn-action delete" title="Delete record"
+                                    <button class="btn-icon" title="Delete record"
                                         (click)="onDelete(emp.id, emp.fullName)">
                                         <i class="bi bi-trash3"></i>
                                     </button>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr *ngIf="employees.length === 0 && !isLoading">
-                            <td colspan="7" class="text-center py-5">
-                                <div class="empty-state">
-                                    <i class="bi bi-people fs-1 text-muted"></i>
-                                    <p class="mt-2">No employees found.</p>
                                 </div>
                             </td>
                         </tr>
@@ -95,43 +92,49 @@
 </div>
 
 <!-- Edit Modal -->
-<div class="modal-backdrop-custom" *ngIf="isEditModalOpen">
-    <div class="modal-card">
-        <div class="modal-header">
-            <h3>Edit Employee Details</h3>
-            <button class="btn-close-custom" (click)="closeModal()">&times;</button>
+<div class="modal-overlay" *ngIf="isEditModalOpen">
+    <div class="modal-content">
+        <div class="header-section">
+            <div class="title-group">
+                <h3>Edit Employee Details</h3>
+            </div>
+            <button class="btn-icon" (click)="closeModal()">&times;</button>
         </div>
         <div class="modal-body" *ngIf="selectedEmployee">
-            <div class="row g-3">
-                <div class="col-md-12">
-                    <label class="form-label">Full Name</label>
-                    <input type="text" class="form-control wood-input" [(ngModel)]="selectedEmployee.fullName">
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label>Employee Name</label>
+                    <input type="text" class="form-control" [(ngModel)]="selectedEmployee.fullName">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Designation</label>
-                    <input type="text" class="form-control wood-input" [(ngModel)]="selectedEmployee.designation">
+                <div class="form-group">
+                    <label>NIC</label>
+                    <input type="text" class="form-control" [(ngModel)]="selectedEmployee.nic">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Mobile Number</label>
-                    <input type="text" class="form-control wood-input" [(ngModel)]="selectedEmployee.mobileNumber">
+                <div class="form-group">
+                    <label>Designation</label>
+                    <input type="text" class="form-control" [(ngModel)]="selectedEmployee.designation">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-control wood-input" [(ngModel)]="selectedEmployee.email">
+                <div class="form-group">
+                    <label>Mobile Number</label>
+                    <input type="text" class="form-control" [(ngModel)]="selectedEmployee.mobileNumber">
                 </div>
-                <div class="col-md-6">
-                    <label class="form-label">NIC</label>
-                    <input type="text" class="form-control wood-input" [(ngModel)]="selectedEmployee.nic">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" class="form-control" [(ngModel)]="selectedEmployee.email">
                 </div>
-                <div class="col-md-12">
-                    <label class="form-label">Address</label>
-                    <input type="text" class="form-control wood-input" [(ngModel)]="selectedEmployee.address">
+                <div class="form-group full-width">
+                    <label>Address</label>
+                    <input type="text" class="form-control" [(ngModel)]="selectedEmployee.address">
+                </div>
+                <div class="form-group">
+                    <label>Joined Date</label>
+                    <input type="date" class="form-control" [(ngModel)]="selectedEmployee.dateJoined">
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-secondary-wood" (click)="closeModal()">Cancel</button>
-            <button class="btn btn-primary-wood" (click)="onUpdateEmployee()">Save Changes</button>
+            <button class="btn-secondary" (click)="closeModal()">Cancel</button>
+            <button class="btn-primary" (click)="onUpdateEmployee()">Save Changes</button>
         </div>
     </div>
-</div>
+</div>

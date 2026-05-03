@@ -44,6 +44,10 @@ export class SupplierManagementComponent implements OnInit {
         });
     }
 
+    getStatusCount(isActive: boolean): number {
+        return this.suppliers.filter(s => s.isActive === isActive).length;
+    }
+
     onToggleStatus(supplier: Supplier) {
         this.supplierService.toggleSupplierStatus(supplier.supId).subscribe({
             next: (res) => {

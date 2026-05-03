@@ -41,6 +41,10 @@ export class UserManagementDashboardComponent implements OnInit {
     });
   }
 
+  getStatusCount(isActive: boolean): number {
+    return this.users.filter(u => u.isActive === isActive).length;
+  }
+
   onToggleStatus(user: User) {
     this.userService.toggleUserStatus(user.userId).subscribe({
       next: (res) => {
