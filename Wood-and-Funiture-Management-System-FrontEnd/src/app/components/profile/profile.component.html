@@ -1,117 +1,130 @@
-<div class="profile-header mb-4">
-    <div class="d-flex align-items-center gap-3">
-        <div class="profile-avatar">
-            <i class="bi bi-person-circle"></i>
-        </div>
-        <div>
-            <h1 class="profile-name">{{ user?.username }}</h1>
-            <p class="profile-role badge bg-wood text-white">{{ user?.role }}</p>
-        </div>
-    </div>
-    <button class="btn btn-wood" *ngIf="!isEditing" (click)="toggleEdit()">
-        <i class="bi bi-pencil-square me-2"></i> Edit Profile
-    </button>
-</div>
+<div class="dashboard-layout">
+    <!-- Navigation Sidebar -->
+    <app-admin-side></app-admin-side>
 
-<div class="row g-4">
-    <!-- Profile Information Card -->
-    <div class="col-lg-8">
-        <div class="admin-card">
-            <div class="card-header-wood">
-                <h5><i class="bi bi-person-vcard me-2"></i> User Information</h5>
-            </div>
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Dynamic Header -->
+        <app-header></app-header>
 
-            <div *ngIf="isLoading && !user" class="text-center p-5">
-                <div class="spinner-border text-wood" role="status"></div>
-            </div>
-
-            <div *ngIf="user && !isEditing" class="profile-details p-4">
-                <div class="info-row">
-                    <span class="label">Username:</span>
-                    <span class="value">{{ user.username }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">System ID:</span>
-                    <span class="value">#{{ user.userId }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Email Address:</span>
-                    <span class="value">{{ user.email }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Phone Number:</span>
-                    <span class="value">{{ user.phoneNumber || 'Not provided' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Member Since:</span>
-                    <span class="value">{{ user.createdDate | date:'mediumDate' }}</span>
-                </div>
-                <div class="info-row">
-                    <span class="label">Last Login:</span>
-                    <span class="value">{{ user.lastLogin | date:'medium' }}</span>
-                </div>
-                <div class="info-row mt-3">
-                    <span class="label">Profile Bio / Details:</span>
-                    <p class="bio-text mt-2">{{ user.userDetails || 'No additional details provided.' }}</p>
-                </div>
-            </div>
-
-            <!-- Edit Form -->
-            <form *ngIf="user && isEditing" (ngSubmit)="onUpdateProfile()" class="p-4">
-                <div class="row g-3">
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label wood-label">Email Address</label>
-                        <input type="email" name="email" [(ngModel)]="editData.email" class="admin-control"
-                            required>
+        <div class="content-body">
+            <div class="profile-header mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="profile-avatar">
+                        <i class="bi bi-person-circle"></i>
                     </div>
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label wood-label">Phone Number</label>
-                        <input type="text" name="phoneNumber" [(ngModel)]="editData.phoneNumber"
-                            class="admin-control" placeholder="+94 7X XXX XXXX">
-                    </div>
-                    <div class="col-12 mb-3">
-                        <label class="form-label wood-label">Profile Details / Designation</label>
-                        <textarea name="userDetails" [(ngModel)]="editData.userDetails"
-                            class="admin-control" rows="4"></textarea>
+                    <div>
+                        <h1 class="profile-name">{{ user?.username }}</h1>
+                        <p class="profile-role badge bg-wood text-white">{{ user?.role }}</p>
                     </div>
                 </div>
-                <div class="d-flex gap-2 mt-4">
-                    <button type="submit" class="btn btn-admin-primary" [disabled]="isLoading">
-                        <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                        Save Changes
-                    </button>
-                    <button type="button" class="btn btn-admin-secondary"
-                        (click)="toggleEdit()">Cancel</button>
+                <button class="btn btn-wood" *ngIf="!isEditing" (click)="toggleEdit()">
+                    <i class="bi bi-pencil-square me-2"></i> Edit Profile
+                </button>
+            </div>
+
+            <div class="row g-4">
+                <!-- Profile Information Card -->
+                <div class="col-lg-8">
+                    <div class="admin-card">
+                        <div class="card-header-wood">
+                            <h5><i class="bi bi-person-vcard me-2"></i> User Information</h5>
+                        </div>
+
+                        <div *ngIf="isLoading && !user" class="text-center p-5">
+                            <div class="spinner-border text-wood" role="status"></div>
+                        </div>
+
+                        <div *ngIf="user && !isEditing" class="profile-details p-4">
+                            <div class="info-row">
+                                <span class="label">Username:</span>
+                                <span class="value">{{ user.username }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">System ID:</span>
+                                <span class="value">#{{ user.userId }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Email Address:</span>
+                                <span class="value">{{ user.email }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Phone Number:</span>
+                                <span class="value">{{ user.phoneNumber || 'Not provided' }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Member Since:</span>
+                                <span class="value">{{ user.createdDate | date:'mediumDate' }}</span>
+                            </div>
+                            <div class="info-row">
+                                <span class="label">Last Login:</span>
+                                <span class="value">{{ user.lastLogin | date:'medium' }}</span>
+                            </div>
+                            <div class="info-row mt-3">
+                                <span class="label">Profile Bio / Details:</span>
+                                <p class="bio-text mt-2">{{ user.userDetails || 'No additional details provided.' }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Edit Form -->
+                        <form *ngIf="user && isEditing" (ngSubmit)="onUpdateProfile()" class="p-4">
+                            <div class="row g-3">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label wood-label">Email Address</label>
+                                    <input type="email" name="email" [(ngModel)]="editData.email" class="admin-control"
+                                        required>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label wood-label">Phone Number</label>
+                                    <input type="text" name="phoneNumber" [(ngModel)]="editData.phoneNumber"
+                                        class="admin-control" placeholder="+94 7X XXX XXXX">
+                                </div>
+                                <div class="col-12 mb-3">
+                                    <label class="form-label wood-label">Profile Details / Designation</label>
+                                    <textarea name="userDetails" [(ngModel)]="editData.userDetails"
+                                        class="admin-control" rows="4"></textarea>
+                                </div>
+                            </div>
+                            <div class="d-flex gap-2 mt-4">
+                                <button type="submit" class="btn btn-admin-primary" [disabled]="isLoading">
+                                    <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
+                                    Save Changes
+                                </button>
+                                <button type="button" class="btn btn-admin-secondary"
+                                    (click)="toggleEdit()">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </form>
-        </div>
-    </div>
 
-    <!-- Account Security Stats -->
-    <div class="col-lg-4">
-        <div class="admin-card mb-4 text-center p-4">
-            <div class="status-indicator" [class.active]="user?.isActive">
-                <i class="bi" [class.bi-check-circle-fill]="user?.isActive"
-                    [class.bi-x-circle-fill]="!user?.isActive"></i>
-                {{ user?.isActive ? 'Account Active' : 'Account Inactive' }}
-            </div>
-            <div class="security-info mt-3">
-                <p class="text-muted small">Your account is secured with 256-bit JWT Encryption.</p>
-                <a routerLink="/change-password" class="btn btn-wood-outline w-100 mt-2">
-                    <i class="bi bi-shield-lock me-2"></i> Update Security
-                </a>
-            </div>
-        </div>
+                <!-- Account Security Stats -->
+                <div class="col-lg-4">
+                    <div class="admin-card mb-4 text-center p-4">
+                        <div class="status-indicator" [class.active]="user?.isActive">
+                            <i class="bi" [class.bi-check-circle-fill]="user?.isActive"
+                                [class.bi-x-circle-fill]="!user?.isActive"></i>
+                            {{ user?.isActive ? 'Account Active' : 'Account Inactive' }}
+                        </div>
+                        <div class="security-info mt-3">
+                            <p class="text-muted small">Your account is secured with 256-bit JWT Encryption.</p>
+                            <a routerLink="/change-password" class="btn btn-wood-outline w-100 mt-2">
+                                <i class="bi bi-shield-lock me-2"></i> Update Security
+                            </a>
+                        </div>
+                    </div>
 
-        <div class="admin-card p-4">
-            <h6 class="wood-title mb-3">System Permissions</h6>
-            <ul class="permission-list">
-                <li><i class="bi bi-check2 text-success me-2"></i> Access Dashboard</li>
-                <li><i class="bi bi-check2 text-success me-2"></i> Manage Resources</li>
-                <li *ngIf="user?.role === 'ADMIN'"><i class="bi bi-check2 text-success me-2"></i>
-                    Administrative Controls</li>
-                <li><i class="bi bi-check2 text-success me-2"></i> View Reports</li>
-            </ul>
+                    <div class="admin-card p-4">
+                        <h6 class="wood-title mb-3">System Permissions</h6>
+                        <ul class="permission-list">
+                            <li><i class="bi bi-check2 text-success me-2"></i> Access Dashboard</li>
+                            <li><i class="bi bi-check2 text-success me-2"></i> Manage Resources</li>
+                            <li *ngIf="user?.role === 'ADMIN'"><i class="bi bi-check2 text-success me-2"></i>
+                                Administrative Controls</li>
+                            <li><i class="bi bi-check2 text-success me-2"></i> View Reports</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
+    </main>
 </div>
