@@ -4,11 +4,13 @@ import { Router, RouterLink } from '@angular/router';
 import { CustomerService, Customer } from '../../../service/customer.service';
 import { ToastService } from '../../../service/toast.service';
 import { FormsModule } from '@angular/forms';
+import { HeaderComponent } from '../../header/header.component';
+import { AdminSideComponent } from '../admin-side/admin-side.component';
 
 @Component({
     selector: 'app-customer-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink],
+    imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, AdminSideComponent],
     templateUrl: './customer-management.component.html',
     styleUrl: './customer-management.component.css'
 })

@@ -1,86 +1,97 @@
-<div class="dashboard-controls">
-    <div class="title-section">
-        <h1>Employee Management</h1>
-        <p class="text-muted">Maintain staff records and designations</p>
-    </div>
-    <button class="btn btn-add" routerLink="/register">
-        <i class="bi bi-person-plus-fill me-2"></i>
-        Add New Employee
-    </button>
-</div>
+<div class="dashboard-layout">
+    <!-- Navigation Sidebar -->
+    <app-admin-side></app-admin-side>
 
-<div class="table-container card">
-    <div class="table-responsive">
-        <table class="table custom-table">
-            <thead>
-                <tr>
-                    <th>#ID</th>
-                    <th>Name & Designation</th>
-                    <th>Contact Info</th>
-                    <th>NIC</th>
-                    <th>Joined Date</th>
-                    <th>Status</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let emp of employees">
-                    <td><span class="badge-id">#{{ emp.id }}</span></td>
-                    <td>
-                        <div class="user-info-cell">
-                            <div class="user-avatar-mini">
-                                {{ emp.fullName.charAt(0).toUpperCase() }}
-                            </div>
-                            <div class="user-details">
-                                <div class="user-username">{{ emp.fullName }}</div>
-                                <div class="user-email">{{ emp.designation }}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <div class="info-stack">
-                            <div><i class="bi bi-telephone-fill me-2 small text-muted"></i>{{
-                                emp.mobileNumber }}</div>
-                            <div class="small text-muted"><i class="bi bi-envelope-fill me-2"></i>{{
-                                emp.email }}</div>
-                        </div>
-                    </td>
-                    <td>{{ emp.nic }}</td>
-                    <td>{{ emp.dateJoined | date:'MMM d, y' }}</td>
-                    <td>
-                        <span class="status-badge" [ngClass]="emp.isActive ? 'active' : 'inactive'">
-                            {{ emp.isActive ? 'Active' : 'Inactive' }}
-                        </span>
-                    </td>
-                    <td class="text-center">
-                        <div class="action-group">
-                            <button class="btn-action edit" title="Edit Details" (click)="onEdit(emp)">
-                                <i class="bi bi-pencil-square"></i>
-                            </button>
-                            <button class="btn-action toggle"
-                                [title]="emp.isActive ? 'Deactivate' : 'Activate'"
-                                (click)="onToggleStatus(emp)">
-                                <i class="bi"
-                                    [ngClass]="emp.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
-                            </button>
-                            <button class="btn-action delete" title="Delete record"
-                                (click)="onDelete(emp.id, emp.fullName)">
-                                <i class="bi bi-trash3"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr *ngIf="employees.length === 0 && !isLoading">
-                    <td colspan="7" class="text-center py-5">
-                        <div class="empty-state">
-                            <i class="bi bi-people fs-1 text-muted"></i>
-                            <p class="mt-2">No employees found.</p>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Dynamic Header -->
+        <app-header></app-header>
+
+        <div class="dashboard-controls">
+            <div class="title-section">
+                <h1>Employee Management</h1>
+                <p class="text-muted">Maintain staff records and designations</p>
+            </div>
+            <button class="btn btn-add" routerLink="/register">
+                <i class="bi bi-person-plus-fill me-2"></i>
+                Add New Employee
+            </button>
+        </div>
+
+        <div class="table-container card">
+            <div class="table-responsive">
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>Name & Designation</th>
+                            <th>Contact Info</th>
+                            <th>NIC</th>
+                            <th>Joined Date</th>
+                            <th>Status</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let emp of employees">
+                            <td><span class="badge-id">#{{ emp.id }}</span></td>
+                            <td>
+                                <div class="user-info-cell">
+                                    <div class="user-avatar-mini">
+                                        {{ emp.fullName.charAt(0).toUpperCase() }}
+                                    </div>
+                                    <div class="user-details">
+                                        <div class="user-username">{{ emp.fullName }}</div>
+                                        <div class="user-email">{{ emp.designation }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="info-stack">
+                                    <div><i class="bi bi-telephone-fill me-2 small text-muted"></i>{{
+                                        emp.mobileNumber }}</div>
+                                    <div class="small text-muted"><i class="bi bi-envelope-fill me-2"></i>{{
+                                        emp.email }}</div>
+                                </div>
+                            </td>
+                            <td>{{ emp.nic }}</td>
+                            <td>{{ emp.dateJoined | date:'MMM d, y' }}</td>
+                            <td>
+                                <span class="status-badge" [ngClass]="emp.isActive ? 'active' : 'inactive'">
+                                    {{ emp.isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+                            <td class="text-center">
+                                <div class="action-group">
+                                    <button class="btn-action edit" title="Edit Details" (click)="onEdit(emp)">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button class="btn-action toggle"
+                                        [title]="emp.isActive ? 'Deactivate' : 'Activate'"
+                                        (click)="onToggleStatus(emp)">
+                                        <i class="bi"
+                                            [ngClass]="emp.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
+                                    </button>
+                                    <button class="btn-action delete" title="Delete record"
+                                        (click)="onDelete(emp.id, emp.fullName)">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="employees.length === 0 && !isLoading">
+                            <td colspan="7" class="text-center py-5">
+                                <div class="empty-state">
+                                    <i class="bi bi-people fs-1 text-muted"></i>
+                                    <p class="mt-2">No employees found.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 </div>
 
 <!-- Edit Modal -->

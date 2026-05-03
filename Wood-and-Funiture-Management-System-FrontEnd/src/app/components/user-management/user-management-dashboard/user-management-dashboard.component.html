@@ -1,83 +1,94 @@
-<div class="dashboard-controls">
-    <div class="title-section">
-        <h1>User Management</h1>
-        <p class="text-muted">Manage system users, roles, and access status</p>
-    </div>
-    <button class="btn btn-add" (click)="onAddUser()">
-        <i class="bi bi-person-plus-fill me-2"></i>
-        Add New User
-    </button>
-</div>
+<div class="dashboard-layout">
+    <!-- Navigation Sidebar -->
+    <app-admin-side></app-admin-side>
 
-<div class="table-container card">
-    <div class="table-responsive">
-        <table class="table custom-table">
-            <thead>
-                <tr>
-                    <th>#ID</th>
-                    <th>User Info</th>
-                    <th>NIC</th>
-                    <th>Role</th>
-                    <th>Status</th>
-                    <th>Last Login</th>
-                    <th class="text-center">Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let user of users">
-                    <td><span class="badge-id">#{{ user.userId }}</span></td>
-                    <td>
-                        <div class="user-info-cell">
-                            <div class="user-avatar-mini">
-                                {{ user.username.charAt(0).toUpperCase() }}
-                            </div>
-                            <div class="user-details">
-                                <div class="user-username">{{ user.username }}</div>
-                                <div class="user-email">{{ user.email }}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="nic-badge">{{ user.nic || 'N/A' }}</span>
-                    </td>
-                    <td>
-                        <select class="form-select role-select" [value]="user.role"
-                            (change)="onUpdateRole(user, $any($event.target).value)">
-                            <option value="ADMIN">Admin</option>
-                            <option value="MANAGER">Manager</option>
-                            <option value="SUPPLIER">Supplier</option>
-                        </select>
-                    </td>
-                    <td>
-                        <span class="status-badge" [ngClass]="user.isActive ? 'active' : 'inactive'">
-                            {{ user.isActive ? 'Active' : 'Inactive' }}
-                        </span>
-                    </td>
-                    <td>{{ user.lastLogin ? (user.lastLogin | date:'MMM d, y, h:mm a') : 'Never' }}</td>
-                    <td class="text-center">
-                        <div class="action-group">
-                            <button class="btn-action toggle"
-                                [title]="user.isActive ? 'Deactivate' : 'Activate'"
-                                (click)="onToggleStatus(user)">
-                                <i class="bi"
-                                    [ngClass]="user.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
-                            </button>
-                            <button class="btn-action delete" title="Delete User"
-                                (click)="onDelete(user.userId, user.username)">
-                                <i class="bi bi-trash3"></i>
-                            </button>
-                        </div>
-                    </td>
-                </tr>
-                <tr *ngIf="users.length === 0 && !isLoading">
-                    <td colspan="6" class="text-center py-5">
-                        <div class="empty-state">
-                            <i class="bi bi-people fs-1 text-muted"></i>
-                            <p class="mt-2">No users found in the system.</p>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Dynamic Header -->
+        <app-header></app-header>
+
+        <div class="dashboard-controls">
+            <div class="title-section">
+                <h1>User Management</h1>
+                <p class="text-muted">Manage system users, roles, and access status</p>
+            </div>
+            <button class="btn btn-add" (click)="onAddUser()">
+                <i class="bi bi-person-plus-fill me-2"></i>
+                Add New User
+            </button>
+        </div>
+
+        <div class="table-container card">
+            <div class="table-responsive">
+                <table class="table custom-table">
+                    <thead>
+                        <tr>
+                            <th>#ID</th>
+                            <th>User Info</th>
+                            <th>NIC</th>
+                            <th>Role</th>
+                            <th>Status</th>
+                            <th>Last Login</th>
+                            <th class="text-center">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let user of users">
+                            <td><span class="badge-id">#{{ user.userId }}</span></td>
+                            <td>
+                                <div class="user-info-cell">
+                                    <div class="user-avatar-mini">
+                                        {{ user.username.charAt(0).toUpperCase() }}
+                                    </div>
+                                    <div class="user-details">
+                                        <div class="user-username">{{ user.username }}</div>
+                                        <div class="user-email">{{ user.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="nic-badge">{{ user.nic || 'N/A' }}</span>
+                            </td>
+                            <td>
+                                <select class="form-select role-select" [value]="user.role"
+                                    (change)="onUpdateRole(user, $any($event.target).value)">
+                                    <option value="ADMIN">Admin</option>
+                                    <option value="MANAGER">Manager</option>
+                                    <option value="SUPPLIER">Supplier</option>
+                                </select>
+                            </td>
+                            <td>
+                                <span class="status-badge" [ngClass]="user.isActive ? 'active' : 'inactive'">
+                                    {{ user.isActive ? 'Active' : 'Inactive' }}
+                                </span>
+                            </td>
+                            <td>{{ user.lastLogin ? (user.lastLogin | date:'MMM d, y, h:mm a') : 'Never' }}</td>
+                            <td class="text-center">
+                                <div class="action-group">
+                                    <button class="btn-action toggle"
+                                        [title]="user.isActive ? 'Deactivate' : 'Activate'"
+                                        (click)="onToggleStatus(user)">
+                                        <i class="bi"
+                                            [ngClass]="user.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
+                                    </button>
+                                    <button class="btn-action delete" title="Delete User"
+                                        (click)="onDelete(user.userId, user.username)">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr *ngIf="users.length === 0 && !isLoading">
+                            <td colspan="6" class="text-center py-5">
+                                <div class="empty-state">
+                                    <i class="bi bi-people fs-1 text-muted"></i>
+                                    <p class="mt-2">No users found in the system.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
 </div>

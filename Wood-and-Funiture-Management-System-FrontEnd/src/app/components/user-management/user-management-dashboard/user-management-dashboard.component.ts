@@ -3,10 +3,12 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { UserManagementService, User } from '../../../service/user-management.service';
 import { ToastService } from '../../../service/toast.service';
+import { HeaderComponent } from '../../header/header.component';
+import { AdminSideComponent } from '../admin-side/admin-side.component';
 @Component({
   selector: 'app-user-management-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HeaderComponent, AdminSideComponent],
   templateUrl: './user-management-dashboard.component.html',
   styleUrl: './user-management-dashboard.component.css'
 })
