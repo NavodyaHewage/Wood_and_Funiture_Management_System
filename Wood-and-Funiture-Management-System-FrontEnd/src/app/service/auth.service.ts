@@ -37,6 +37,7 @@ export interface JwtResponse {
     email: string;
     role: string;
     expiresIn: number;
+    passwordResetRequired?: boolean;
 }
 
 export interface MessageResponse {
@@ -165,5 +166,12 @@ export class AuthService {
      */
     changePassword(username: string, oldPassword: string, newPassword: string): Observable<MessageResponse> {
         return this.http.patch<MessageResponse>(`${environment.apiUrl}/users/change-password`, { username, oldPassword, newPassword });
+    }
+
+    /**
+     * Forgot password - reset to default 'password123' (public access)
+     */
+    forgotPassword(username: string): Observable<MessageResponse> {
+        return this.http.post<MessageResponse>(`${this.apiUrl}/forgot-password`, { username });
     }
 }

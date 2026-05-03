@@ -80,7 +80,8 @@
                         </label>
                     </div>
                     <div class="d-flex flex-column align-items-end">
-                        <a routerLink="/change-password" class="forgot-password mb-1">Forgot Password?</a>
+                        <a (click)="onForgotPassword()" class="forgot-password mb-1" style="cursor: pointer;">Reset Password</a>
+                        <a routerLink="/change-password" class="forgot-password mb-1">Change Password?</a>
                     </div>
                 </div>
 
@@ -92,6 +93,33 @@
                     <span *ngIf="isLoading">Signing In...</span>
                 </button>
             </form>
+        </div>
+    </div>
+
+    <!-- Custom Reset Password Modal -->
+    <div class="custom-modal-overlay" *ngIf="showResetModal" (click)="cancelReset()">
+        <div class="custom-modal-card" (click)="$event.stopPropagation()">
+            <div class="modal-glow"></div>
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="bi bi-shield-lock"></i>
+                </div>
+                <h3>Reset Password?</h3>
+                <p>Are you sure you want to reset the password for user <strong>{{loginData.username}}</strong>?</p>
+            </div>
+            <div class="modal-body">
+                <div class="reset-info">
+                    <i class="bi bi-info-circle"></i>
+                    <span>Your password will be set to the default: <strong>password123</strong></span>
+                </div>
+                <p class="modal-note">You will be required to change it immediately after logging in.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-cancel" (click)="cancelReset()">Cancel</button>
+                <button class="btn-confirm" (click)="confirmReset()">
+                    <i class="bi bi-check2-circle me-1"></i> Confirm Reset
+                </button>
+            </div>
         </div>
     </div>
 </div>

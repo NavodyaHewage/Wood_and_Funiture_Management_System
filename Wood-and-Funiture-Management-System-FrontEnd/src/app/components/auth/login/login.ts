@@ -27,6 +27,7 @@ export class Login {
   lockCountdown = 0;
   countdownInterval: any;
   showPassword = false;
+  showResetModal = false;
 
   constructor(
     private router: Router,
@@ -42,6 +43,15 @@ export class Login {
         this.isLoading = false;
         this.toastService.showSuccess('Login successful! Welcome back.');
         this.sessionService.startMonitoring();
+
+        // Check if password reset is required
+        if (response.passwordResetRequired) {
+          this.toastService.showWarning('Your password has been reset. Please change it to continue.');
+          setTimeout(() => {
+            this.router.navigate(['/change-password'], { queryParams: { username: this.loginData.username } });
+          }, 1500);
+          return;
+        }
 
         // Show success message briefly before redirecting
         setTimeout(() => {
@@ -117,5 +127,38 @@ export class Login {
     if (this.countdownInterval) {
       clearInterval(this.countdownInterval);
     }
+  }
+
+  onForgotPassword() {
+    if (!this.loginData.username) {
+      this.toastService.showWarning('Please enter your username first to reset your password.');
+      return;
+    }
+    this.showResetModal = true;
+  }
+
+  cancelReset() {
+    this.showResetModal = false;
+  }
+
+  confirmReset() {
+    this.showResetModal = false;
+    this.isLoading = true;
+    
+    this.authService.forgotPassword(this.loginData.username).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.successMessage = response.message;
+        this.toastService.showSuccess(response.message);
+        // Auto-fill password with default to help user
+        this.loginData.password = 'password123';
+      },
+      error: (error) => {
+        this.isLoading = false;
+        const errorMsg = error.error?.message || 'Failed to reset password. Please check the username.';
+        this.toastService.showError(errorMsg);
+        this.errorMessage = errorMsg;
+      }
+    });
   }
 }
