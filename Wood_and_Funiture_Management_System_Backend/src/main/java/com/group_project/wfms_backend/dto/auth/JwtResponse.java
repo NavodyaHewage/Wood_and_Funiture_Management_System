@@ -20,9 +20,10 @@ public class JwtResponse {
     private String email;
     private String role;
     private Long expiresIn; // in milliseconds
+    private Boolean passwordResetRequired;
 
     public JwtResponse(String token, String refreshToken, Integer userId, String username, String email, String role,
-            Long expiresIn) {
+            Long expiresIn, Boolean passwordResetRequired) {
         this.token = token;
         this.refreshToken = refreshToken;
         this.userId = userId;
@@ -30,5 +31,6 @@ public class JwtResponse {
         this.email = email;
         this.role = role;
         this.expiresIn = expiresIn;
+        this.passwordResetRequired = passwordResetRequired;
     }
 }

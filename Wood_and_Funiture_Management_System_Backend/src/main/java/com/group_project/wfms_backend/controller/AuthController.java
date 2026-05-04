@@ -12,6 +12,8 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -131,6 +133,24 @@ public class AuthController {
         } catch (Exception e) {
             log.error("Logout error: ", e);
             return ResponseEntity.ok(new MessageResponse("Logout completed"));
+        }
+    }
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        try {
+            String username = request.get("username");
+            if (username == null || username.isEmpty()) {
+                return ResponseEntity.badRequest().body(new MessageResponse("Username is required"));
+            }
+            MessageResponse response = authService.forgotPassword(username);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            log.error("Forgot password error: {}", e.getMessage());
+            return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
+        } catch (Exception e) {
+            log.error("Unexpected forgot password error: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new MessageResponse("Error resetting password"));
         }
     }
 }

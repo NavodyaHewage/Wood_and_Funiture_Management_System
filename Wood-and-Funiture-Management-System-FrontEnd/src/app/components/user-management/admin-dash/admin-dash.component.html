@@ -25,6 +25,27 @@
                         <p>Manage Staff & Roles</p>
                     </div>
                 </div>
+                <div class="stat-card" routerLink="/employee-management" style="cursor: pointer;">
+                    <i class="bi bi-person-badge"></i>
+                    <div class="stat-info">
+                        <h3>Employees</h3>
+                        <p>Staff Records & Status</p>
+                    </div>
+                </div>
+                <div class="stat-card" routerLink="/supplier-management" style="cursor: pointer;">
+                    <i class="bi bi-truck"></i>
+                    <div class="stat-info">
+                        <h3>Suppliers</h3>
+                        <p>Manage Contributors</p>
+                    </div>
+                </div>
+                <div class="stat-card" routerLink="/customer-management" style="cursor: pointer;">
+                    <i class="bi bi-person-heart"></i>
+                    <div class="stat-info">
+                        <h3>Customers</h3>
+                        <p>Client Directory</p>
+                    </div>
+                </div>
                 <div class="stat-card">
                     <i class="bi bi-box-seam"></i>
                     <div class="stat-info">
@@ -49,9 +70,17 @@
                         <i class="bi bi-person-plus"></i>
                         <span>Add New Staff</span>
                     </button>
-                    <button class="btn btn-action-card" routerLink="/user-management">
-                        <i class="bi bi-shield-lock"></i>
-                        <span>System Access</span>
+                    <button class="btn btn-action-card" routerLink="/employee-management">
+                        <i class="bi bi-person-badge"></i>
+                        <span>Employee List</span>
+                    </button>
+                    <button class="btn btn-action-card" routerLink="/supplier-management">
+                        <i class="bi bi-truck"></i>
+                        <span>Manage Suppliers</span>
+                    </button>
+                    <button class="btn btn-action-card" routerLink="/customer-management">
+                        <i class="bi bi-person-heart"></i>
+                        <span>Customer Directory</span>
                     </button>
                 </div>
             </div>
