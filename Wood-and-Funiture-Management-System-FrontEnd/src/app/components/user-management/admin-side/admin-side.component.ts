@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../service/auth.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-admin-side',
@@ -9,7 +11,17 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './admin-side.component.html',
   styleUrls: ['./admin-side.component.css']
 })
-export class AdminSideComponent {
+export class AdminSideComponent implements OnInit {
+
+  currentUser$: Observable<any>;
+
+  constructor(private authService: AuthService) {
+    this.currentUser$ = this.authService.currentUser;
+  }
+
+  isSupplier(user: any): boolean {
+    return user?.role?.toLowerCase() === 'supplier';
+  }
   menuItems = [
     { name: 'Dashboard', icon: 'bi-grid-1x2-fill', route: '/admin-dashboard' },
     { name: 'User Management', icon: 'bi-people-fill', route: '/user-management' },
@@ -24,4 +36,6 @@ export class AdminSideComponent {
     { name: 'Inventory', icon: 'bi-box-seam-fill', route: '/inventory' },
     { name: 'Settings', icon: 'bi-gear-fill', route: '/settings' }
   ];
+
+  ngOnInit(): void {}
 }
