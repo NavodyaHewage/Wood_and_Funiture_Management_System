@@ -3,10 +3,13 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UserManagementService } from '../../service/user-management.service';
 import { ToastService } from '../../service/toast.service';
+import { HeaderComponent } from '../header/header.component';
+import { AdminSideComponent } from '../user-management/admin-side/admin-side.component';
+
 @Component({
     selector: 'app-profile',
     standalone: true,
-    imports: [CommonModule, FormsModule],
+    imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent],
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.css']
 })
