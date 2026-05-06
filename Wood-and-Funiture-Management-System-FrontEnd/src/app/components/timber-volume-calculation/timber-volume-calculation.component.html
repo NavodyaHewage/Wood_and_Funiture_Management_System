@@ -1,0 +1,85 @@
+<div class="cft-overlay" *ngIf="isOpen" (click)="closeModal($event)">
+    <div class="cft-modal-card" [@modalScale] (click)="$event.stopPropagation()">
+        
+        <!-- Close Button -->
+        <button class="absolute-close" (click)="closeModal()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="cft-split-container">
+            
+            <!-- LEFT PANEL: Inputs -->
+            <div class="input-panel">
+                <div class="tool-header">
+                    <div class="title-with-icon">
+                        <i class="bi bi-calculator"></i>
+                        <h2>Timber CFT Tool</h2>
+                    </div>
+                    <p class="subtitle">Quickly calculate timber volume and estimated valuation for a single log.</p>
+                </div>
+
+                <form [formGroup]="logForm" class="tool-form">
+                    <div class="row gx-3">
+                        <div class="col-6 mb-4">
+                            <label>LOG GIRTH</label>
+                            <div class="premium-input">
+                                <i class="bi bi-circle"></i>
+                                <input type="number" formControlName="girthIn" placeholder="0.00">
+                                <span class="unit">IN</span>
+                            </div>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <label>LOG LENGTH</label>
+                            <div class="premium-input">
+                                <i class="bi bi-ruler"></i>
+                                <input type="number" formControlName="lengthFt" placeholder="0.00">
+                                <span class="unit">FT</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-5">
+                        <label>WOOD TYPE / MATERIAL</label>
+                        <div class="premium-input">
+                            <i class="bi bi-tree"></i>
+                            <select formControlName="woodTypeId" (change)="onWoodTypeChange()">
+                                <option [value]="null" disabled>Select Wood Type</option>
+                                <option *ngFor="let type of woodTypes" [value]="type.rmId">
+                                    {{ type.rmName }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-reset-tool" (click)="resetEntryForm()">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Reset
+                    </button>
+                </form>
+            </div>
+
+            <!-- RIGHT PANEL: Results -->
+            <div class="output-panel">
+                <div class="result-section">
+                    <label>VOLUME OUTPUT</label>
+                    <div class="display-value volume">
+                        <span class="number">{{ currentVolume | number:'1.2-2' }}</span>
+                        <span class="unit-text">CFT</span>
+                    </div>
+                </div>
+
+                <div class="result-section mt-auto">
+                    <label>ESTIMATED TOTAL VALUE</label>
+                    <div class="display-value price">
+                        <span class="currency">Rs.</span>
+                        <span class="number">{{ currentEstimatedValue | number:'1.2-2' }}</span>
+                    </div>
+                </div>
+
+                <div class="formula-footer">
+                    FORMULA: (GIRTH² × LENGTH) / 2304
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

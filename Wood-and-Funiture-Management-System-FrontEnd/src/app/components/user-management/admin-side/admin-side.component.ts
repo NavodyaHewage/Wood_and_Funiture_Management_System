@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
 import { Observable } from 'rxjs';
+import { CftCalculatorService } from '../../../service/cft-calculator.service';
 
 @Component({
   selector: 'app-admin-side',
@@ -15,8 +16,15 @@ export class AdminSideComponent implements OnInit {
 
   currentUser$: Observable<any>;
 
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private cftService: CftCalculatorService
+  ) {
     this.currentUser$ = this.authService.currentUser;
+  }
+
+  openCftCalculator() {
+    this.cftService.open();
   }
 
   isSupplier(user: any): boolean {
