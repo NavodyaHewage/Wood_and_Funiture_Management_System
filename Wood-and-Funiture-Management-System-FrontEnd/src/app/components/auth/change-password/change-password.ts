@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
 import { ToastService } from '../../../service/toast.service';
+import { LanguageService } from '../../../service/language.service';
 
 @Component({
     selector: 'app-change-password',
@@ -36,7 +37,8 @@ export class ChangePassword {
         private authService: AuthService,
         private router: Router,
         private route: ActivatedRoute,
-        private toastService: ToastService
+        private toastService: ToastService,
+        public lang: LanguageService
     ) { }
 
     ngOnInit() {
@@ -66,16 +68,16 @@ export class ChangePassword {
         this.passwordStrength = strength;
 
         if (strength <= 25) {
-            this.strengthLabel = 'Weak';
+            this.strengthLabel = this.lang.translate('CHANGE_PASSWORD.STRENGTH.WEAK');
             this.strengthColor = '#ff4d4d';
         } else if (strength <= 50) {
-            this.strengthLabel = 'Fair';
+            this.strengthLabel = this.lang.translate('CHANGE_PASSWORD.STRENGTH.FAIR');
             this.strengthColor = '#ffa64d';
         } else if (strength <= 75) {
-            this.strengthLabel = 'Good';
+            this.strengthLabel = this.lang.translate('CHANGE_PASSWORD.STRENGTH.GOOD');
             this.strengthColor = '#a3cfbb';
         } else {
-            this.strengthLabel = 'Strong';
+            this.strengthLabel = this.lang.translate('CHANGE_PASSWORD.STRENGTH.STRONG');
             this.strengthColor = '#198754';
         }
     }
@@ -85,12 +87,12 @@ export class ChangePassword {
         this.successMessage = '';
 
         if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
-            this.toastService.showError('Passwords do not match');
+            this.toastService.showError(this.lang.translate('CHANGE_PASSWORD.PASSWORDS_NOT_MATCH'));
             return;
         }
 
         if (this.passwordData.newPassword.length < 6) {
-            this.toastService.showWarning('New password must be at least 6 characters');
+            this.toastService.showWarning(this.lang.translate('CHANGE_PASSWORD.WARNING_MIN_LENGTH'));
             return;
         }
 
@@ -102,7 +104,7 @@ export class ChangePassword {
         ).subscribe({
             next: (response) => {
                 this.isLoading = false;
-                this.toastService.showSuccess('Password changed successfully! Please login with your new password.');
+                this.toastService.showSuccess(this.lang.translate('CHANGE_PASSWORD.SUCCESS_CHANGE'));
                 this.passwordData = { username: '', oldPassword: '', newPassword: '', confirmPassword: '' };
 
                 setTimeout(() => {
