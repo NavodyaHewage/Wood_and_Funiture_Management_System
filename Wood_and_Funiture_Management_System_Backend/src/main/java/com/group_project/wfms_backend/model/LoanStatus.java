@@ -7,6 +7,7 @@ public enum LoanStatus {
     ACTIVE("Active"),
     PARTIALLY_PAID("Partially Paid"),
     COMPLETED("Completed"),
+    SETTLED("Settled"),
     CANCELLED("Cancelled");
 
     private final String displayName;

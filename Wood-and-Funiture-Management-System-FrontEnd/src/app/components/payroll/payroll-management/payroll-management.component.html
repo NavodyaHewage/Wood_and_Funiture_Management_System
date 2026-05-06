@@ -1,0 +1,182 @@
+<div class="dashboard-layout">
+  <app-admin-side></app-admin-side>
+  <main class="main-content">
+    <app-header></app-header>
+    <div class="content-body">
+      <div class="payroll-container animate-fade-in">
+        
+        <div class="dashboard-controls mb-4">
+          <div class="title-section">
+            <h1>Payroll & Salary Automation</h1>
+            <p class="text-muted">Generate, preview and confirm monthly employee payouts</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <!-- Configuration Panel -->
+          <div class="col-lg-4">
+            <div class="card config-card mb-4">
+              <div class="card-header bg-primary-dark text-white">
+                <h5 class="mb-0"><i class="bi bi-gear-fill me-2"></i> Payroll Parameters</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label class="wood-label">Select Employee</label>
+                  <select class="form-select wood-select" [(ngModel)]="selectedEmployeeId">
+                    <option [ngValue]="null" disabled>-- Choose Employee --</option>
+                    <option *ngFor="let emp of activeEmployees" [ngValue]="emp.id">
+                      {{ emp.fullName }} ({{ emp.designation }})
+                    </option>
+                  </select>
+                </div>
+
+                <div class="row g-2 mb-3">
+                  <div class="col-6">
+                    <label class="wood-label">Month</label>
+                    <select class="form-select wood-select" [(ngModel)]="selectedMonth">
+                      <option *ngFor="let m of months; let i = index" [ngValue]="i+1">{{ m }}</option>
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <label class="wood-label">Year</label>
+                    <select class="form-select wood-select" [(ngModel)]="selectedYear">
+                      <option *ngFor="let y of years" [ngValue]="y">{{ y }}</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="mb-3">
+                  <label class="wood-label">Payment Frequency</label>
+                  <div class="d-flex gap-3 mt-1">
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="paymentType" id="typeMonthly" value="MONTHLY" [(ngModel)]="paymentType">
+                      <label class="form-check-label" for="typeMonthly">Monthly</label>
+                    </div>
+                    <div class="form-check">
+                      <input class="form-check-input" type="radio" name="paymentType" id="typeDaily" value="DAILY" [(ngModel)]="paymentType">
+                      <label class="form-check-label" for="typeDaily">Daily Wage</label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-check form-switch mb-3">
+                  <input class="form-check-input" type="checkbox" id="loanToggle" [(ngModel)]="isLoanDeductionEnabled">
+                  <label class="form-check-label fw-bold" for="loanToggle">
+                    Deduct Loan Installment
+                  </label>
+                </div>
+
+                <hr class="my-4">
+
+                <div class="mb-3">
+                  <label class="wood-label">Other Deductions (Rs.)</label>
+                  <input type="number" class="form-control wood-input" [(ngModel)]="otherDeduction" placeholder="0.00">
+                </div>
+
+                <div class="mb-3" *ngIf="otherDeduction > 0">
+                  <label class="wood-label">Deduction Reason</label>
+                  <textarea class="form-control wood-input" [(ngModel)]="otherDeductionReason" rows="2" placeholder="Required for audit..."></textarea>
+                </div>
+
+                <div class="mb-4">
+                  <label class="wood-label">Loan Override (Optional)</label>
+                  <input type="number" class="form-control wood-input" [(ngModel)]="loanOverride" placeholder="Auto-calculated if empty">
+                  <small class="text-muted fst-italic">Only values > auto-calculated installment are accepted.</small>
+                </div>
+
+                <button class="btn btn-calculate w-100 py-2" (click)="calculatePayroll()" [disabled]="isCalculating">
+                  <i class="bi bi-calculator-fill me-2" *ngIf="!isCalculating"></i>
+                  <span class="spinner-border spinner-border-sm me-2" *ngIf="isCalculating"></span>
+                  {{ isCalculating ? 'Calculating...' : 'Preview Payroll' }}
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preview Panel -->
+          <div class="col-lg-8">
+            <div *ngIf="payrollPreview" class="preview-container animate-slide-up">
+              <div class="card preview-card shadow-lg border-0">
+                <div class="card-header bg-gradient-wood text-white d-flex justify-content-between align-items-center p-3">
+                  <h5 class="mb-0">Payroll Preview: {{ payrollPreview.employeeName }}</h5>
+                  <span class="badge bg-white text-dark">{{ months[selectedMonth-1] }} {{ selectedYear }}</span>
+                </div>
+                <div class="card-body p-4">
+                  
+                  <div class="row mb-4">
+                    <div class="col-md-6 border-end">
+                      <h6 class="text-uppercase text-muted small fw-bold mb-3">Earnings Breakdown</h6>
+                      <div class="d-flex justify-content-between mb-2">
+                        <span>Basic Salary ({{ payrollPreview.designation }})</span>
+                        <span class="fw-bold">Rs. {{ payrollPreview.baseSalary | number:'1.2-2' }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between mb-2">
+                        <span>Overtime ({{ payrollPreview.overtimeHours | number:'1.1-2' }} hrs)</span>
+                        <span class="fw-bold text-success">+ Rs. {{ payrollPreview.overtimeAmount | number:'1.2-2' }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between mt-3 pt-2 border-top">
+                        <span class="fw-bold">Gross Earnings</span>
+                        <span class="fw-bold fs-5">Rs. {{ (payrollPreview.baseSalary + payrollPreview.overtimeAmount) | number:'1.2-2' }}</span>
+                      </div>
+                    </div>
+
+                    <div class="col-md-6 ps-md-4">
+                      <h6 class="text-uppercase text-muted small fw-bold mb-3">Deductions & Adjustments</h6>
+                      <div class="d-flex justify-content-between mb-2">
+                        <span>Loan Recovery</span>
+                        <span class="fw-bold text-danger">- Rs. {{ payrollPreview.loanDeduction | number:'1.2-2' }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between mb-2">
+                        <span>Other Deductions</span>
+                        <span class="fw-bold text-danger">- Rs. {{ payrollPreview.otherDeduction | number:'1.2-2' }}</span>
+                      </div>
+                      <div class="d-flex justify-content-between mb-2">
+                        <span>Daily Wages Already Paid</span>
+                        <span class="fw-bold text-secondary">- Rs. {{ payrollPreview.previouslyPaidAmount | number:'1.2-2' }}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="net-salary-section bg-light p-4 rounded-3 text-center border">
+                    <h2 class="mb-1 fw-bold text-primary-dark">Net Payable: Rs. {{ payrollPreview.netSalary | number:'1.2-2' }}</h2>
+                    <p class="text-muted small mb-0">Total amount to be disbursed for the month of {{ months[selectedMonth-1] }}</p>
+                  </div>
+
+                  <div class="warnings mt-4" *ngIf="payrollPreview.attendanceWarnings.length > 0">
+                    <div class="alert alert-warning border-start border-4 border-warning">
+                      <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                      <strong>Attendance Flags:</strong>
+                      <ul class="mb-0 mt-2">
+                        <li *ngFor="let warn of payrollPreview.attendanceWarnings">{{ warn }}</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="actions mt-4 pt-3 border-top d-flex gap-3">
+                    <button class="btn btn-outline-secondary flex-grow-1" (click)="payrollPreview = null">Cancel</button>
+                    <button class="btn btn-confirm flex-grow-1 py-2" (click)="confirmPayroll()" [disabled]="isConfirming">
+                      <i class="bi bi-check-circle-fill me-2" *ngIf="!isConfirming"></i>
+                      <span class="spinner-border spinner-border-sm me-2" *ngIf="isConfirming"></span>
+                      {{ isConfirming ? 'Finalizing...' : 'Confirm & Generate Expense' }}
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="!payrollPreview && !isCalculating" class="empty-preview-state text-center py-5">
+              <div class="empty-icon-box mb-3">
+                <i class="bi bi-file-earmark-spreadsheet text-muted opacity-25"></i>
+              </div>
+              <h4 class="text-muted">No Preview Generated</h4>
+              <p class="text-muted">Select an employee and period, then click "Preview Payroll" to see calculation details.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>

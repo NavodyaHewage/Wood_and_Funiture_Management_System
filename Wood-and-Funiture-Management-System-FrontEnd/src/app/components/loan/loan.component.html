@@ -118,7 +118,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let loan of loans" [class.settled-row]="loan.status === 'COMPLETED'">
+                    <tr *ngFor="let loan of loans" [class.settled-row]="loan.status === 'SETTLED'">
                       <td class="monospace">#{{ loan.loanId }}</td>
                       <td>{{ loan.employeeName }}</td>
                       <td class="monospace text-end">{{ loan.loanAmount | number:'1.2-2' }}</td>

@@ -254,7 +254,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     const themes: Record<string, string> = {
       'ACTIVE': 'amber',
       'PARTIALLY_PAID': 'green',
-      'COMPLETED': 'blue',
+      'SETTLED': 'blue',
       'CANCELLED': 'red'
     };
     return themes[status] || 'gray';
