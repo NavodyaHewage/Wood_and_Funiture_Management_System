@@ -13,4 +13,8 @@ public class PayrollRequestDTO {
     private BigDecimal loanDeductionOverride;
     private String paymentType; // "DAILY" or "MONTHLY"
     private Boolean isLoanDeductionEnabled;
+
+    public Boolean isLoanDeductionEnabled() {
+        return isLoanDeductionEnabled;
+    }
 }

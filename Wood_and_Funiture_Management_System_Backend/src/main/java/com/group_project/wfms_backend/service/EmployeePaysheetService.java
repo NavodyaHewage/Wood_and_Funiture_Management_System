@@ -98,7 +98,7 @@ public class EmployeePaysheetService {
 
         // 3. Loan Deduction
         BigDecimal totalLoanDeduction = BigDecimal.ZERO;
-        if (request.isLoanDeductionEnabled()) {
+        if (Boolean.TRUE.equals(request.getIsLoanDeductionEnabled())) {
             List<Loan_Deduction_Rule> activeRules = loanDeductionRuleRepository.findActiveRulesByEmployeeId(employee.getId());
             totalLoanDeduction = activeRules.stream()
                     .map(Loan_Deduction_Rule::getDeductionAmount)
