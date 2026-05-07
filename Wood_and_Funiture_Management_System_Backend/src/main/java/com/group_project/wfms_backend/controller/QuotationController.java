@@ -3,6 +3,7 @@ package com.group_project.wfms_backend.controller;
 import com.group_project.wfms_backend.dto.auth.QuotationRequestDTO;
 import com.group_project.wfms_backend.dto.auth.QuotationResponseDTO;
 import com.group_project.wfms_backend.model.QuotationStatus;
+import com.group_project.wfms_backend.service.QuotationReminderService;
 import com.group_project.wfms_backend.service.QuotationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,12 @@ import java.util.List;
 public class QuotationController {
 
     private final QuotationService quotationService;
+    private final QuotationReminderService quotationReminderService;
+
+    @PostMapping("/check-expiry")
+    public ResponseEntity<String> triggerExpiryCheck() {
+        return ResponseEntity.ok(quotationReminderService.checkQuotationExpirations());
+    }
 
     @PostMapping
     public ResponseEntity<QuotationResponseDTO> createQuotation(@Valid @RequestBody QuotationRequestDTO requestDTO) {

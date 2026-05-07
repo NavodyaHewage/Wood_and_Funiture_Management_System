@@ -25,8 +25,11 @@ public interface QuotationRepository extends JpaRepository<Quotation, Integer> {
 
     List<Quotation> findByCustomer_CusIdAndStatus(Integer customerId, QuotationStatus status);
 
-    @Query("SELECT q FROM Quotation q WHERE q.validUntil < :today AND q.status = 'Pending'")
-    List<Quotation> findExpiredPendingQuotations(@Param("today") LocalDate today);
+    @Query("SELECT q FROM Quotation q WHERE q.validUntil < :today AND q.status = :status")
+    List<Quotation> findExpiredQuotations(@Param("today") LocalDate today, @Param("status") QuotationStatus status);
+
+    @Query("SELECT q FROM Quotation q WHERE q.status = :status AND q.validUntil BETWEEN :today AND :soon")
+    List<Quotation> findExpiringSoon(@Param("status") QuotationStatus status, @Param("today") LocalDate today, @Param("soon") LocalDate soon);
 
     @Query("SELECT q FROM Quotation q ORDER BY q.quotationDate DESC")
     List<Quotation> findAllOrderByDateDesc();
