@@ -1,24 +1,30 @@
 <div class="login-wrapper">
+    <!-- Language Toggle -->
+    <div class="language-toggle-container">
+        <button class="lang-btn" [class.active]="lang.getLanguage() === 'en'" (click)="lang.setLanguage('en')">EN</button>
+        <button class="lang-btn" [class.active]="lang.getLanguage() === 'si'" (click)="lang.setLanguage('si')">සිං</button>
+    </div>
+
     <!-- Left Side: Branding/Logo -->
     <div class="branding-section">
         <div class="branding-content">
             <div class="logo-container">
                 <img src="/logo.jpg" alt="Sachintha Timber Mall Logo" class="brand-logo">
             </div>
-            <h1 class="brand-title">Sachintha Timber Mall</h1>
-            <p class="brand-subtitle">Wood & Furniture Management System</p>
+            <h1 class="brand-title">{{ lang.translate('LOGIN.BRAND_TITLE') }}</h1>
+            <p class="brand-subtitle">{{ lang.translate('LOGIN.BRAND_SUBTITLE') }}</p>
             <div class="brand-features">
                 <div class="feature-item">
                     <i class="bi bi-check-circle-fill"></i>
-                    <span>Comprehensive Inventory Management</span>
+                    <span>{{ lang.translate('LOGIN.FEATURE_INVENTORY') }}</span>
                 </div>
                 <div class="feature-item">
                     <i class="bi bi-check-circle-fill"></i>
-                    <span>Real-time Order Tracking</span>
+                    <span>{{ lang.translate('LOGIN.FEATURE_TRACKING') }}</span>
                 </div>
                 <div class="feature-item">
                     <i class="bi bi-check-circle-fill"></i>
-                    <span>Secure & Reliable</span>
+                    <span>{{ lang.translate('LOGIN.FEATURE_SECURE') }}</span>
                 </div>
             </div>
         </div>
@@ -28,42 +34,36 @@
     <div class="form-section">
         <div class="form-container">
             <div class="form-header">
-                <h2>Welcome Back</h2>
-                <p class="text-muted">Please sign in to your account</p>
+                <h2>{{ lang.translate('LOGIN.WELCOME_BACK') }}</h2>
+                <p class="text-muted">{{ lang.translate('LOGIN.SIGN_IN_PROMPT') }}</p>
             </div>
 
             <!-- Alert Messages -->
-            <!-- <div *ngIf="errorMessage" class="alert alert-danger" role="alert">
-                <i class="bi bi-exclamation-circle-fill me-2"></i>{{ errorMessage }}
-                <div *ngIf="lockCountdown > 0" class="mt-2 fw-bold text-center">
-                    Please try again in: {{ formatTime(lockCountdown) }}
-                </div>
-            </div> -->
             <div *ngIf="successMessage" class="alert alert-success" role="alert">
                 <i class="bi bi-check-circle-fill me-2"></i>{{ successMessage }}
             </div>
 
             <form (ngSubmit)="onLogin()" #loginForm="ngForm" class="login-form">
                 <div class="form-group">
-                    <label for="username" class="form-label">Username</label>
+                    <label for="username" class="form-label">{{ lang.translate('LOGIN.USERNAME') }}</label>
                     <div class="input-group">
                         <span class="input-icon">
                             <i class="bi bi-person"></i>
                         </span>
                         <input type="text" class="form-control" id="username" name="username"
-                            [(ngModel)]="loginData.username" required placeholder="Enter your username"
+                            [(ngModel)]="loginData.username" required [placeholder]="lang.translate('LOGIN.USERNAME_PLACEHOLDER')"
                             [disabled]="isLoading">
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="password" class="form-label">Password</label>
+                    <label for="password" class="form-label">{{ lang.translate('LOGIN.PASSWORD') }}</label>
                     <div class="input-group">
                         <span class="input-icon">
                             <i class="bi bi-lock"></i>
                         </span>
                         <input [type]="showPassword ? 'text' : 'password'" class="form-control" id="password"
-                            name="password" [(ngModel)]="loginData.password" required placeholder="Enter your password"
+                            name="password" [(ngModel)]="loginData.password" required [placeholder]="lang.translate('LOGIN.PASSWORD_PLACEHOLDER')"
                             [disabled]="isLoading || lockCountdown > 0">
                         <span class="password-toggle" (click)="showPassword = !showPassword">
                             <i class="bi" [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"></i>
@@ -76,12 +76,12 @@
                         <input class="form-check-input" type="checkbox" id="rememberMe" [(ngModel)]="rememberMe"
                             name="rememberMe">
                         <label class="form-check-label" for="rememberMe">
-                            Remember me
+                            {{ lang.translate('LOGIN.REMEMBER_ME') }}
                         </label>
                     </div>
                     <div class="d-flex flex-column align-items-end">
-                        <a (click)="onForgotPassword()" class="forgot-password mb-1" style="cursor: pointer;">Reset Password</a>
-                        <a routerLink="/change-password" class="forgot-password mb-1">Change Password?</a>
+                        <a (click)="onForgotPassword()" class="forgot-password mb-1" style="cursor: pointer;">{{ lang.translate('LOGIN.RESET_PASSWORD_LINK') }}</a>
+                        <a routerLink="/change-password" class="forgot-password mb-1">{{ lang.translate('LOGIN.CHANGE_PASSWORD_LINK') }}</a>
                     </div>
                 </div>
 
@@ -89,8 +89,8 @@
                     [disabled]="!loginForm.form.valid || isLoading || lockCountdown > 0">
                     <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2" role="status"
                         aria-hidden="true"></span>
-                    <span *ngIf="!isLoading">Sign In</span>
-                    <span *ngIf="isLoading">Signing In...</span>
+                    <span *ngIf="!isLoading">{{ lang.translate('LOGIN.SIGN_IN_BTN') }}</span>
+                    <span *ngIf="isLoading">{{ lang.translate('LOGIN.SIGNING_IN_BTN') }}</span>
                 </button>
             </form>
         </div>
@@ -104,20 +104,20 @@
                 <div class="modal-icon">
                     <i class="bi bi-shield-lock"></i>
                 </div>
-                <h3>Reset Password?</h3>
-                <p>Are you sure you want to reset the password for user <strong>{{loginData.username}}</strong>?</p>
+                <h3>{{ lang.translate('LOGIN.RESET_MODAL_TITLE') }}</h3>
+                <p>{{ lang.translate('LOGIN.RESET_MODAL_BODY') }} <strong>{{loginData.username}}</strong>?</p>
             </div>
             <div class="modal-body">
                 <div class="reset-info">
                     <i class="bi bi-info-circle"></i>
-                    <span>Your password will be set to the default: <strong>password123</strong></span>
+                    <span>{{ lang.translate('LOGIN.RESET_MODAL_INFO') }}</span>
                 </div>
-                <p class="modal-note">You will be required to change it immediately after logging in.</p>
+                <p class="modal-note">{{ lang.translate('LOGIN.RESET_MODAL_NOTE') }}</p>
             </div>
             <div class="modal-footer">
-                <button class="btn-cancel" (click)="cancelReset()">Cancel</button>
+                <button class="btn-cancel" (click)="cancelReset()">{{ lang.translate('LOGIN.CANCEL_BTN') }}</button>
                 <button class="btn-confirm" (click)="confirmReset()">
-                    <i class="bi bi-check2-circle me-1"></i> Confirm Reset
+                    <i class="bi bi-check2-circle me-1"></i> {{ lang.translate('LOGIN.CONFIRM_RESET_BTN') }}
                 </button>
             </div>
         </div>
