@@ -21,17 +21,20 @@
                 <form [formGroup]="logForm" class="tool-form">
                     <div class="row gx-3">
                         <div class="col-6 mb-4">
-                            <label>LOG GIRTH</label>
+                            <label style="text-align: center;">LOG GIRTH</label>
                             <div class="premium-input">
-                                <i class="bi bi-circle"></i>
+                                <svg   width="25" height="25" viewBox="0 0 18 18" fill="none">
+                  <circle cx="9" cy="9" r="7" stroke="#C17B2F" stroke-width="1.8" fill="none"/>
+                  <circle cx="9" cy="9" r="2.5" stroke="#C17B2F" stroke-width="1.5" fill="none"/>
+                </svg>
                                 <input type="number" formControlName="girthIn" placeholder="0.00">
                                 <span class="unit">IN</span>
                             </div>
                         </div>
                         <div class="col-6 mb-4">
-                            <label>LOG LENGTH</label>
+                            <label style="text-align: center;">LOG LENGTH</label>
                             <div class="premium-input">
-                                <i class="bi bi-ruler"></i>
+                                <i class="bi bi-rulers"></i>
                                 <input type="number" formControlName="lengthFt" placeholder="0.00">
                                 <span class="unit">FT</span>
                             </div>
@@ -39,7 +42,7 @@
                     </div>
 
                     <div class="col-12 mb-5">
-                        <label>WOOD TYPE / MATERIAL</label>
+                        <label style="text-align: center;">WOOD TYPE / MATERIAL</label>
                         <div class="premium-input">
                             <i class="bi bi-tree"></i>
                             <select formControlName="woodTypeId" (change)="onWoodTypeChange()">
@@ -48,12 +51,13 @@
                                     {{ type.rmName }}
                                 </option>
                             </select>
+                            
                         </div>
                     </div>
 
                     <button type="button" class="btn-reset-tool" (click)="resetEntryForm()">
                         <i class="bi bi-arrow-counterclockwise"></i>
-                        Reset
+                        Reset Calculator
                     </button>
                 </form>
             </div>
@@ -77,8 +81,12 @@
                 </div>
 
                 <div class="formula-footer">
-                    FORMULA: (GIRTH² × LENGTH) / 2304
-                </div>
+    <span class="formula-label">FORMULA:</span>
+    <div class="fraction">
+        <span class="numerator">GIRTH² × LENGTH</span>
+        <span class="denominator">2304</span>
+    </div>
+</div>
             </div>
         </div>
     </div>
