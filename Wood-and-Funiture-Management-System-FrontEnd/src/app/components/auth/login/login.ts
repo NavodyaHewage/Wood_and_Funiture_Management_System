@@ -5,6 +5,7 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
 import { ToastService } from '../../../service/toast.service';
 import { SessionService } from '../../../service/session.service';
+import { LanguageService } from '../../../service/language.service';
 
 @Component({
   selector: 'app-login',
@@ -33,20 +34,26 @@ export class Login {
     private router: Router,
     private authService: AuthService,
     private toastService: ToastService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
+    public lang: LanguageService
   ) { }
+
+  toggleLanguage() {
+    const newLang = this.lang.getLanguage() === 'en' ? 'si' : 'en';
+    this.lang.setLanguage(newLang);
+  }
 
   onLogin() {
     // ... validation logic ...
     this.authService.login(this.loginData.username, this.loginData.password).subscribe({
       next: (response) => {
         this.isLoading = false;
-        this.toastService.showSuccess('Login successful! Welcome back.');
+        this.toastService.showSuccess(this.lang.translate('LOGIN.SUCCESS_LOGIN'));
         this.sessionService.startMonitoring();
 
         // Check if password reset is required
         if (response.passwordResetRequired) {
-          this.toastService.showWarning('Your password has been reset. Please change it to continue.');
+          this.toastService.showWarning(this.lang.translate('LOGIN.WARNING_RESET'));
           setTimeout(() => {
             this.router.navigate(['/change-password'], { queryParams: { username: this.loginData.username } });
           }, 1500);
@@ -83,19 +90,19 @@ export class Login {
             this.startLockCountdown(5 * 60); // 5 minutes
           }
         } else if (error.status === 401) {
-          this.toastService.showError('Invalid username or password');
+          this.toastService.showError(this.lang.translate('LOGIN.ERROR_INVALID'));
           this.remainingAttempts = null;
         } else if (error.status === 423) {
-          this.toastService.showError('Your account has been locked. Please try again in 5 minutes.');
+          this.toastService.showError(this.lang.translate('LOGIN.ERROR_LOCKED'));
           this.startLockCountdown(5 * 60);
         } else if (error.status === 403) {
-          this.toastService.showError('Your account has been disabled. Please contact support.');
+          this.toastService.showError(this.lang.translate('LOGIN.ERROR_DISABLED'));
           this.remainingAttempts = null;
         } else if (error.status === 0) {
-          this.toastService.showError('Unable to connect to server. Please check your connection.');
+          this.toastService.showError(this.lang.translate('LOGIN.ERROR_CONNECTION'));
           this.remainingAttempts = null;
         } else {
-          this.toastService.showError('An error occurred during login. Please try again.');
+          this.toastService.showError(this.lang.translate('LOGIN.ERROR_GENERAL'));
           this.remainingAttempts = null;
         }
 
