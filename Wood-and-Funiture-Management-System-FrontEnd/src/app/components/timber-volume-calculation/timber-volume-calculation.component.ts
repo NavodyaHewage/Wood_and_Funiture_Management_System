@@ -4,9 +4,15 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { CftCalculatorService } from '../../service/cft-calculator.service';
 import { RawMaterialService } from '../../service/raw-material.service';
 import { WoodType } from '../../models/timber-volume.model';
-import { Subscription } from 'rxjs';
+import { Subscription, debounceTime } from 'rxjs';
 import { trigger, transition, style, animate } from '@angular/animations';
 
+/**
+ * TimberVolumeCalculationComponent
+ * 
+ * Handles real-time CFT calculations using the Hoppus formula: (Girth² * Length) / 2304
+ * Note: Despite the database column being named 'Girth_ft', it stores measurements in INCHES.
+ */
 @Component({
   selector: 'app-timber-volume-calculation',
   standalone: true,
@@ -26,20 +32,40 @@ import { trigger, transition, style, animate } from '@angular/animations';
   ]
 })
 export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
+  readonly HOPPUS_DIVISOR = 2304;
+  
   logForm: FormGroup;
   woodTypes: WoodType[] = [];
   isOpen = false;
   
+  // Warning Flags
+  girthWarning = '';
+  lengthWarning = '';
+
+  currentVolume: number | null = null;
+  currentEstimatedValue: number | null = null;
+  
   private subscription: Subscription = new Subscription();
+  private calculationSubscription: Subscription | null = null;
 
   constructor(
     private fb: FormBuilder,
     public cftService: CftCalculatorService,
     private rawMaterialService: RawMaterialService
   ) {
+    const decimalPattern = '^[0-9]+(\\.[0-9]{1,2})?$';
     this.logForm = this.fb.group({
-      lengthFt: [0, [Validators.required, Validators.min(0.01)]],
-      girthIn: [0, [Validators.required, Validators.min(0.01)]],
+      lengthFt: [null, [
+        Validators.required, 
+        Validators.min(0.01), 
+        Validators.pattern(decimalPattern)
+      ]],
+      girthIn: [null, [
+        Validators.required, 
+        Validators.min(0.01), 
+        Validators.max(240),
+        Validators.pattern(decimalPattern)
+      ]],
       woodTypeId: [null, Validators.required]
     });
   }
@@ -50,8 +76,10 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
         this.isOpen = state;
         if (state) {
           this.loadWoodTypes();
+          this.setupCalculations();
         } else {
           this.resetEntryForm();
+          this.calculationSubscription?.unsubscribe();
         }
       })
     );
@@ -59,6 +87,15 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscription.unsubscribe();
+    this.calculationSubscription?.unsubscribe();
+  }
+
+  setupCalculations() {
+    this.calculationSubscription = this.logForm.valueChanges
+      .pipe(debounceTime(300))
+      .subscribe(() => {
+        this.validateAndCalculate();
+      });
   }
 
   loadWoodTypes() {
@@ -72,34 +109,92 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
     });
   }
 
-  get currentVolume(): number {
-    const length = this.logForm.get('lengthFt')?.value || 0;
-    const girthIn = this.logForm.get('girthIn')?.value || 0;
-    if (length > 0 && girthIn > 0) {
-      return (girthIn * girthIn * length) / 2304;
+  validateAndCalculate() {
+    const girth = this.logForm.get('girthIn')?.value;
+    const length = this.logForm.get('lengthFt')?.value;
+    const woodTypeId = this.logForm.get('woodTypeId')?.value;
+
+    const girthCtrl = this.logForm.get('girthIn');
+    const lengthCtrl = this.logForm.get('lengthFt');
+
+    // Reset Warnings
+    this.girthWarning = '';
+    this.lengthWarning = '';
+
+    // Check if fields are empty
+    if (!girth && !length && !woodTypeId) {
+      this.currentVolume = null;
+      this.currentEstimatedValue = null;
+      return;
     }
-    return 0;
+
+    // Check Girth Warnings
+    if (girth > 180) {
+      this.girthWarning = 'Unusual girth detected (>180 inches / 15 ft). Please confirm.';
+    } else if (girth > 0 && girth < 6) {
+      this.girthWarning = 'Very small girth detected (<6 inches). Please verify measurement.';
+    }
+
+    // Check Length Warnings
+    if (length > 100) {
+      this.lengthWarning = 'Unusual length detected (>100 ft). Please confirm.';
+    }
+
+    // Calculate Volume independently if Girth and Length are valid
+    if (girthCtrl?.valid && lengthCtrl?.valid && girth > 0 && length > 0) {
+      this.currentVolume = (girth * girth * length) / this.HOPPUS_DIVISOR;
+      
+      // Check for rounding to zero
+      if (Number(this.currentVolume.toFixed(3)) <= 0) {
+        this.currentVolume = 0;
+      }
+    } else {
+      this.currentVolume = (girth > 0 || length > 0) ? 0 : null;
+    }
+
+    // Calculate Value if Wood Type is also valid
+    if (this.currentVolume && this.currentVolume > 0 && this.logForm.get('woodTypeId')?.valid) {
+      const wood = this.woodTypes.find(w => w.rmId === +woodTypeId);
+      if (wood) {
+        this.currentEstimatedValue = this.currentVolume * wood.pricePerCft;
+      } else {
+        this.currentEstimatedValue = 0;
+      }
+    } else {
+      this.currentEstimatedValue = (woodTypeId) ? 0 : null;
+    }
   }
 
-  get currentEstimatedValue(): number {
-    const woodTypeId = this.logForm.get('woodTypeId')?.value;
-    const wood = this.woodTypes.find(w => w.rmId === +woodTypeId);
-    if (wood) {
-      return this.currentVolume * wood.pricePerCft;
+  // Prevent invalid keys in numeric inputs
+  onKeyPress(event: KeyboardEvent) {
+    const charCode = (event.which) ? event.which : event.keyCode;
+    // Allow only numbers and decimal point
+    if (charCode > 31 && (charCode < 48 || charCode > 57) && charCode !== 46) {
+      event.preventDefault();
+      return false;
     }
-    return 0;
+    // Prevent multiple decimal points
+    if (charCode === 46 && (event.target as HTMLInputElement).value.indexOf('.') !== -1) {
+      event.preventDefault();
+      return false;
+    }
+    return true;
   }
 
   onWoodTypeChange() {
-    // Value is calculated via getter
+    this.validateAndCalculate();
   }
 
   resetEntryForm() {
     this.logForm.reset({
-      lengthFt: 0,
-      girthIn: 0,
+      lengthFt: null,
+      girthIn: null,
       woodTypeId: null
     });
+    this.currentVolume = null;
+    this.currentEstimatedValue = null;
+    this.girthWarning = '';
+    this.lengthWarning = '';
   }
 
   closeModal(event?: MouseEvent) {
