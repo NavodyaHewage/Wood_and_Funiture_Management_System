@@ -43,6 +43,10 @@
     letter-spacing: 0.5px;
 }
 
+.supplier-text {
+    color: #C05800;
+}
+
 .sidebar-nav {
     flex-grow: 1;
     padding: 20px 0;

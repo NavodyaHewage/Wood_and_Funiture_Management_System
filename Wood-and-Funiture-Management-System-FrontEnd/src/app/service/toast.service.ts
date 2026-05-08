@@ -45,6 +45,14 @@ export class ToastService {
         this.show(message, 'warning', title);
     }
 
+    success(message: string, title?: string) {
+        this.showSuccess(message, title);
+    }
+
+    error(message: string, title?: string) {
+        this.showError(message, title);
+    }
+
     remove(id: number) {
         const currentToasts = this.toastsSubject.value.filter(t => t.id !== id);
         this.toastsSubject.next(currentToasts);

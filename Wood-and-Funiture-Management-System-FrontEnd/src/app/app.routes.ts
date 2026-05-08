@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { roleGuard } from './guards/role.guard';
 import { Login } from './components/auth/login/login';
 import { Register } from './components/auth/register/register';
 import { AdminDashComponent } from './components/user-management/admin-dash/admin-dash.component';
@@ -16,18 +17,24 @@ import { QuotationManagementComponent } from './components/order-managment/quota
 import { ProductCategoryComponent } from './components/order-managment/product-category/product-category.component';
 import { PayrollManagementComponent } from './components/payroll/payroll-management/payroll-management.component';
 import { DesignationSalaryConfigComponent } from './components/payroll/designation-salary-config/designation-salary-config.component';
+import { SuppliyerManagementDashboardComponent } from './components/user-management/suppliyer-management-dashboard/suppliyer-management-dashboard.component';
+import { SupplyRawMaterialComponent } from './components/inventory-management/supply-raw-material/supply-raw-material.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login, data: { title: 'User Login' } },
     { path: 'register', component: Register, data: { title: 'Register New User' } },
-    { path: 'admin-dashboard', component: AdminDashComponent, data: { title: 'Admin Dashboard' } },
-    { path: 'user-management', component: UserManagementDashboardComponent, data: { title: 'User Management' } },
-    { path: 'employee-management', component: EmployeeManagementComponent, data: { title: 'Employee Management' } },
-    { path: 'supplier-management', component: SupplierManagementComponent, data: { title: 'Supplier Management' } },
-    { path: 'customer-management', component: CustomerManagementComponent, data: { title: 'Customer Management' } },
-    { path: 'change-password', component: ChangePassword, data: { title: 'Change Password' } },
-    { path: 'profile', component: ProfileComponent, data: { title: 'User Profile' } },
+  
+
+     { path: 'admin-dashboard', component: AdminDashComponent, canActivate: [roleGuard], data: { title: 'Admin Dashboard', requiredRole: 'Admin' } },
+    { path: 'user-management', component: UserManagementDashboardComponent, canActivate: [roleGuard], data: { title: 'User Management', requiredRole: 'Admin' } },
+    { path: 'employee-management', component: EmployeeManagementComponent, canActivate: [roleGuard], data: { title: 'Employee Management', requiredRole: 'Admin' } },
+    { path: 'supplier-management', component: SupplierManagementComponent, canActivate: [roleGuard], data: { title: 'Supplier Management', requiredRole: 'Admin' } },
+    { path: 'customer-management', component: CustomerManagementComponent, canActivate: [roleGuard], data: { title: 'Customer Management', requiredRole: 'Admin' } },
+    { path: 'change-password', component: ChangePassword, canActivate: [roleGuard], data: { title: 'Change Password' } },
+    { path: 'profile', component: ProfileComponent, canActivate: [roleGuard], data: { title: 'User Profile' } },
+    { path: 'supplier-dashboard', component: SuppliyerManagementDashboardComponent, canActivate: [roleGuard], data: { title: 'Supplier Dashboard', requiredRole: 'Supplier' } },
+    
     { path: 'order-management', component: OrderManagementDashboardComponent, data: { title: 'Order Management' } },
     { path: 'quotation-management', component: QuotationManagementComponent, data: { title: 'Quotation Management' } },
     { path: 'product-category', component: ProductCategoryComponent, data: { title: 'Product Category' } },
@@ -36,5 +43,6 @@ export const routes: Routes = [
     { path: 'payroll-management', component: PayrollManagementComponent, data: { title: 'Payroll Automation' } },
     { path: 'designation-salary', component: DesignationSalaryConfigComponent, data: { title: 'Designation Salary Settings' } },
 
+    { path: 'log-management', component: SupplyRawMaterialComponent, canActivate: [roleGuard], data: { title: 'Log Management', requiredRole: 'Admin' } },
 ];
 
