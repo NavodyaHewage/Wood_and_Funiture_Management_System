@@ -8,11 +8,15 @@ import { WoodType } from '../models/timber-volume.model';
   providedIn: 'root'
 })
 export class RawMaterialService {
-  private apiUrl = `${environment.apiUrl}/raw-material-items`;
+  private apiUrl = `${environment.apiUrl}/v1/raw-material-items`;
 
   constructor(private http: HttpClient) { }
 
   getWoodTypes(): Observable<WoodType[]> {
     return this.http.get<WoodType[]>(this.apiUrl);
+  }
+
+  getAllRawMaterialItems(): Observable<any[]> {
+    return this.http.get<any[]>(this.apiUrl);
   }
 }

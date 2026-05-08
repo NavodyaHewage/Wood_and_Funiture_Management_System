@@ -16,6 +16,7 @@ import { OrderManagementDashboardComponent } from './components/order-managment/
 import { QuotationManagementComponent } from './components/order-managment/quotation-management/quotation-management.component';
 import { ProductCategoryComponent } from './components/order-managment/product-category/product-category.component';
 import { SuppliyerManagementDashboardComponent } from './components/user-management/suppliyer-management-dashboard/suppliyer-management-dashboard.component';
+import { SupplyRawMaterialComponent } from './components/inventory-management/supply-raw-material/supply-raw-material.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -37,6 +38,6 @@ export const routes: Routes = [
     { path: 'product-category', component: ProductCategoryComponent, data: { title: 'Product Category' } },
     { path: 'attendance-management', component: AttendanceListComponent, data: { title: 'Attendance Management' } },
     { path: 'loan-management', component: LoanComponent, data: { title: 'Loan & Advance Management' } },
-
+    { path: 'log-management', component: SupplyRawMaterialComponent, canActivate: [roleGuard], data: { title: 'Log Management', requiredRole: 'Admin' } },
 ];
 

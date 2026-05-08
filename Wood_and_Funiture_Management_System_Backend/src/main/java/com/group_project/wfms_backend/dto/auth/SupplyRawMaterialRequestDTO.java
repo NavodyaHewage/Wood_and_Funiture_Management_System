@@ -15,6 +15,8 @@ public class SupplyRawMaterialRequestDTO {
     private Integer rmId;
     private String invoiceNumber;
     private BigDecimal transport;
+    private BigDecimal cuttingFee;
+    private Integer cuttingFeeEmployeeId;
     private LocalDate supplyDate;
     private Integer createdById;
     private List<SupplyRawMaterialDetailRequestDTO> supplyDetails;
