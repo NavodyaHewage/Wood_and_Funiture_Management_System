@@ -1,6 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { AuthService } from '../../../service/auth.service';
+import { Observable } from 'rxjs';
+import { CftCalculatorService } from '../../../service/cft-calculator.service';
 
 @Component({
   selector: 'app-admin-side',
@@ -9,7 +12,24 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   templateUrl: './admin-side.component.html',
   styleUrls: ['./admin-side.component.css']
 })
-export class AdminSideComponent {
+export class AdminSideComponent implements OnInit {
+
+  currentUser$: Observable<any>;
+
+  constructor(
+    private authService: AuthService,
+    private cftService: CftCalculatorService
+  ) {
+    this.currentUser$ = this.authService.currentUser;
+  }
+
+  openCftCalculator() {
+    this.cftService.open();
+  }
+
+  isSupplier(user: any): boolean {
+    return user?.role?.toLowerCase() === 'supplier';
+  }
   menuItems = [
     { name: 'Dashboard', icon: 'bi-grid-1x2-fill', route: '/admin-dashboard' },
     { name: 'User Management', icon: 'bi-people-fill', route: '/user-management' },
@@ -21,9 +41,12 @@ export class AdminSideComponent {
     { name: 'Suppliers', icon: 'bi-truck', route: '/supplier-management' },
     { name: 'Customers', icon: 'bi-person-heart', route: '/customer-management' },
     { name: 'Product Category', icon: 'bi-tags-fill', route: '/product-category' },
+    { name: 'Log Management', icon: 'bi bi-tree-fill me-2', route: '/log-management' },
     { name: 'Quotations', icon: 'bi-file-earmark-text-fill', route: '/quotation-management' },
     { name: 'Orders', icon: 'bi-cart-fill', route: '/order-management' },
     { name: 'Inventory', icon: 'bi-box-seam-fill', route: '/inventory' },
     { name: 'Settings', icon: 'bi-gear-fill', route: '/settings' }
   ];
+
+  ngOnInit(): void {}
 }

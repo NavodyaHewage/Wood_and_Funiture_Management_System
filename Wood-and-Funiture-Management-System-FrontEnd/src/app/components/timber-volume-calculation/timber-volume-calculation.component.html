@@ -1,0 +1,125 @@
+<div class="cft-overlay" *ngIf="isOpen" (click)="closeModal($event)">
+    <div class="cft-modal-card" [@modalScale] (click)="$event.stopPropagation()">
+        
+        <!-- Close Button -->
+        <button class="absolute-close" (click)="closeModal()">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+        <div class="cft-split-container">
+            
+            <!-- LEFT PANEL: Inputs -->
+            <div class="input-panel">
+                <div class="tool-header">
+                    <div class="title-with-icon">
+                        <i class="bi bi-calculator"></i>
+                        <h2>Timber CFT Tool</h2>
+                    </div>
+                    <p class="subtitle">Quickly calculate timber volume and estimated valuation for a single log.</p>
+                </div>
+
+                <form [formGroup]="logForm" class="tool-form">
+                    <div class="row gx-3">
+                        <div class="col-6 mb-4">
+                            <label style="text-align: center;" title="Measure girth at midpoint of log in inches">LOG GIRTH (inches)</label>
+                            <div class="premium-input" [class.has-error]="logForm.get('girthIn')?.invalid && logForm.get('girthIn')?.touched" [class.has-warning]="girthWarning">
+                                <svg width="25" height="25" viewBox="0 0 18 18" fill="none">
+                                    <circle cx="9" cy="9" r="7" stroke="#C17B2F" stroke-width="1.8" fill="none"/>
+                                    <circle cx="9" cy="9" r="2.5" stroke="#C17B2F" stroke-width="1.5" fill="none"/>
+                                </svg>
+                                <input type="number" formControlName="girthIn" placeholder="0.00" title="Enter girth measurement in inches" (keypress)="onKeyPress($event)">
+                                <span class="unit">in</span>
+                            </div>
+                            <div class="validation-msg error" *ngIf="logForm.get('girthIn')?.errors?.['required'] && logForm.get('girthIn')?.touched">
+                                Girth is required.
+                            </div>
+                            <div class="validation-msg error" *ngIf="logForm.get('girthIn')?.errors?.['min'] && logForm.get('girthIn')?.touched">
+                                Girth must be greater than 0.
+                            </div>
+                            <div class="validation-msg error" *ngIf="logForm.get('girthIn')?.errors?.['max'] && logForm.get('girthIn')?.touched">
+                                Girth exceeds maximum (240 in).
+                            </div>
+                            <div class="validation-msg error" *ngIf="logForm.get('girthIn')?.errors?.['pattern'] && logForm.get('girthIn')?.touched">
+                                Enter a valid number (max 2 decimal places).
+                            </div>
+                            <div class="validation-msg warning" *ngIf="girthWarning && !logForm.get('girthIn')?.errors">
+                                {{ girthWarning }}
+                            </div>
+                        </div>
+                        <div class="col-6 mb-4">
+                            <label style="text-align: center;" title="Enter log length in feet">LOG LENGTH (feet)</label>
+                            <div class="premium-input" [class.has-error]="logForm.get('lengthFt')?.invalid && logForm.get('lengthFt')?.touched" [class.has-warning]="lengthWarning">
+                                <i class="bi bi-rulers"></i>
+                                <input type="number" formControlName="lengthFt" placeholder="0.00" title="Enter length in feet" (keypress)="onKeyPress($event)">
+                                <span class="unit">ft</span>
+                            </div>
+                            <div class="validation-msg error" *ngIf="logForm.get('lengthFt')?.errors?.['required'] && logForm.get('lengthFt')?.touched">
+                                Length is required.
+                            </div>
+                            <div class="validation-msg error" *ngIf="logForm.get('lengthFt')?.errors?.['min'] && logForm.get('lengthFt')?.touched">
+                                Length must be greater than 0.
+                            </div>
+                            <div class="validation-msg error" *ngIf="logForm.get('lengthFt')?.errors?.['pattern'] && logForm.get('lengthFt')?.touched">
+                                Enter a valid number (max 2 decimal places).
+                            </div>
+                            <div class="validation-msg warning" *ngIf="lengthWarning && !logForm.get('lengthFt')?.errors">
+                                {{ lengthWarning }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 mb-5">
+                        <label style="text-align: center;">WOOD TYPE / MATERIAL</label>
+                        <div class="premium-input" [class.has-error]="logForm.get('woodTypeId')?.invalid && logForm.get('woodTypeId')?.touched">
+                            <i class="bi bi-tree"></i>
+                            <select formControlName="woodTypeId" (change)="onWoodTypeChange()">
+                                <option [value]="null" disabled>Select Wood Type</option>
+                                <option *ngFor="let type of woodTypes" [value]="type.rmId">
+                                    {{ type.rmName }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="validation-msg error" *ngIf="logForm.get('woodTypeId')?.errors?.['required'] && logForm.get('woodTypeId')?.touched">
+                            Please select a wood type.
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn-reset-tool" (click)="resetEntryForm()">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Reset Calculator
+                    </button>
+                </form>
+            </div>
+
+            <!-- RIGHT PANEL: Results -->
+            <div class="output-panel">
+                <div class="result-section">
+                    <label>VOLUME OUTPUT</label>
+                    <div class="display-value volume">
+                        <span class="number">{{ currentVolume !== null ? (currentVolume | number:'1.3-3') : '—' }}</span>
+                        <span class="unit-text" *ngIf="currentVolume !== null">CFT</span>
+                    </div>
+                </div>
+
+                <div class="result-section mt-auto">
+                    <label>ESTIMATED TOTAL VALUE</label>
+                    <div class="display-value price">
+                        <span class="currency" *ngIf="currentEstimatedValue !== null">Rs.</span>
+                        <span class="number">{{ currentEstimatedValue !== null ? (currentEstimatedValue | number:'1.2-2') : '—' }}</span>
+                    </div>
+                </div>
+
+                <div class="formula-footer">
+                    <div class="formula-info">
+                        <span class="formula-label">FORMULA:</span>
+                        <div class="fraction">
+                            <span class="numerator">GIRTH² × LENGTH</span>
+                            <span class="denominator">2304</span>
+                        </div>
+                    </div>
+                    <p class="formula-note">Where: Girth in inches, Length in feet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -57,4 +57,7 @@ export class HeaderComponent implements OnInit {
       }
     });
   }
+   isSupplier(user: any): boolean {
+    return user?.role?.toLowerCase() === 'supplier';
+  }
 }
