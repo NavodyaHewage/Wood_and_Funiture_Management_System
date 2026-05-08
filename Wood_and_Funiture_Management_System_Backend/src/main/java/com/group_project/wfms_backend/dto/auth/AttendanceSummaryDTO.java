@@ -19,4 +19,5 @@ public class AttendanceSummaryDTO {
     private long holidayDays;
     private long weekendDays;
     private long totalWorkingDays;
+    private Double totalOvertimeHours;
 }

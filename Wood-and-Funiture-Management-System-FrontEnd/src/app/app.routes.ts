@@ -14,6 +14,8 @@ import { LoanComponent } from './components/loan/loan.component';
 import { OrderManagementDashboardComponent } from './components/order-managment/order-managemnt-dashboard/order-managemnt-dashboard.component';
 import { QuotationManagementComponent } from './components/order-managment/quotation-management/quotation-management.component';
 import { ProductCategoryComponent } from './components/order-managment/product-category/product-category.component';
+import { PayrollManagementComponent } from './components/payroll/payroll-management/payroll-management.component';
+import { DesignationSalaryConfigComponent } from './components/payroll/designation-salary-config/designation-salary-config.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -31,6 +33,8 @@ export const routes: Routes = [
     { path: 'product-category', component: ProductCategoryComponent, data: { title: 'Product Category' } },
     { path: 'attendance-management', component: AttendanceListComponent, data: { title: 'Attendance Management' } },
     { path: 'loan-management', component: LoanComponent, data: { title: 'Loan & Advance Management' } },
+    { path: 'payroll-management', component: PayrollManagementComponent, data: { title: 'Payroll Automation' } },
+    { path: 'designation-salary', component: DesignationSalaryConfigComponent, data: { title: 'Designation Salary Settings' } },
 
 ];
 

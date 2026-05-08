@@ -4,7 +4,7 @@ import { isPlatformBrowser } from '@angular/common';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { environment } from '../environment/environment';
-import { EmployeeLoanDTO, LoanDeductionRuleDTO } from '../models/loan.model';
+import { EmployeeLoanDTO, LoanDeductionRuleDTO } from '../model/loan.model';
 import { ToastService } from './toast.service';
 
 @Injectable({
@@ -25,7 +25,7 @@ export class LoanService {
   }
 
   // --- Loan Endpoints ---
-  
+
   getAllLoans(): Observable<EmployeeLoanDTO[]> {
     return this.http.get<EmployeeLoanDTO[]>(this.loanUrl).pipe(
       catchError(err => this.handleError(err, 'Failed to load loans'))
@@ -66,7 +66,7 @@ export class LoanService {
 
   private handleError(error: HttpErrorResponse, fallbackMessage: string) {
     let errorMessage = fallbackMessage;
-    
+
     if (error.error && error.error.message) {
       errorMessage = error.error.message;
     } else if (error.status === 0) {
@@ -76,7 +76,7 @@ export class LoanService {
     if (this.isBrowser()) {
       this.toastService.show(errorMessage, 'error');
     }
-    
+
     return throwError(() => new Error(errorMessage));
   }
 }

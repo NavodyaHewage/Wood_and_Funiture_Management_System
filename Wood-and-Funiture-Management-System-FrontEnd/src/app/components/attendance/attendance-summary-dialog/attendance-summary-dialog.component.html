@@ -55,18 +55,24 @@
         </div>
       </div>
 
-      <!-- Additional Stats (Holiday/Weekend) -->
+      <!-- Additional Stats (Holiday/Weekend/OT) -->
       <div class="row g-3 mt-1">
-        <div class="col-6">
+        <div class="col-4">
           <div class="stat-card holiday">
             <span class="stat-value text-info">{{ summary.holidayDays || 0 }}</span>
             <span class="stat-label">Holidays</span>
           </div>
         </div>
-        <div class="col-6">
+        <div class="col-4">
           <div class="stat-card weekend">
             <span class="stat-value text-secondary">{{ summary.weekendDays || 0 }}</span>
             <span class="stat-label">Weekends</span>
+          </div>
+        </div>
+        <div class="col-4">
+          <div class="stat-card overtime">
+            <span class="stat-value text-warning">{{ (summary.totalOvertimeHours || 0) | number: '1.1-2' }}</span>
+            <span class="stat-label">Total OT Hrs</span>
           </div>
         </div>
       </div>

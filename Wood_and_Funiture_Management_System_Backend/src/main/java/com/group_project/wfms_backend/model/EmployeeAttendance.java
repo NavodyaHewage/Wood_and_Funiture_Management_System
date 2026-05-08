@@ -28,9 +28,9 @@ public class EmployeeAttendance {
     @Column(name="Date",nullable= false)
     private LocalDate date;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = AttendanceStatusConverter.class)
     @Column(name="Status")
-    private AttendanceStatus status=AttendanceStatus.PRESENT;
+    private AttendanceStatus status = AttendanceStatus.PRESENT;
 
     @Column(name ="Check_In")
     private LocalTime checkIn;

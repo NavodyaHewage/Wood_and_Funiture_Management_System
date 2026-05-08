@@ -83,6 +83,7 @@
                   <th>Attendance Date</th>
                   <th>Status</th>
                   <th>Check In / Out</th>
+                  <th>Overtime</th>
                   <th>Remarks</th>
                   <th class="text-center pe-4">Actions</th>
                 </tr>
@@ -133,6 +134,17 @@
                         *ngIf="!record.checkIn && !record.checkOut"
                       >Not recorded</span>
                     </div>
+                  </td>
+
+                  <!-- Overtime -->
+                  <td>
+                    <span 
+                      class="badge" 
+                      [ngClass]="record.overtimeHours && record.overtimeHours > 0 ? 'bg-warning text-dark' : 'bg-light text-muted'"
+                      *ngIf="record.overtimeHours !== undefined"
+                    >
+                      {{ record.overtimeHours > 0 ? (record.overtimeHours | number: '1.1-2') + ' hrs' : '0 hrs' }}
+                    </span>
                   </td>
 
                   <!-- Remarks -->

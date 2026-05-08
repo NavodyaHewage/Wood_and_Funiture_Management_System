@@ -138,15 +138,19 @@ export class LanguageService {
   };
 
   constructor() {
-    const savedLang = localStorage.getItem('selectedLang');
-    if (savedLang) {
-      this.currentLang.next(savedLang);
+    if (typeof localStorage !== 'undefined') {
+      const savedLang = localStorage.getItem('selectedLang');
+      if (savedLang) {
+        this.currentLang.next(savedLang);
+      }
     }
   }
 
   setLanguage(lang: string) {
     this.currentLang.next(lang);
-    localStorage.setItem('selectedLang', lang);
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem('selectedLang', lang);
+    }
   }
 
   getLanguage() {

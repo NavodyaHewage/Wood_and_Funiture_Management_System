@@ -14,5 +14,6 @@ public class AttendanceResponseDTO {
     private AttendanceStatus status;
     private LocalTime checkIn;
     private LocalTime checkOut;
+    private Double overtimeHours; // Calculated on the fly (CheckOut - 17:00)
     private String remarks;
 }

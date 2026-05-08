@@ -39,6 +39,7 @@ export interface AttendanceResponseDTO {
   status: AttendanceStatus;
   checkIn?: string;
   checkOut?: string;
+  overtimeHours?: number;
   remarks?: string;
 }
 
@@ -54,6 +55,7 @@ export interface AttendanceSummaryDTO {
   holidayDays: number;
   weekendDays: number;
   totalWorkingDays: number;
+  totalOvertimeHours?: number;
 }
 
 @Injectable({

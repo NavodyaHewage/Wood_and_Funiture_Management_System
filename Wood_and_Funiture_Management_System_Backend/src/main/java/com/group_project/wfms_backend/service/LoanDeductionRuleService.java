@@ -32,19 +32,35 @@ public class LoanDeductionRuleService {
     // CREATE RULE
     @Transactional
     public LoanDeductionRuleDTO createRule(LoanDeductionRuleDTO dto) {
-        Loan_Deduction_Rule rule = new Loan_Deduction_Rule();
-
         // Link to the parent Loan
         Employee_loan parentLoan = loanRepository.findById(dto.getLoanId())
                 .orElseThrow(() -> new EntityNotFoundException("Loan ID not found with ID: " + dto.getLoanId()));
 
+        // BUSINESS RULE: Cannot create rule for a SETTLED loan
+        if (com.group_project.wfms_backend.model.LoanStatus.SETTLED.equals(parentLoan.getStatus())) {
+            throw new RuntimeException("Cannot create deduction rules for a fully settled loan.");
+        }
+
+        // VALIDATION: Period Chronology
+        if (dto.getEndYear() != null && (dto.getEndYear() < dto.getStartYear() || 
+           (dto.getEndYear().equals(dto.getStartYear()) && dto.getEndMonth() != null && dto.getEndMonth() < dto.getStartMonth()))) {
+            throw new RuntimeException("End period must be after start period.");
+        }
+
+        // VALIDATION: Deduction vs Outstanding Balance
+        java.math.BigDecimal balance = parentLoan.getLoanAmount().subtract(parentLoan.getTotalDeducted() != null ? parentLoan.getTotalDeducted() : java.math.BigDecimal.ZERO);
+        if (dto.getDeductionAmount().compareTo(balance) > 0) {
+            throw new RuntimeException("Monthly deduction (Rs. " + dto.getDeductionAmount() + ") cannot exceed outstanding balance (Rs. " + balance + ").");
+        }
+
+        Loan_Deduction_Rule rule = new Loan_Deduction_Rule();
         rule.setEmployeeloan(parentLoan);
         rule.setDeductionAmount(dto.getDeductionAmount());
         rule.setStartMonth(dto.getStartMonth());
         rule.setStartYear(dto.getStartYear());
         rule.setEndMonth(dto.getEndMonth());
         rule.setEndYear(dto.getEndYear());
-        rule.setIsActive(dto.getIsActive());
+        rule.setIsActive(dto.getIsActive() != null ? dto.getIsActive() : true);
         rule.setRemarks(dto.getRemarks());
 
         return convertToDTO(ruleRepository.save(rule));

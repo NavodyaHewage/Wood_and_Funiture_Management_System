@@ -111,6 +111,16 @@ public class EmployeeLoanService {
         // Resolve Relationships
         Employee employee = employeeRepository.findById(dto.getEmployeeId())
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
+        
+        // BUSINESS RULE: Cannot have multiple active loans simultaneously
+        boolean hasActive = loanRepository.findAll().stream()
+                .filter(l -> l.getEmployee().getId().equals(employee.getId()))
+                .anyMatch(l -> l.getStatus() != com.group_project.wfms_backend.model.LoanStatus.SETTLED);
+        
+        if (hasActive) {
+            throw new RuntimeException("Employee already has an active or partially paid loan.");
+        }
+
         loan.setEmployee(employee);
 
         if (dto.getCreatedById() != null) {
@@ -143,8 +153,19 @@ public class EmployeeLoanService {
 
     // DELETE
     public void deleteLoan(Integer id) {
+        Employee_loan loan = loanRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Loan not found"));
+        
+        // BUSINESS RULE: Cannot delete a loan with partial repayments recorded
+        if (loan.getTotalDeducted() != null && loan.getTotalDeducted().compareTo(java.math.BigDecimal.ZERO) > 0) {
+            throw new RuntimeException("Cannot delete a loan that has existing repayments.");
+        }
+        
         loanRepository.deleteById(id);
     }
+
+    @Autowired
+    private com.group_project.wfms_backend.repository.DesignationSalaryRepository designationSalaryRepository;
 
     // GET MAX LOAN LIMIT (3x monthly salary based on designation)
     public BigDecimal getMaxLoanLimit(Integer employeeId) {
@@ -155,10 +176,46 @@ public class EmployeeLoanService {
             return BigDecimal.ZERO;
         }
 
-        return salaryRateRepository.findByRateNameAndIsActiveTrue(employee.getDesignation())
-                .map(rate -> rate.getAmount().multiply(new BigDecimal("3")))
-                .orElse(BigDecimal.ZERO);
+        // Use the new DesignationSalary table for calculations
+        return designationSalaryRepository.findByDesignationNameAndIsActiveTrue(employee.getDesignation())
+                .map(ds -> {
+                    BigDecimal monthlyEstimate = ds.getBasicSalary();
+                    if (ds.getSalaryType() == com.group_project.wfms_backend.model.SalaryRateType.DAILY) {
+                        monthlyEstimate = ds.getBasicSalary().multiply(new BigDecimal("26")); // Assume 26 working days
+                    }
+                    return monthlyEstimate.multiply(new BigDecimal("3"));
+                })
+                .orElse(BigDecimal.valueOf(45000)); // Default fallback
     }
+
+    @Transactional
+    public void recordRepayment(Integer loanId, BigDecimal amount) {
+        Employee_loan loan = loanRepository.findById(loanId)
+                .orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
+
+        BigDecimal currentDeducted = loan.getTotalDeducted() != null ? loan.getTotalDeducted() : BigDecimal.ZERO;
+        BigDecimal newDeducted = currentDeducted.add(amount);
+        loan.setTotalDeducted(newDeducted);
+
+        // Check if fully settled
+        if (newDeducted.compareTo(loan.getLoanAmount()) >= 0) {
+            loan.setStatus(com.group_project.wfms_backend.model.LoanStatus.SETTLED);
+            
+            // Deactivate any active rules for this loan
+            // We use the repository directly here for efficiency
+            loanDeductionRuleRepository.findActiveRulesByEmployeeId(loan.getEmployee().getId())
+                .stream()
+                .filter(r -> r.getEmployeeloan().getLoanId().equals(loanId))
+                .forEach(r -> {
+                    r.setIsActive(false);
+                    loanDeductionRuleRepository.save(r);
+                });
+        }
+        loanRepository.save(loan);
+    }
+
+    @Autowired
+    private com.group_project.wfms_backend.repository.LoanDeductionRuleRepository loanDeductionRuleRepository;
 
     // MAPPING HELPER
     private EmployeeLoanDTO convertToDTO(Employee_loan loan) {

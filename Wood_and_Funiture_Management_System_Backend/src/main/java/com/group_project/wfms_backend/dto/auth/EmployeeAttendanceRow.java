@@ -18,6 +18,7 @@ public class EmployeeAttendanceRow {
     private boolean alreadyMarked;
     private LocalTime checkIn;
     private LocalTime checkOut;
+    private Double overtimeHours;
     private String remarks;
 
 
