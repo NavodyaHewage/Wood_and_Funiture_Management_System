@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface EmployeeSalaryRepository extends JpaRepository<EmployeeSalaryDetails,Integer> {
     // සේවකයා, මාසය සහ අවුරුද්ද අනුව record එකක් තිබේදැයි බැලීමට (Duplicate වැළැක්වීමට)
     Optional<EmployeeSalaryDetails> findByEmployeeIdAndMonthAndYear(Integer employeeId, Integer month, Integer year);
+
+    boolean existsByEmployeeIdAndMonthAndYearAndStatus(Integer employeeId, Integer month, Integer year, com.group_project.wfms_backend.model.Salary_details_Status status);
 }

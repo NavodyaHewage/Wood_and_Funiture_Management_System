@@ -1,0 +1,105 @@
+<div class="dashboard-layout">
+  <app-admin-side></app-admin-side>
+  <main class="main-content">
+    <app-header></app-header>
+    <div class="content-body">
+      <div class="config-container animate-fade-in">
+        
+        <div class="title-section mb-4">
+          <h1>Designation Salary Management</h1>
+          <p class="text-muted">Set base salary rates for different roles in the company</p>
+        </div>
+
+        <div class="row">
+          <!-- Form Section -->
+          <div class="col-lg-4">
+            <div class="card wood-card mb-4">
+              <div class="card-header bg-primary-dark text-white">
+                <h5 class="mb-0">{{ isEditing ? 'Edit Mapping' : 'Add New Designation' }}</h5>
+              </div>
+              <div class="card-body">
+                <div class="mb-3">
+                  <label class="wood-label">Designation Name</label>
+                  <input type="text" class="form-control wood-input" [(ngModel)]="currentDS.designationName" placeholder="e.g. Carpenter, Manager">
+                </div>
+
+                <div class="mb-3">
+                  <label class="wood-label">Basic Salary / Rate (Rs.)</label>
+                  <input type="number" class="form-control wood-input" [(ngModel)]="currentDS.basicSalary" placeholder="0.00">
+                </div>
+
+                <div class="mb-3">
+                  <label class="wood-label">Rate Type</label>
+                  <select class="form-select wood-select" [(ngModel)]="currentDS.salaryType">
+                    <option value="DAILY">Daily Rate</option>
+                    <option value="MONTHLY">Monthly (Fixed)</option>
+                  </select>
+                </div>
+
+                <div class="form-check form-switch mb-4">
+                  <input class="form-check-input" type="checkbox" id="activeToggle" [(ngModel)]="currentDS.isActive">
+                  <label class="form-check-label fw-bold" for="activeToggle">Is Active</label>
+                </div>
+
+                <div class="d-flex gap-2">
+                  <button class="btn btn-primary w-100 py-2" (click)='saveDesignation()'>
+                    {{ isEditing ? 'Update Rate' : 'Save Rate' }}
+                  </button>
+                  <button class="btn btn-outline-secondary" *ngIf="isEditing" (click)="resetForm()">Cancel</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- List Section -->
+          <div class="col-lg-8">
+            <div class="card wood-card border-0 shadow-sm">
+              <div class="card-body p-0">
+                <div class="table-responsive">
+                  <table class="table table-hover mb-0">
+                    <thead class="bg-light">
+                      <tr>
+                        <th class="ps-4">Designation</th>
+                        <th>Rate (Rs.)</th>
+                        <th>Type</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let ds of designations" class="align-middle">
+                        <td class="ps-4 fw-bold text-primary-dark">{{ ds.designationName }}</td>
+                        <td>{{ ds.basicSalary | number:'1.2-2' }}</td>
+                        <td>
+                          <span class="badge" [ngClass]="ds.salaryType === 'DAILY' ? 'bg-info' : 'bg-secondary'">
+                            {{ ds.salaryType }}
+                          </span>
+                        </td>
+                        <td>
+                          <span class="badge" [ngClass]="ds.isActive ? 'bg-success' : 'bg-danger'">
+                            {{ ds.isActive ? 'Active' : 'Inactive' }}
+                          </span>
+                        </td>
+                        <td class="text-end pe-4">
+                          <button class="btn btn-sm btn-outline-primary me-2" (click)="editDesignation(ds)">
+                            <i class="bi bi-pencil-square"></i>
+                          </button>
+                        </td>
+                      </tr>
+                      <tr *ngIf="designations.length === 0 && !isLoading">
+                        <td colspan="5" class="text-center py-5 text-muted">
+                          No designations found. Add your first one to the left.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>

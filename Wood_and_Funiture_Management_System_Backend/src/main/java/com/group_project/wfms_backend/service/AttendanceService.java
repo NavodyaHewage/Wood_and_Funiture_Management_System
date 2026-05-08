@@ -116,7 +116,14 @@ public class AttendanceService {
         summary.setLeaveDays(leave);
         summary.setHolidayDays(holiday);
         summary.setWeekendDays(weekend);
-        summary.setTotalWorkingDays(present + absent + halfDay + leave + holiday + weekend);
+        summary.setTotalWorkingDays(present + halfDay*2 );
+
+        // Calculate total OT hours for the month
+        double totalOt = attendanceRepository.findByMonthAndYear(month, year).stream()
+                .filter(a -> a.getEmployee().getId().equals(employeeId))
+                .mapToDouble(this::calculateOT)
+                .sum();
+        summary.setTotalOvertimeHours(totalOt);
 
         return summary;
     }
@@ -161,7 +168,16 @@ public class AttendanceService {
         dto.setCheckIn(a.getCheckIn());
         dto.setCheckOut(a.getCheckOut());
         dto.setRemarks(a.getRemarks());
+        dto.setOvertimeHours(calculateOT(a));
         return dto;
+    }
+
+    private double calculateOT(EmployeeAttendance a) {
+        if (a.getCheckOut() != null && a.getCheckOut().isAfter(LocalTime.of(17, 0))) {
+            long seconds = java.time.Duration.between(LocalTime.of(17, 0), a.getCheckOut()).getSeconds();
+            return seconds / 3600.0;
+        }
+        return 0.0;
     }
 }
 

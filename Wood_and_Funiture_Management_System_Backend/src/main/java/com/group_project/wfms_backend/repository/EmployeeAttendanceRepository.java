@@ -15,6 +15,9 @@ import java.util.Optional;
 public interface EmployeeAttendanceRepository extends JpaRepository<EmployeeAttendance,Integer> {
 
     Optional<EmployeeAttendance> findByEmployeeAndDate(Employee employee, LocalDate date);
+    
+    @Query("SELECT a FROM EmployeeAttendance a WHERE a.employee.id = :employeeId AND a.date = :date")
+    Optional<EmployeeAttendance> findByEmployeeIdAndDate(@Param("employeeId") Integer employeeId, @Param("date") LocalDate date);
 
     List<EmployeeAttendance> findByDate(LocalDate date);
 
@@ -25,8 +28,8 @@ public interface EmployeeAttendanceRepository extends JpaRepository<EmployeeAtte
 
     @Query("SELECT COUNT(a) FROM EmployeeAttendance a WHERE a.employee.id = :empId " +
             "AND MONTH(a.date) = :month AND YEAR(a.date) = :year " +
-            "AND a.status IN ('PRESENT', 'HALF_DAY')")
-    long countPresentDays(@Param("empId") int empId, @Param("month") int month, @Param("year") int year);
+            "AND a.status = :status")
+    long countByEmployeeIdAndMonthAndYearAndStatus(@Param("empId") int empId, @Param("month") int month, @Param("year") int year, @Param("status") com.group_project.wfms_backend.model.AttendanceStatus status);
 
     boolean existsByEmployeeIdAndDate(Integer employeeId, LocalDate date);
 

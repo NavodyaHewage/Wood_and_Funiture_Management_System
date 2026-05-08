@@ -1,0 +1,107 @@
+.payroll-container {
+  padding: 10px;
+}
+
+.config-card {
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid rgba(113, 54, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.bg-primary-dark {
+  background-color: var(--primary-dark) !important;
+}
+
+.bg-gradient-wood {
+  background: linear-gradient(135deg, #713600 0%, #4d2500 100%);
+}
+
+.wood-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wood-input, .wood-select {
+  border: 1.5px solid rgba(113, 54, 0, 0.1);
+  border-radius: 10px;
+  padding: 10px 15px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.wood-input:focus, .wood-select:focus {
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 4px rgba(192, 88, 0, 0.1);
+}
+
+.btn-calculate {
+  background-color: var(--primary-orange);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+
+.btn-calculate:hover:not(:disabled) {
+  background-color: #a84d00;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(192, 88, 0, 0.3);
+}
+
+.preview-card {
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 45px rgba(0,0,0,0.1);
+}
+
+.net-salary-section {
+  background: #fffcf9 !important;
+}
+
+.btn-confirm {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  transition: all 0.3s;
+}
+
+.btn-confirm:hover:not(:disabled) {
+  background-color: #218838;
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(40, 167, 69, 0.3);
+}
+
+.empty-preview-state {
+  opacity: 0.7;
+}
+
+.empty-icon-box i {
+  font-size: 8rem;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

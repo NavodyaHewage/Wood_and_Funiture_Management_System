@@ -72,7 +72,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/users/**", "/users").hasRole("ADMIN")
                         .requestMatchers("/api/attendance/**").permitAll()
 
-                        .requestMatchers("/api/employees/**", "/api/suppliers/**", "/api/customers/**")
+                        .requestMatchers("/api/employees/**", "/api/suppliers/**", "/api/customers/**", "/api/payroll/**")
                         .hasAnyRole("ADMIN", "MANAGER")
 
                         // Any other request must be authenticated
