@@ -84,6 +84,7 @@
 .absent .stat-value { color: #bd2130; }
 .half-day .stat-value { color: #856404; }
 .leave .stat-value { color: #117a8b; }
+.overtime .stat-value { color: #ffc107; }
 
 .total-bar { 
   background: var(--background-light); 

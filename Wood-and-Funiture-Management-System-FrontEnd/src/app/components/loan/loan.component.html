@@ -20,10 +20,8 @@
             <span class="widget-label">Expected Collection (Month)</span>
             <span class="widget-value monospace">LKR {{ metrics.expectedCollection | number:'1.2-2' }}</span>
           </div>
-          <div class="widget highlight">
-            <span class="widget-label">Pending Requests</span>
-            <span class="widget-value monospace">{{ metrics.pendingCount }}</span>
-          </div>
+          
+
         </header>
 
         <div class="main-layout">
@@ -36,6 +34,14 @@
               </div>
               <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
                 
+                <div class="form-group">
+                  <label for="type">Select Type</label>
+                  <select id="type" formControlName="type" class="form-control">
+                    <option value="Loan">Loan</option>
+                    <option value="Advance">Advance</option>
+                  </select>
+                </div>
+
                 <div class="form-group">
                   <label for="employeeId">Select Employee</label>
                   <select id="employeeId" formControlName="employeeId" class="form-control">
@@ -85,10 +91,7 @@
                   <input type="text" id="reason" formControlName="reason" class="form-control" placeholder="e.g. Personal emergency">
                 </div>
 
-                <div class="form-group">
-                  <label for="remarks">Admin Remarks (Audit Trail)</label>
-                  <textarea id="remarks" formControlName="remarks" class="form-control" rows="3" placeholder="Document manual preference changes requested by employee..."></textarea>
-                </div>
+
 
                 <button type="submit" class="btn btn-primary w-100 mt-3" [disabled]="loading">
                   {{ loading ? 'Processing...' : 'Apply Loan & Set Rule' }}
@@ -118,7 +121,7 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let loan of loans" [class.settled-row]="loan.status === 'COMPLETED'">
+                    <tr *ngFor="let loan of loans" [class.settled-row]="loan.status === 'SETTLED'">
                       <td class="monospace">#{{ loan.loanId }}</td>
                       <td>{{ loan.employeeName }}</td>
                       <td class="monospace text-end">{{ loan.loanAmount | number:'1.2-2' }}</td>

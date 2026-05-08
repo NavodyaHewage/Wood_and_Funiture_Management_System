@@ -1,0 +1,59 @@
+.config-container {
+  padding: 10px;
+}
+
+.wood-card {
+  border-radius: 15px;
+  overflow: hidden;
+  border: 1px solid rgba(113, 54, 0, 0.1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.bg-primary-dark {
+  background-color: var(--primary-dark) !important;
+}
+
+.wood-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.wood-input, .wood-select {
+  border: 1.5px solid rgba(113, 54, 0, 0.1);
+  border-radius: 10px;
+  padding: 10px 15px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+
+.wood-input:focus, .wood-select:focus {
+  border-color: var(--primary-orange);
+  box-shadow: 0 0 0 4px rgba(192, 88, 0, 0.1);
+}
+
+.table thead th {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #6c757d;
+  font-weight: 700;
+  border-bottom: 2px solid #f8f9fa;
+}
+
+.text-primary-dark {
+  color: var(--primary-dark);
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

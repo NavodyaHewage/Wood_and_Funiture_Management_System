@@ -99,6 +99,23 @@ td {
     border-bottom: 1px solid rgba(113, 54, 0, 0.05);
 }
 
+/* Expiry Highlighting Styles */
+.expired-row {
+    background-color: #fff1f0 !important;
+}
+
+.expired-row td {
+    color: #cf1322 !important;
+}
+
+.expiring-soon-row {
+    background-color: #f6ffed !important;
+}
+
+.expiring-soon-row td {
+    color: #389e0d !important;
+}
+
 .badge {
     padding: 0.25rem 0.75rem;
     border-radius: 9999px;

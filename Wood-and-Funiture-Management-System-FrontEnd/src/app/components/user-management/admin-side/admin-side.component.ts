@@ -36,6 +36,8 @@ export class AdminSideComponent implements OnInit {
     { name: 'Employees', icon: 'bi-person-badge-fill', route: '/employee-management' },
     { name: 'Attendance', icon: 'bi-calendar-check-fill', route: '/attendance-management' },
     { name: 'Loans And Advances', icon: 'bi-bank', route: '/loan-management' },
+    { name: 'Payroll Automation', icon: 'bi-wallet2', route: '/payroll-management' },
+    { name: 'Designation Rates', icon: 'bi-currency-exchange', route: '/designation-salary' },
     { name: 'Suppliers', icon: 'bi-truck', route: '/supplier-management' },
     { name: 'Customers', icon: 'bi-person-heart', route: '/customer-management' },
     { name: 'Product Category', icon: 'bi-tags-fill', route: '/product-category' },
