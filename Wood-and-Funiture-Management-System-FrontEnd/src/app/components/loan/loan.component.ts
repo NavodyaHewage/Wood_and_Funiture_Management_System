@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { HttpClientModule } from '@angular/common/http';
 import { LoanService } from '../../service/loan.service';
 import { EmployeeService, Employee } from '../../service/employee.service';
-import { EmployeeLoanDTO, LoanDeductionRuleDTO, LoanStatus } from '../../models/loan.model';
+import { EmployeeLoanDTO, LoanDeductionRuleDTO, LoanStatus } from '../../model/loan.model';
 import { ToastService } from '../../service/toast.service';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { AdminSideComponent } from '../user-management/admin-side/admin-side.component';
@@ -19,18 +19,18 @@ import { HeaderComponent } from '../header/header.component';
 })
 export class LoanComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
-  
+
   // State
   loanForm!: FormGroup;
   employees: Employee[] = [];
   loans: EmployeeLoanDTO[] = [];
   loading = false;
-  
+
   // Tracking selected employee state
   selectedEmployeeBalance: number = 0;
   selectedEmployeeMaxLoan: number = 0;
   hasActiveLoanWarning: boolean = false;
-  
+
   // Dashboard Metrics
   metrics = {
     totalActive: 0,
@@ -44,7 +44,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     private employeeService: EmployeeService,
     private toastr: ToastService,
     @Inject(PLATFORM_ID) private platformId: Object
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.initForm();
@@ -59,8 +59,10 @@ export class LoanComponent implements OnInit, OnDestroy {
   private initForm(): void {
     this.loanForm = this.fb.group({
       employeeId: ['', Validators.required],
+      type: ['Loan', Validators.required],
       loanAmount: [null, [Validators.required, Validators.min(100)]],
       installments: [12, [Validators.required, Validators.min(1), Validators.max(60)]],
+      autoDeduction: [true],
       deductionAmount: [null, [Validators.required, Validators.min(1)]],
       issuedDate: [new Date().toISOString().split('T')[0], Validators.required],
       reason: ['', [Validators.required, Validators.minLength(5)]],
@@ -71,7 +73,10 @@ export class LoanComponent implements OnInit, OnDestroy {
     this.loanForm.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(val => {
-        if (val.loanAmount && val.installments) {
+        if (val.type === 'Advance' && val.loanAmount) {
+          // For advance, set installments to 1 and deductionAmount equal to loan amount
+          this.loanForm.patchValue({ installments: 1, deductionAmount: val.loanAmount }, { emitEvent: false });
+        } else if (val.loanAmount && val.installments) {
           const preview = Math.ceil(val.loanAmount / val.installments);
           if (preview !== val.deductionAmount) {
             this.loanForm.patchValue({ deductionAmount: preview }, { emitEvent: false });
@@ -95,7 +100,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     // 1. Calculate Active Balance
     const activeLoanStatuses = [LoanStatus.ACTIVE, LoanStatus.PARTIALLY_PAID];
     const activeLoans = this.loans.filter(l => l.employeeId === empId && activeLoanStatuses.includes(l.status as LoanStatus));
-    
+
     this.selectedEmployeeBalance = activeLoans.reduce((sum, l) => sum + l.balance, 0);
     this.hasActiveLoanWarning = this.selectedEmployeeBalance > 0;
 
@@ -115,7 +120,7 @@ export class LoanComponent implements OnInit, OnDestroy {
 
   private loadInitialData(): void {
     this.loading = true;
-    
+
     // Use forkJoin to load data in parallel
     forkJoin({
       employees: this.employeeService.getAllEmployees(),
@@ -147,9 +152,9 @@ export class LoanComponent implements OnInit, OnDestroy {
 
   private updateDashboardMetrics(): void {
     const activeLoanStatuses = [LoanStatus.ACTIVE, LoanStatus.PARTIALLY_PAID];
-    
+
     this.metrics.totalActive = this.loans.filter(l => activeLoanStatuses.includes(l.status as LoanStatus)).length;
-    
+
     // Calculate Monthly Expected Collection
     const now = new Date();
     const currMonth = now.getMonth() + 1;
@@ -179,21 +184,22 @@ export class LoanComponent implements OnInit, OnDestroy {
 
     const payload = this.loanForm.value;
 
-    // Business Logic: Block exceeding max amount
-    if (this.selectedEmployeeMaxLoan > 0 && payload.loanAmount > this.selectedEmployeeMaxLoan) {
+    // Business Logic: Block exceeding max amount only for loans
+    if (payload.type === 'Loan' && this.selectedEmployeeMaxLoan > 0 && payload.loanAmount > this.selectedEmployeeMaxLoan) {
       this.toastr.showError(`Loan amount cannot exceed the maximum limit of LKR ${this.selectedEmployeeMaxLoan}`, 'Amount Exceeded');
       return;
     }
-    
-    // Business Logic: Strictly block multiple active loans for the same employee
-    const hasActive = this.loans.some(l => 
-      l.employeeId === +payload.employeeId && 
-      [LoanStatus.ACTIVE, LoanStatus.PARTIALLY_PAID].includes(l.status as LoanStatus)
-    );
 
-    if (hasActive) {
-      this.toastr.showError('This employee already has an active loan. System policy allows only one loan per employee.', 'Action Denied');
-      return;
+    // Business Logic: Strictly block multiple active loans for the same employee (only for loans)
+    if (payload.type === 'Loan') {
+      const hasActive = this.loans.some(l =>
+        l.employeeId === +payload.employeeId &&
+        [LoanStatus.ACTIVE, LoanStatus.PARTIALLY_PAID].includes(l.status as LoanStatus)
+      );
+      if (hasActive) {
+        this.toastr.showError('This employee already has an active loan. System policy allows only one loan per employee.', 'Action Denied');
+        return;
+      }
     }
 
     this.executeLoanCreation(payload);
@@ -201,6 +207,9 @@ export class LoanComponent implements OnInit, OnDestroy {
 
   private executeLoanCreation(payload: any): void {
     this.loading = true;
+
+    // Determine loan status based on type
+    const loanStatus = payload.type === 'Advance' ? LoanStatus.COMPLETED : LoanStatus.ACTIVE;
 
     const loanDto: EmployeeLoanDTO = {
       employeeId: +payload.employeeId,
@@ -215,7 +224,13 @@ export class LoanComponent implements OnInit, OnDestroy {
 
     this.loanService.createLoan(loanDto).subscribe({
       next: (res) => {
-        this.createDeductionRule(res.loanId!, payload.deductionAmount, payload.issuedDate);
+        // For Advance, no deduction rule needed as it's settled immediately
+        if (payload.type !== 'Advance') {
+          this.createDeductionRule(res.loanId!, payload.deductionAmount, payload.issuedDate);
+        } else {
+          this.toastr.showSuccess('Advance settled successfully', 'System Success');
+          this.resetWorkflow();
+        }
       },
       error: () => this.loading = false
     });
