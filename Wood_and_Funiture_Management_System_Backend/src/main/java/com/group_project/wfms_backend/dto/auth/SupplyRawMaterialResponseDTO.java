@@ -17,6 +17,8 @@ public class SupplyRawMaterialResponseDTO {
     private String invoiceNumber;
     private BigDecimal totalAmount;
     private BigDecimal transport;
+    private BigDecimal netAmount;
+    private Boolean isTreeSeller;
     private LocalDate supplyDate;
     private List<SupplyRawMaterialDetailResponseDTO> supplyDetails;
 }

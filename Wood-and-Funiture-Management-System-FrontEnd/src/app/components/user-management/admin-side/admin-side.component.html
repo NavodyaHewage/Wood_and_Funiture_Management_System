@@ -1,20 +1,43 @@
-<div class="sidebar">
+<div class="sidebar" *ngIf="currentUser$ | async as user">
     <div class="sidebar-header">
         <div class="logo-box">
             <img src="/logo.jpg" alt="Logo" class="mini-logo">
         </div>
         <div class="sidebar-info">
-            <h5 class="m-0">WFMS Admin</h5>
-            <small class="text-white-50">Management System</small>
+            <h5 class="m-0" [ngClass]="{'supplier-text': isSupplier(user)}">{{ isSupplier(user) ? 'WFMS Supplier' :
+                'WFMS Admin' }}</h5>
+            <small class="text-white-50">{{ isSupplier(user) ? 'Partner Portal' : 'Management System' }}</small>
         </div>
     </div>
 
     <nav class="sidebar-nav">
         <ul class="nav-list">
-            <li *ngFor="let item of menuItems">
-                <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
-                    <i class="bi" [ngClass]="item.icon"></i>
-                    <span>{{ item.name }}</span>
+            <ng-container *ngIf="isSupplier(user); else adminMenu">
+                <li>
+                    <a routerLink="/supplier-dashboard" routerLinkActive="active" class="nav-item">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li>
+                    <a routerLink="/my-supplies" routerLinkActive="active" class="nav-item">
+                        <i class="bi bi-box-seam"></i>
+                        <span>My Supplies</span>
+                    </a>
+                </li>
+            </ng-container>
+            <ng-template #adminMenu>
+                <li *ngFor="let item of menuItems">
+                    <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+                        <i class="bi" [ngClass]="item.icon"></i>
+                        <span>{{ item.name }}</span>
+                    </a>
+                </li>
+            </ng-template>
+            <li>
+                <a class="nav-item cursor-pointer" (click)="openCftCalculator()">
+                    <i class="bi bi-calculator-fill"></i>
+                    <span>CFT Calculator</span>
                 </a>
             </li>
         </ul>
@@ -24,8 +47,10 @@
         <div class="user-brief">
             <i class="bi bi-person-circle fs-4"></i>
             <div class="ms-2">
-                <div class="fw-bold">Admin User</div>
-                <small class="text-white-50">Administrator</small>
+                <div class="fw-bold">{{ user.username }}</div>
+                <small class="text-white-50">{{ isSupplier(user) ? 'Authorized Partner' : (user.role === 'Admin' ?
+                    'Administrator' : user.role) }}</small>
+
             </div>
         </div>
     </div>
