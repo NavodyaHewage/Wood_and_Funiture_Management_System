@@ -45,11 +45,14 @@
                 <th>Date</th>
                 <th>Total Amount</th>
                 <th>Status</th>
+                <th>Expiry Status</th>
                 <th>Actions</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let q of quotations">
+              <tr *ngFor="let q of quotations" 
+                  [class.expired-row]="getExpiryStatus(q) === 'EXPIRED'"
+                  [class.expiring-soon-row]="getExpiryStatus(q) === 'EXPIRING_SOON'">
                 <td>#Q-{{ q.quotationId }}</td>
                 <td>{{ q.customerName || 'Customer #' + q.customerId }}</td>
                 <td>{{ q.quotationDate | date:'mediumDate' }}</td>
@@ -59,11 +62,16 @@
                     {{ q.status }}
                   </span>
                 </td>
+                <td>
+                  <span class="badge" [ngClass]="getExpiryBadgeClass(q)">
+                    {{ getExpiryStatus(q).replace('_', ' ') }}
+                  </span>
+                </td>
                 <td class="action-btns">
                   <button class="btn-icon" (click)="viewQuotation(q)" title="View">
                     <i class="bi bi-eye"></i>
                   </button>
-                  <button class="btn-icon" (click)="openEditModal(q)" [disabled]="q.status === 'CONVERTED'" title="Edit">
+                  <button class="btn-icon" (click)="openEditModal(q)" [disabled]="!isEditable(q)" title="Edit">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn-icon text-red-600" (click)="confirmDelete(q.quotationId)"
