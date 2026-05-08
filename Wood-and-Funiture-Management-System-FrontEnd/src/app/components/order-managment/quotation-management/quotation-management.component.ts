@@ -244,6 +244,46 @@ export class QuotationManagementComponent implements OnInit {
     this.openEditModal(q);
   }
 
+  getExpiryStatus(q: any): string {
+    if (!q.validUntil) return 'NORMAL';
+    if (q.status === 'CONVERTED') return 'NORMAL';
+
+    const expiryDate = new Date(q.validUntil);
+    const today = new Date();
+    
+    expiryDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    if (today > expiryDate) {
+      return 'EXPIRED';
+    }
+
+    // Check if expiring in the next 3 days
+    const threeDaysFromNow = new Date();
+    threeDaysFromNow.setDate(today.getDate() + 3);
+    threeDaysFromNow.setHours(23, 59, 59, 999);
+
+    if (expiryDate <= threeDaysFromNow) {
+      return 'EXPIRING_SOON';
+    }
+
+    return 'NORMAL';
+  }
+
+  getExpiryBadgeClass(q: any): string {
+    const status = this.getExpiryStatus(q);
+    switch (status) {
+      case 'EXPIRED': return 'badge-rejected';
+      case 'EXPIRING_SOON': return 'badge-approved';
+      default: return 'badge-pending';
+    }
+  }
+
+  isEditable(q: any): boolean {
+    if (q.status === 'CONVERTED') return false;
+    return this.getExpiryStatus(q) !== 'EXPIRED';
+  }
+
   handleSuccess(msg: string): void {
     this.isLoading = false;
     this.showModal = false;
