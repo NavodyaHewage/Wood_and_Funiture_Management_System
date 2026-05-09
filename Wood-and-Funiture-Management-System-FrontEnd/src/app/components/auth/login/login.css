@@ -1,3 +1,152 @@
+/* =============================
+    Reset Password Modal Styles
+    ============================= */
+.custom-modal-overlay {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100vw;
+   height: 100vh;
+   background: rgba(56, 36, 13, 0.45);
+   z-index: 2000;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   animation: modalFadeIn 0.3s;
+}
+
+@keyframes modalFadeIn {
+   from { opacity: 0; }
+   to { opacity: 1; }
+}
+
+.custom-modal-card {
+   background: #fffbe9;
+   border-radius: 20px;
+   box-shadow: 0 8px 32px rgba(56, 36, 13, 0.18), 0 1.5px 8px rgba(192, 88, 0, 0.10);
+   max-width: 400px;
+   width: 95vw;
+   padding: 0 0 24px 0;
+   position: relative;
+   animation: modalCardPop 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+   overflow: hidden;
+}
+
+@keyframes modalCardPop {
+   0% { transform: scale(0.95) translateY(30px); opacity: 0; }
+   100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+.modal-glow {
+   position: absolute;
+   top: -40px;
+   left: 50%;
+   transform: translateX(-50%);
+   width: 120px;
+   height: 120px;
+   background: radial-gradient(circle, #C05800 0%, transparent 70%);
+   opacity: 0.12;
+   z-index: 0;
+}
+
+.modal-header {
+   padding: 32px 32px 12px 32px;
+   text-align: center;
+   position: relative;
+   z-index: 1;
+}
+.modal-icon {
+   font-size: 2.5rem;
+   color: #C05800;
+   margin-bottom: 8px;
+}
+.modal-header h3 {
+   color: #713600;
+   font-size: 1.35rem;
+   font-weight: 700;
+   margin: 0 0 6px 0;
+}
+.modal-header p {
+   color: #38240D;
+   font-size: 1rem;
+   margin: 0 0 4px 0;
+}
+.modal-body {
+   padding: 0 32px 8px 32px;
+}
+.reset-info {
+   display: flex;
+   align-items: center;
+   gap: 8px;
+   background: #fff3e0;
+   color: #C05800;
+   border-radius: 8px;
+   padding: 8px 12px;
+   font-size: 0.98rem;
+   margin-bottom: 10px;
+}
+.reset-info i {
+   font-size: 1.2rem;
+}
+.modal-note {
+   color: #b85c00;
+   font-size: 0.93rem;
+   margin: 8px 0 0 0;
+   background: #fdfbd4;
+   border-left: 3px solid #C05800;
+   padding: 6px 12px;
+   border-radius: 6px;
+}
+.modal-footer {
+   display: flex;
+   justify-content: flex-end;
+   gap: 12px;
+   padding: 12px 32px 0 32px;
+}
+.btn-cancel {
+   background: none;
+   border: 1.5px solid #C05800;
+   color: #C05800;
+   border-radius: 8px;
+   padding: 8px 20px;
+   font-weight: 600;
+   font-size: 1rem;
+   transition: background 0.2s, color 0.2s;
+   cursor: pointer;
+}
+.btn-cancel:hover {
+   background: #ffe2c2;
+   color: #713600;
+}
+.btn-confirm {
+   background: linear-gradient(135deg, #C05800 0%, #E06800 100%);
+   color: #fffbe9;
+   border: none;
+   border-radius: 8px;
+   padding: 8px 22px;
+   font-weight: 600;
+   font-size: 1rem;
+   box-shadow: 0 2px 8px rgba(192, 88, 0, 0.10);
+   transition: background 0.2s, color 0.2s;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   gap: 6px;
+}
+.btn-confirm:hover {
+   background: linear-gradient(135deg, #E06800 0%, #C05800 100%);
+   color: #FDFBD4;
+}
+@media (max-width: 480px) {
+   .custom-modal-card {
+      padding: 0 0 16px 0;
+      border-radius: 14px;
+   }
+   .modal-header, .modal-body, .modal-footer {
+      padding-left: 12px;
+      padding-right: 12px;
+   }
+}
 /* ===================================
    Login Component Styles
    Color Palette:
