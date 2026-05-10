@@ -11,7 +11,7 @@ public class QuotationStatusConverter implements AttributeConverter<QuotationSta
         if (status == null) {
             return null;
         }
-        return status.name(); // Store as PENDING, APPROVED, etc.
+        return status.getDisplayName(); // Store as Pending, Approved, Converted, etc.
     }
 
     @Override

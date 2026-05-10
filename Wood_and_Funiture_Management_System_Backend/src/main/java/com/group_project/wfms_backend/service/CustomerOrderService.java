@@ -29,7 +29,7 @@ public class CustomerOrderService {
 
         CustomerOrder order = new CustomerOrder();
         order.setCustomer(customer);
-        order.setReceiptNumber(dto.getReceiptNumber());
+        order.setQuotationNumber(dto.getQuotationNumber());
         order.setPaidAmount(dto.getPaidAmount() != null ? dto.getPaidAmount() : BigDecimal.ZERO);
         order.setOrderDate(dto.getOrderDate());
 
@@ -94,7 +94,7 @@ public class CustomerOrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found: " + id));
 
         if (dto.getPaidAmount() != null) order.setPaidAmount(dto.getPaidAmount());
-        if (dto.getReceiptNumber() != null) order.setReceiptNumber(dto.getReceiptNumber());
+        if (dto.getQuotationNumber() != null) order.setQuotationNumber(dto.getQuotationNumber());
         if (dto.getOrderDate() != null) order.setOrderDate(dto.getOrderDate());
         if (dto.getStatus() != null) {
             try {
@@ -149,7 +149,7 @@ public class CustomerOrderService {
             dto.setCustomerName(order.getCustomer().getCusName());
         }
 
-        dto.setReceiptNumber(order.getReceiptNumber());
+        dto.setQuotationNumber(order.getQuotationNumber());
         dto.setTotalAmount(order.getTotalAmount());
         dto.setPaidAmount(order.getPaidAmount());
         dto.setBalanceAmount(order.getBalanceAmount());

@@ -20,11 +20,11 @@
           <div class="topbar-left">
             <div class="search-box">
               <i class="bi bi-search"></i>
-              <input type="text" placeholder="Search by customer or receipt..." [(ngModel)]="searchTerm" (input)="onSearch()" />
+              <input type="text" placeholder="Search by customer or quotation..." [(ngModel)]="searchTerm" (input)="onSearch()" />
             </div>
             <select class="status-select" [(ngModel)]="statusFilter" (change)="onStatusFilter()">
               <option value="">All Status</option>
-              <option *ngFor="let s of statusOptions" [value]="s">{{ s }}</option>
+              <option *ngFor="let s of statusOptions" [value]="s">{{ getStatusLabel(s) }}</option>
             </select>
           </div>
           <button class="btn-create" (click)="openCreateModal()">
@@ -45,14 +45,14 @@
             <div class="stat-icon icon-pending"><i class="bi bi-hourglass-split"></i></div>
             <div class="stat-info">
               <span class="stat-label">Pending</span>
-              <span class="stat-value">{{ orderStatusCount('Pending') }}</span>
+              <span class="stat-value">{{ orderStatusCount('PENDING') }}</span>
             </div>
           </div>
           <div class="stat-card">
             <div class="stat-icon icon-completed"><i class="bi bi-check-circle-fill"></i></div>
             <div class="stat-info">
               <span class="stat-label">Completed</span>
-              <span class="stat-value">{{ orderStatusCount('Completed') }}</span>
+              <span class="stat-value">{{ orderStatusCount('COMPLETED') }}</span>
             </div>
           </div>
           <div class="stat-card">
@@ -81,7 +81,7 @@
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Receipt No.</th>
+                  <th>Quotation No.</th>
                   <th>Customer</th>
                   <th>Order Date</th>
                   <th>Total</th>
@@ -94,7 +94,7 @@
               <tbody>
                 <tr *ngFor="let order of filteredOrders; let i = index">
                   <td class="row-num">{{ i + 1 }}</td>
-                  <td class="receipt-cell">{{ order.receiptNumber || '—' }}</td>
+                  <td class="receipt-cell">{{ order.quotationNumber || '—' }}</td>
                   <td class="customer-cell">
                     <span class="customer-avatar">{{ order.customerName.charAt(0) }}</span>
                     {{ order.customerName }}
@@ -107,7 +107,7 @@
                   </td>
                   <td>
                     <span class="status-badge" [ngClass]="getStatusClass(order.status)">
-                      {{ order.status }}
+                      {{ getStatusLabel(order.status) }}
                     </span>
                   </td>
                   <td class="action-cell">
@@ -154,10 +154,10 @@
                   </select>
                 </div>
 
-                <!-- Receipt Number -->
+                <!-- Quotation Number -->
                 <div class="form-group">
-                  <label>Receipt Number</label>
-                  <input type="text" [(ngModel)]="orderForm.receiptNumber" placeholder="e.g. REC-0001" />
+                  <label>Quotation Number</label>
+                  <input type="text" [(ngModel)]="orderForm.quotationNumber" placeholder="e.g. QTN-0001" />
                 </div>
 
                 <!-- Order Date -->
@@ -257,8 +257,8 @@
                   <span>{{ selectedOrder.customerName }}</span>
                 </div>
                 <div class="view-item">
-                  <label>Receipt No.</label>
-                  <span>{{ selectedOrder.receiptNumber || '—' }}</span>
+                  <label>Quotation No.</label>
+                  <span>{{ selectedOrder.quotationNumber || '—' }}</span>
                 </div>
                 <div class="view-item">
                   <label>Order Date</label>
@@ -267,7 +267,7 @@
                 <div class="view-item">
                   <label>Status</label>
                   <span class="status-badge" [ngClass]="getStatusClass(selectedOrder.status)">
-                    {{ selectedOrder.status }}
+                    {{ getStatusLabel(selectedOrder.status) }}
                   </span>
                 </div>
                 <div class="view-item">

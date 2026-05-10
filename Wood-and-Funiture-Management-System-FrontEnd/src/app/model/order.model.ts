@@ -9,7 +9,7 @@ export interface OrderDetailDTO {
 
 export interface CustomerOrderRequestDTO {
     customerId: number;
-    receiptNumber: string;
+    quotationNumber: string;
     paidAmount: number;
     orderDate: string;
     status: string;
@@ -21,7 +21,7 @@ export interface CustomerOrderResponseDTO {
     orderId: number;
     customerId: number;
     customerName: string;
-    receiptNumber: string;
+    quotationNumber: string;
     totalAmount: number;
     paidAmount: number;
     balanceAmount: number;
