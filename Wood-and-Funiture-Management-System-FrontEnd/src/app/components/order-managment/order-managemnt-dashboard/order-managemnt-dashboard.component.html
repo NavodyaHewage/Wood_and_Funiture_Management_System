@@ -20,7 +20,7 @@
           <div class="topbar-left">
             <div class="search-box">
               <i class="bi bi-search"></i>
-              <input type="text" placeholder="Search by customer or receipt..." [(ngModel)]="searchTerm" (input)="onSearch()" />
+              <input type="text" placeholder="Search by customer or quotation..." [(ngModel)]="searchTerm" (input)="onSearch()" />
             </div>
             <select class="status-select" [(ngModel)]="statusFilter" (change)="onStatusFilter()">
               <option value="">All Status</option>
@@ -81,7 +81,7 @@
               <thead>
                 <tr>
                   <th>#</th>
-                  <th>Receipt No.</th>
+                  <th>Quotation No.</th>
                   <th>Customer</th>
                   <th>Order Date</th>
                   <th>Total</th>
@@ -94,7 +94,7 @@
               <tbody>
                 <tr *ngFor="let order of filteredOrders; let i = index">
                   <td class="row-num">{{ i + 1 }}</td>
-                  <td class="receipt-cell">{{ order.receiptNumber || '—' }}</td>
+                  <td class="receipt-cell">{{ order.quotationNumber || '—' }}</td>
                   <td class="customer-cell">
                     <span class="customer-avatar">{{ order.customerName.charAt(0) }}</span>
                     {{ order.customerName }}
@@ -154,10 +154,10 @@
                   </select>
                 </div>
 
-                <!-- Receipt Number -->
+                <!-- Quotation Number -->
                 <div class="form-group">
-                  <label>Receipt Number</label>
-                  <input type="text" [(ngModel)]="orderForm.receiptNumber" placeholder="e.g. REC-0001" />
+                  <label>Quotation Number</label>
+                  <input type="text" [(ngModel)]="orderForm.quotationNumber" placeholder="e.g. QTN-0001" />
                 </div>
 
                 <!-- Order Date -->
@@ -257,8 +257,8 @@
                   <span>{{ selectedOrder.customerName }}</span>
                 </div>
                 <div class="view-item">
-                  <label>Receipt No.</label>
-                  <span>{{ selectedOrder.receiptNumber || '—' }}</span>
+                  <label>Quotation No.</label>
+                  <span>{{ selectedOrder.quotationNumber || '—' }}</span>
                 </div>
                 <div class="view-item">
                   <label>Order Date</label>

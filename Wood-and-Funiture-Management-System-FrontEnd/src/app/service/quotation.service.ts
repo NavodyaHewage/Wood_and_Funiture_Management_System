@@ -35,4 +35,8 @@ export class QuotationService {
   deleteQuotation(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  convertToOrder(id: number): Observable<string> {
+    return this.http.post(`${this.apiUrl}/${id}/convert-to-order`, {}, { responseType: 'text' });
+  }
 }

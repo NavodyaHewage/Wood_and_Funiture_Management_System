@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { QuotationService } from '../../../service/quotation.service';
@@ -37,7 +38,8 @@ export class QuotationManagementComponent implements OnInit {
     private customerService: CustomerService,
     private authService: AuthService,
     private productCategoryService: ProductCategoryService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private router: Router
   ) {
     this.initForm();
   }
@@ -313,5 +315,25 @@ export class QuotationManagementComponent implements OnInit {
 
   getStatusCount(status: string): number {
     return this.quotations.filter(q => q.status === status).length;
+  }
+
+  approveAndConvert(q: any): void {
+    if (!confirm(`Are you sure you want to approve and convert Quotation #Q-${q.quotationId} to an Order?`)) {
+      return;
+    }
+
+    this.isLoading = true;
+    this.quotationService.convertToOrder(q.quotationId).subscribe({
+      next: (response) => {
+        this.isLoading = false;
+        this.toastService.show('Quotation approved and converted to Order successfully!', 'success');
+        this.router.navigate(['/order-management']);
+      },
+      error: (err) => {
+        this.isLoading = false;
+        console.error('Error converting quotation', err);
+        this.toastService.show(err.error?.message || 'Error converting quotation to order', 'error');
+      }
+    });
   }
 }

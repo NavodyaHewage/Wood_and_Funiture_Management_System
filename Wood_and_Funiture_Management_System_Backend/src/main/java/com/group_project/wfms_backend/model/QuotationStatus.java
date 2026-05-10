@@ -7,6 +7,7 @@ public enum QuotationStatus {
     PENDING("Pending"),       // Awaiting customer response
     APPROVED("Approved"),     // Customer approved the quotation
     REJECTED("Rejected"),   // Customer rejected the quotation
+    READY_TO_ORDER("Ready to Order"), // Stock checked and ready
     CONVERTED("Converted");   // Converted to an order
 
     @com.fasterxml.jackson.annotation.JsonValue

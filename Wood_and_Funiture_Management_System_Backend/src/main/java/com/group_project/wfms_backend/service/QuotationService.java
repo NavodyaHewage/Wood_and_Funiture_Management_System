@@ -26,6 +26,8 @@ public class QuotationService {
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final ProductCategoryRepository productCategoryRepository;
+    private final ProductStockRepository productStockRepository;
+    private final CustomerOrderRepository customerOrderRepository;
 
     public QuotationResponseDTO createQuotation(QuotationRequestDTO requestDTO) {
         Customer customer = customerRepository.findById(requestDTO.getCustomerId())
@@ -113,6 +115,62 @@ public class QuotationService {
         Quotation existing = findQuotationById(id);
         existing.setStatus(status);
         return mapToResponseDTO(quotationRepository.save(existing));
+    }
+
+    @Transactional
+    public void convertToOrder(Integer quotationId) {
+        Quotation quotation = findQuotationById(quotationId);
+
+        // 1. Check if already converted or ready
+        if (quotation.getStatus() == QuotationStatus.CONVERTED) {
+            throw new IllegalStateException("Quotation already converted to order.");
+        }
+
+        // 2. Check and Deduct Stock
+        for (QuotationDetails detail : quotation.getDetails()) {
+            ProductStock stock = productStockRepository.findByProductCategory_ProductCatId(detail.getProductCategory().getProductCatId())
+                    .orElseThrow(() -> new RuntimeException("Stock record not found for category: " + detail.getProductCategory().getMaterialCategory()));
+
+            if (stock.getAvailableQuantity().compareTo(detail.getQuantity()) < 0) {
+                throw new RuntimeException("Insufficient stock for: " + detail.getProductCategory().getMaterialCategory() 
+                    + ". Available: " + stock.getAvailableQuantity() + ", Required: " + detail.getQuantity());
+            }
+
+            // Deduct stock
+            stock.setAvailableQuantity(stock.getAvailableQuantity().subtract(detail.getQuantity()));
+            productStockRepository.save(stock);
+        }
+
+        // 3. Update Quotation Status
+        quotation.setStatus(QuotationStatus.READY_TO_ORDER);
+        quotationRepository.save(quotation);
+
+        // 4. Create Customer Order
+        CustomerOrder order = new CustomerOrder();
+        order.setCustomer(quotation.getCustomer());
+        order.setOrderDate(LocalDate.now());
+        order.setTotalAmount(quotation.getTotalAmount());
+        order.setStatus(OrderStatus.PENDING);
+        order.setCreatedBy(quotation.getCreatedBy());
+        
+        // Set the quotation number for tracking
+        order.setQuotationNumber("QTN-" + quotation.getQuotationId());
+
+        CustomerOrder savedOrder = customerOrderRepository.save(order);
+
+        // 5. Create Order Details
+        List<CustomerOrderDetails> orderDetails = quotation.getDetails().stream().map(qd -> {
+            CustomerOrderDetails od = new CustomerOrderDetails();
+            od.setOrder(savedOrder);
+            od.setProductCategory(qd.getProductCategory());
+            od.setName(qd.getName());
+            od.setQuantity(qd.getQuantity());
+            od.setPrice(qd.getPrice());
+            return od;
+        }).collect(Collectors.toList());
+
+        savedOrder.setOrderDetails(orderDetails);
+        customerOrderRepository.save(savedOrder);
     }
 
     private Quotation findQuotationById(Integer id) {

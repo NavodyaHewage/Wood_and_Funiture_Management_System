@@ -78,7 +78,7 @@ export class OrderManagementDashboardComponent implements OnInit {
       const matchSearch =
         !this.searchTerm ||
         order.customerName?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
-        order.receiptNumber?.toLowerCase().includes(this.searchTerm.toLowerCase());
+        order.quotationNumber?.toLowerCase().includes(this.searchTerm.toLowerCase());
       const matchStatus = !this.statusFilter || order.status === this.statusFilter;
       return matchSearch && matchStatus;
     });
@@ -117,7 +117,7 @@ export class OrderManagementDashboardComponent implements OnInit {
     this.editOrderId = order.orderId;
     this.orderForm = {
       customerId: order.customerId,
-      receiptNumber: order.receiptNumber,
+      quotationNumber: order.quotationNumber,
       paidAmount: order.paidAmount,
       orderDate: order.orderDate,
       status: order.status,
@@ -197,7 +197,7 @@ export class OrderManagementDashboardComponent implements OnInit {
   getEmptyForm(): CustomerOrderRequestDTO {
     return {
       customerId: 0,
-      receiptNumber: '',
+      quotationNumber: '',
       paidAmount: 0,
       orderDate: new Date().toISOString().split('T')[0],
       status: 'Pending',

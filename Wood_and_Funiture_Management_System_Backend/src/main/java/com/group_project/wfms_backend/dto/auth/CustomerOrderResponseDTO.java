@@ -10,7 +10,7 @@ public class CustomerOrderResponseDTO {
     private Long orderId;
     private Integer customerId;
     private String customerName;
-    private String receiptNumber;
+    private String quotationNumber;
     private BigDecimal totalAmount;
     private BigDecimal paidAmount;
     private BigDecimal balanceAmount;

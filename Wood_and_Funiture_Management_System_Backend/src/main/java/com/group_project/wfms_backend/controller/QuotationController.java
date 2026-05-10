@@ -57,4 +57,10 @@ public class QuotationController {
         quotationService.deleteQuotation(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/convert-to-order")
+    public ResponseEntity<String> convertToOrder(@PathVariable Integer id) {
+        quotationService.convertToOrder(id);
+        return ResponseEntity.ok("Quotation converted to order successfully and stock deducted.");
+    }
 }

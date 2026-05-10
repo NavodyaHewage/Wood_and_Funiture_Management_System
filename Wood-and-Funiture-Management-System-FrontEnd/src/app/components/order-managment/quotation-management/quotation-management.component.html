@@ -68,6 +68,10 @@
                   </span>
                 </td>
                 <td class="action-btns">
+                  <button class="btn-icon text-green-600" (click)="approveAndConvert(q)" 
+                    *ngIf="q.status === 'PENDING' || q.status === 'APPROVED'" title="Approve & Convert">
+                    <i class="bi bi-check-circle"></i>
+                  </button>
                   <button class="btn-icon" (click)="viewQuotation(q)" title="View">
                     <i class="bi bi-eye"></i>
                   </button>

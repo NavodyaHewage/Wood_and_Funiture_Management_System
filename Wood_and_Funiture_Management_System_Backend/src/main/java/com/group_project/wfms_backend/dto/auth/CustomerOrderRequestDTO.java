@@ -8,7 +8,7 @@ import java.util.List;
 @Data
 public class CustomerOrderRequestDTO {
     private Integer customerId;
-    private String receiptNumber;
+    private String quotationNumber;
     private BigDecimal paidAmount;
     private String status;           // Optional override
     private LocalDate orderDate;

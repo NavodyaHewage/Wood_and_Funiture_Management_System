@@ -25,8 +25,8 @@ public class CustomerOrder {
     @JoinColumn(name = "Customer_Id", nullable = false)
     private Customer customer;
 
-    @Column(name = "Receipt_Number", length = 50)
-    private String receiptNumber;
+    @Column(name = "Quotation_Number", length = 50)
+    private String quotationNumber;
 
     @Column(name = "Total_Amount", precision = 15, scale = 2)
     private BigDecimal totalAmount = BigDecimal.ZERO;
