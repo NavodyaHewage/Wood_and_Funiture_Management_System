@@ -20,9 +20,9 @@ public class ProductStock {
     private Integer stockId;
 
     @OneToOne
-    @JoinColumn(name = "product_cat_id", nullable = false)
+    @JoinColumn(name = "product_category_id", nullable = false)
     private ProductCategory productCategory;
 
-    @Column(name = "available_quantity", precision = 10, scale = 2, nullable = false)
+    @Column(name = "quantity", precision = 10, scale = 2, nullable = false)
     private BigDecimal availableQuantity;
 }

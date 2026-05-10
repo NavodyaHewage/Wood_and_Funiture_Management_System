@@ -38,7 +38,6 @@ public class CustomerOrder {
     @Column(name = "Balance_Amount", precision = 15, scale = 2, insertable = false, updatable = false)
     private BigDecimal balanceAmount;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "Status")
     private OrderStatus status = OrderStatus.PENDING;
 

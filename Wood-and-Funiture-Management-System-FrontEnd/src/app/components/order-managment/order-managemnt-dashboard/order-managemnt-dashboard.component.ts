@@ -49,7 +49,7 @@ export class OrderManagementDashboardComponent implements OnInit {
     { id: 3, name: 'Processed Wood' }
   ];
 
-  statusOptions = ['Pending', 'Processing', 'Completed', 'Cancelled'];
+  statusOptions = ['PENDING', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
 
   constructor(private orderService: OrderService) {}
 
@@ -96,8 +96,19 @@ export class OrderManagementDashboardComponent implements OnInit {
     return this.orders.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
   }
 
+  getStatusLabel(status: string): string {
+    const map: { [key: string]: string } = {
+      'PENDING': 'Pending',
+      'PROCESSING': 'Processing',
+      'COMPLETED': 'Completed',
+      'CANCELLED': 'Cancelled'
+    };
+    return map[status?.toUpperCase()] || status;
+  }
+
   orderStatusCount(status: string): number {
-    return this.orders.filter(order => order.status === status).length;
+    const normalized = status?.toUpperCase();
+    return this.orders.filter(order => order.status?.toUpperCase() === normalized).length;
   }
 
   viewOrder(order: CustomerOrderResponseDTO): void {
@@ -120,7 +131,7 @@ export class OrderManagementDashboardComponent implements OnInit {
       quotationNumber: order.quotationNumber,
       paidAmount: order.paidAmount,
       orderDate: order.orderDate,
-      status: order.status,
+      status: order.status?.toUpperCase() || 'PENDING',
       createdById: null,
       orderDetails: order.orderDetails?.map((d: OrderDetailDTO) => ({
         productCatId: d.productCatId,
@@ -200,7 +211,7 @@ export class OrderManagementDashboardComponent implements OnInit {
       quotationNumber: '',
       paidAmount: 0,
       orderDate: new Date().toISOString().split('T')[0],
-      status: 'Pending',
+      status: 'PENDING',
       createdById: null,
       orderDetails: [{ productCatId: 0, name: '', quantity: 1, price: 0 }]
     };

@@ -27,10 +27,20 @@ export class QuotationManagementComponent implements OnInit {
 
   quotationForm!: FormGroup;
   showModal = false;
+  showApproveModal = false;
+  showDeleteModal = false;
   isEditMode = false;
   editId: number | null = null;
+  deleteId: number | null = null;
+  selectedQuotation: any = null;
   isLoading = false;
   grandTotal = 0;
+  Math = Math;
+  
+  // Pagination
+  currentPage = 1;
+  pageSize = 5;
+  todayStr = new Date().toISOString().split('T')[0];
 
   constructor(
     private fb: FormBuilder,
@@ -171,7 +181,9 @@ export class QuotationManagementComponent implements OnInit {
     this.editId = null;
     const currentUserId = this.authService.currentUserValue?.userId || null;
     this.quotationForm.reset({
-      quotationDate: new Date().toISOString().split('T')[0],
+      quotationDate: this.todayStr,
+      validUntil: '',
+      remarks: '',
       status: 'PENDING',
       createdBy: currentUserId
     });
@@ -228,18 +240,28 @@ export class QuotationManagementComponent implements OnInit {
   }
 
   confirmDelete(id: number): void {
-    if (confirm('Are you sure you want to delete this quotation?')) {
-      this.quotationService.deleteQuotation(id).subscribe({
+    this.deleteId = id;
+    this.showDeleteModal = true;
+  }
+
+  confirmDeletion(): void {
+    if (this.deleteId) {
+      this.quotationService.deleteQuotation(this.deleteId).subscribe({
         next: () => {
           this.loadQuotations();
           this.toastService.show('Quotation deleted successfully', 'success');
+          this.closeDeleteModal();
         },
         error: (err) => {
-            console.error('Error deleting quotation', err);
             this.toastService.show(err.error?.message || 'Error deleting quotation', 'error');
         }
       });
     }
+  }
+
+  closeDeleteModal(): void {
+    this.showDeleteModal = false;
+    this.deleteId = null;
   }
 
   viewQuotation(q: any): void {
@@ -282,7 +304,7 @@ export class QuotationManagementComponent implements OnInit {
   }
 
   isEditable(q: any): boolean {
-    if (q.status === 'CONVERTED') return false;
+    if (q.status?.toUpperCase() === 'CONVERTED') return false;
     return this.getExpiryStatus(q) !== 'EXPIRED';
   }
 
@@ -314,16 +336,42 @@ export class QuotationManagementComponent implements OnInit {
   }
 
   getStatusCount(status: string): number {
-    return this.quotations.filter(q => q.status === status).length;
+    return this.quotations.filter(q => q.status?.toUpperCase() === status.toUpperCase()).length;
+  }
+
+  get paginatedQuotations(): any[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.quotations.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.quotations.length / this.pageSize);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
   approveAndConvert(q: any): void {
-    if (!confirm(`Are you sure you want to approve and convert Quotation #Q-${q.quotationId} to an Order?`)) {
-      return;
-    }
+    this.selectedQuotation = q;
+    this.showApproveModal = true;
+  }
+
+  confirmApproveAndConvert(): void {
+    if (!this.selectedQuotation) return;
 
     this.isLoading = true;
-    this.quotationService.convertToOrder(q.quotationId).subscribe({
+    this.showApproveModal = false;
+
+    this.quotationService.convertToOrder(this.selectedQuotation.quotationId).subscribe({
       next: (response) => {
         this.isLoading = false;
         this.toastService.show('Quotation approved and converted to Order successfully!', 'success');
@@ -335,5 +383,10 @@ export class QuotationManagementComponent implements OnInit {
         this.toastService.show(err.error?.message || 'Error converting quotation to order', 'error');
       }
     });
+  }
+
+  closeApproveModal(): void {
+    this.showApproveModal = false;
+    this.selectedQuotation = null;
   }
 }

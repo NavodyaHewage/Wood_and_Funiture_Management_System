@@ -142,7 +142,7 @@ public class QuotationService {
         }
 
         // 3. Update Quotation Status
-        quotation.setStatus(QuotationStatus.READY_TO_ORDER);
+        quotation.setStatus(QuotationStatus.CONVERTED);
         quotationRepository.save(quotation);
 
         // 4. Create Customer Order
