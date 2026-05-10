@@ -41,6 +41,7 @@
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Quotation No</th>
                 <th>Customer</th>
                 <th>Date</th>
                 <th>Total Amount</th>
@@ -54,6 +55,7 @@
                   [class.expired-row]="getExpiryStatus(q) === 'EXPIRED'"
                   [class.expiring-soon-row]="getExpiryStatus(q) === 'EXPIRING_SOON'">
                 <td>#Q-{{ q.quotationId }}</td>
+                <td><span class="fw-bold">{{ q.quotationNumber || 'N/A' }}</span></td>
                 <td>{{ q.customerName || 'Customer #' + q.customerId }}</td>
                 <td>{{ q.quotationDate | date:'mediumDate' }}</td>
                 <td>{{ q.totalAmount | currency:'LKR ':'symbol':'1.2-2' }}</td>
@@ -145,6 +147,12 @@
             <div *ngIf="f['quotationDate'].touched && f['quotationDate'].errors" class="error-msg">
               Date is required
             </div>
+          </div>
+
+          <!-- Quotation Number (Read Only) -->
+          <div class="form-group" *ngIf="isEditMode">
+            <label>Quotation Number</label>
+            <input type="text" [value]="quotationForm.get('quotationNumber')?.value || 'Generating...'" class="form-control" readonly>
           </div>
 
           <!-- Valid Until -->
@@ -257,7 +265,7 @@
         <div class="confirmation-icon mb-3">
           <i class="bi bi-question-circle text-amber-500" style="font-size: 4rem;"></i>
         </div>
-        <p class="fs-5">Are you sure you want to approve <strong>Quotation #Q-{{ selectedQuotation?.quotationId }}</strong>?</p>
+        <p class="fs-5">Are you sure you want to approve <strong>{{ selectedQuotation?.quotationNumber || '#Q-' + selectedQuotation?.quotationId }}</strong>?</p>
         <p class="text-muted">This will convert the quotation into a customer order and redirect you to the Order Management dashboard.</p>
         
         <div class="summary-box mt-4 p-3 bg-light rounded text-start">

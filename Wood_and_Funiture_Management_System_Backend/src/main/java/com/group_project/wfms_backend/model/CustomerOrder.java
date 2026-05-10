@@ -21,6 +21,9 @@ public class CustomerOrder {
     @Column(name = "Order_Id")
     private Long orderId;
 
+    @Column(name = "Order_Number", length = 20)
+    private String orderNumber;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Customer_Id", nullable = false)
     private Customer customer;

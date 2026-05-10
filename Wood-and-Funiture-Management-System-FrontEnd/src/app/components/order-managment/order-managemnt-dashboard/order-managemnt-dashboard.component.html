@@ -81,6 +81,7 @@
               <thead>
                 <tr>
                   <th>#</th>
+                  <th>Order No.</th>
                   <th>Quotation No.</th>
                   <th>Customer</th>
                   <th>Order Date</th>
@@ -94,6 +95,7 @@
               <tbody>
                 <tr *ngFor="let order of filteredOrders; let i = index">
                   <td class="row-num">{{ i + 1 }}</td>
+                  <td><span class="fw-bold">{{ order.orderNumber || 'N/A' }}</span></td>
                   <td class="receipt-cell">{{ order.quotationNumber || '—' }}</td>
                   <td class="customer-cell">
                     <span class="customer-avatar">{{ order.customerName.charAt(0) }}</span>
@@ -145,6 +147,12 @@
 
             <div class="modal-body">
               <div class="form-grid">
+                <!-- Order Number (edit only) -->
+                <div class="form-group" *ngIf="isEditMode">
+                  <label>Order Number</label>
+                  <input type="text" [value]="selectedOrder?.orderNumber" readonly />
+                </div>
+
                 <!-- Customer -->
                 <div class="form-group">
                   <label>Customer</label>
@@ -252,6 +260,10 @@
 
             <div class="modal-body">
               <div class="view-grid">
+                <div class="view-item">
+                  <label>Order No.</label>
+                  <span class="fw-bold">{{ selectedOrder.orderNumber || 'N/A' }}</span>
+                </div>
                 <div class="view-item">
                   <label>Customer</label>
                   <span>{{ selectedOrder.customerName }}</span>

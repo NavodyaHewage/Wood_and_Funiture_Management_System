@@ -125,6 +125,7 @@ export class OrderManagementDashboardComponent implements OnInit {
 
   openEditModal(order: CustomerOrderResponseDTO): void {
     this.isEditMode = true;
+    this.selectedOrder = order;
     this.editOrderId = order.orderId;
     this.orderForm = {
       customerId: order.customerId,
