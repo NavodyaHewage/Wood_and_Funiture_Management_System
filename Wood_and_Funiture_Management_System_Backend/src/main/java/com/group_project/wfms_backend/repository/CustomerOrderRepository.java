@@ -22,4 +22,7 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
 
     @Query("SELECT o FROM CustomerOrder o JOIN FETCH o.customer JOIN FETCH o.orderDetails d JOIN FETCH d.productCategory WHERE o.orderId = :id")
     java.util.Optional<CustomerOrder> findByIdWithDetails(Long id);
+
+    @Query(value = "CALL Generate_Order_Number()", nativeQuery = true)
+    String generateOrderNumber();
 }

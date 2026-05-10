@@ -33,4 +33,7 @@ public interface QuotationRepository extends JpaRepository<Quotation, Integer> {
 
     @Query("SELECT q FROM Quotation q ORDER BY q.quotationDate DESC")
     List<Quotation> findAllOrderByDateDesc();
+
+    @Query(value = "CALL Generate_Quotation_Number()", nativeQuery = true)
+    String generateQuotationNumber();
 }

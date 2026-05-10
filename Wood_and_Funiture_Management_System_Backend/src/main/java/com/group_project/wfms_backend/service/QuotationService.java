@@ -51,6 +51,9 @@ public class QuotationService {
         quotation.setRemarks(requestDTO.getRemarks());
         quotation.setCreatedBy(createdBy);
 
+        // Generate Quotation Number
+        quotation.setQuotationNumber(quotationRepository.generateQuotationNumber());
+
         if (requestDTO.getDetails() != null && !requestDTO.getDetails().isEmpty()) {
             List<QuotationDetails> detailsList = mapToDetailEntities(requestDTO.getDetails(), quotation);
             quotation.setDetails(detailsList);
@@ -148,13 +151,14 @@ public class QuotationService {
         // 4. Create Customer Order
         CustomerOrder order = new CustomerOrder();
         order.setCustomer(quotation.getCustomer());
+        order.setOrderNumber(customerOrderRepository.generateOrderNumber());
         order.setOrderDate(LocalDate.now());
         order.setTotalAmount(quotation.getTotalAmount());
         order.setStatus(OrderStatus.PENDING);
         order.setCreatedBy(quotation.getCreatedBy());
         
         // Set the quotation number for tracking
-        order.setQuotationNumber("QTN-" + quotation.getQuotationId());
+        order.setQuotationNumber(quotation.getQuotationNumber() != null ? quotation.getQuotationNumber() : "QTN-" + quotation.getQuotationId());
 
         CustomerOrder savedOrder = customerOrderRepository.save(order);
 
@@ -201,6 +205,7 @@ public class QuotationService {
     private QuotationResponseDTO mapToResponseDTO(Quotation q) {
         QuotationResponseDTO dto = new QuotationResponseDTO();
         dto.setQuotationId(q.getQuotationId());
+        dto.setQuotationNumber(q.getQuotationNumber());
         dto.setCustomerId(q.getCustomer().getCusId());
         dto.setCustomerName(q.getCustomer().getCusName());
         dto.setTotalAmount(q.getTotalAmount());

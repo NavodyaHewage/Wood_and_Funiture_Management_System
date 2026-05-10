@@ -8,6 +8,7 @@ import java.util.List;
 @Data
 public class CustomerOrderResponseDTO {
     private Long orderId;
+    private String orderNumber;
     private Integer customerId;
     private String customerName;
     private String quotationNumber;

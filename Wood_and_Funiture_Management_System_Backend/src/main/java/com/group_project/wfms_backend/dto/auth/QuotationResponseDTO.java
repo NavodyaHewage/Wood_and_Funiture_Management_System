@@ -19,6 +19,8 @@ public class QuotationResponseDTO {
 
     private Integer quotationId;
 
+    private String quotationNumber;
+
     private Integer customerId;
     private String customerName;
 

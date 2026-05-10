@@ -68,7 +68,8 @@ export class QuotationManagementComponent implements OnInit {
       validUntil: [''],
       remarks: ['', Validators.maxLength(500)],
       status: ['PENDING'],
-      createdBy: [currentUserId], 
+      createdBy: [currentUserId],
+      quotationNumber: [''],
       details: this.fb.array([this.createItemRow()])
     });
   }
@@ -185,7 +186,8 @@ export class QuotationManagementComponent implements OnInit {
       validUntil: '',
       remarks: '',
       status: 'PENDING',
-      createdBy: currentUserId
+      createdBy: currentUserId,
+      quotationNumber: ''
     });
     this.details.clear();
     this.details.push(this.createItemRow());
@@ -201,7 +203,8 @@ export class QuotationManagementComponent implements OnInit {
       quotationDate: q.quotationDate,
       validUntil: q.validUntil,
       remarks: q.remarks,
-      status: q.status
+      status: q.status,
+      quotationNumber: q.quotationNumber
     });
 
     this.details.clear();

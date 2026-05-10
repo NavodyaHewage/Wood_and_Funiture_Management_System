@@ -29,6 +29,7 @@ public class CustomerOrderService {
 
         CustomerOrder order = new CustomerOrder();
         order.setCustomer(customer);
+        order.setOrderNumber(orderRepository.generateOrderNumber());
         order.setQuotationNumber(dto.getQuotationNumber());
         order.setPaidAmount(dto.getPaidAmount() != null ? dto.getPaidAmount() : BigDecimal.ZERO);
         order.setOrderDate(dto.getOrderDate());
@@ -143,6 +144,7 @@ public class CustomerOrderService {
     private CustomerOrderResponseDTO toResponseDTO(CustomerOrder order) {
         CustomerOrderResponseDTO dto = new CustomerOrderResponseDTO();
         dto.setOrderId(order.getOrderId());
+        dto.setOrderNumber(order.getOrderNumber());
 
         if (order.getCustomer() != null) {
             dto.setCustomerId(order.getCustomer().getCusId());
