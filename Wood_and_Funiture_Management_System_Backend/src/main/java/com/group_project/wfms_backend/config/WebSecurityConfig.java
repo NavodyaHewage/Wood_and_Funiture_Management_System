@@ -97,6 +97,7 @@ public class WebSecurityConfig {
                                 "/receipts/**",
                                 "/v1/supply-raw-materials/**"
                         ).hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers("/supply-requests/**").hasAnyRole("ADMIN", "MANAGER", "SUPPLIER")
 
                         // Any other request must be authenticated
                         .anyRequest().authenticated());

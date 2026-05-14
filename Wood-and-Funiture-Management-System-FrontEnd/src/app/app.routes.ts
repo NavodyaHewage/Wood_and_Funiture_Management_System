@@ -19,6 +19,7 @@ import { PayrollManagementComponent } from './components/payroll/payroll-managem
 import { DesignationSalaryConfigComponent } from './components/payroll/designation-salary-config/designation-salary-config.component';
 import { SuppliyerManagementDashboardComponent } from './components/user-management/suppliyer-management-dashboard/suppliyer-management-dashboard.component';
 import { SupplyRawMaterialComponent } from './components/inventory-management/supply-raw-material/supply-raw-material.component';
+import { SupplyRawMaterialRequestComponent } from './components/inventory-management/supply-raw-material-request/supply-raw-material-request.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -44,5 +45,6 @@ export const routes: Routes = [
     { path: 'designation-salary', component: DesignationSalaryConfigComponent, data: { title: 'Designation Salary Settings' } },
 
     { path: 'log-management', component: SupplyRawMaterialComponent, canActivate: [roleGuard], data: { title: 'Log Management', requiredRole: 'Admin' } },
+    { path: 'supply-request-management', component: SupplyRawMaterialRequestComponent, canActivate: [roleGuard], data: { title: 'Supply Request Management' } },
 ];
 

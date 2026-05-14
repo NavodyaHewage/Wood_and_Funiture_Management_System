@@ -1,0 +1,130 @@
+<div class="modal-overlay" *ngIf="show" (click)="close()">
+  <div class="modal-box large" style="max-width: 950px;" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h5>Convert to Supply Order (GRN)</h5>
+      <button class="modal-close" (click)="close()"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="modal-body">
+      <!-- Summary Header -->
+      <div class="alert alert-success mb-4" *ngIf="request">
+        <i class="bi bi-info-circle-fill me-2"></i>
+        Converting Request #{{request.requestId}} from <strong>{{request.supplierName}}</strong>.
+        <div class="mt-2 small">
+          <strong>Target Volume (Approved by Supplier):</strong> 
+          <span *ngFor="let d of request.details; let last = last">
+            {{d.rmName}}: {{d.supplierApprovedCft}} CFT{{!last ? ', ' : ''}}
+          </span>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Invoice Number</label>
+          <input type="text" [(ngModel)]="conversionData.invoiceNumber" placeholder="INV-001" />
+        </div>
+        <div class="form-group">
+          <label>Supply Date</label>
+          <input type="date" [(ngModel)]="conversionData.supplyDate" />
+        </div>
+        <div class="form-group">
+          <label>Transport Cost (Rs.)</label>
+          <input type="number" [(ngModel)]="conversionData.transport" min="0" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label>Cutting Fee (Rs.)</label>
+          <input type="number" [(ngModel)]="conversionData.cuttingFee" min="0" placeholder="0.00" />
+        </div>
+        <div class="form-group col-span-2">
+          <label>Cutting Fee Employee</label>
+          <select [(ngModel)]="conversionData.cuttingFeeEmployeeId">
+            <option [ngValue]="null">Select Employee</option>
+            <option *ngFor="let e of employees" [ngValue]="e.id">{{e.fullName}}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="section-title">
+        <span>Actual Log Details</span>
+        <div class="d-flex gap-2">
+            <button *ngFor="let d of request?.details" 
+                    class="btn-add-row"
+                    (click)="addLog(d.rmId, d.rmName, d.unitPrice)">
+                <i class="bi bi-plus"></i> Add {{d.rmName}}
+            </button>
+        </div>
+      </div>
+
+      <div class="details-table-wrap">
+        <table class="details-table">
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th>Log #</th>
+              <th>Length (ft)</th>
+              <th>Girth (ft)</th>
+               <th>Price/CFT</th>
+               <th>Expected (Exp.)</th>
+               <th>CFT</th>
+               <th>Total</th>
+               <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let log of conversionData.supplyDetails; let i = index">
+              <td class="fw-bold">{{log.rmName}}</td>
+              <td>
+                <input type="number" [(ngModel)]="log.logNumber" class="short-input" />
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="log.lengthFt" min="0" class="short-input" />
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="log.girthFt" min="0" class="short-input" />
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="log.price" min="0" class="short-input" />
+                <div class="small text-muted">Supplier Price</div>
+              </td>
+              <td class="text-secondary small">
+                Rs. {{getExpectedPrice(log.rmId) | number:'1.2-2'}}
+              </td>
+              <td class="fw-bold text-primary">
+                {{calculateCft(log) | number:'1.2-3'}}
+              </td>
+              <td class="line-total">
+                Rs. {{(calculateCft(log) * log.price) | number:'1.2-2'}}
+              </td>
+              <td>
+                <button class="remove-row-btn" (click)="removeLog(i)" *ngIf="conversionData.supplyDetails.length > 1">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="6" class="total-label">Grand Totals</td>
+              <td class="grand-total" [class.text-danger]="getTotalCft() > getMaxAllowedCft()">
+                {{getTotalCft() | number:'1.2-3'}} CFT
+                <div class="small text-muted" *ngIf="getMaxAllowedCft() > 0">
+                  Target: {{getMaxAllowedCft() | number:'1.2-3'}}
+                </div>
+              </td>
+              <td class="grand-total">Rs. {{getTotalAmount() | number:'1.2-2'}}</td>
+              <td></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="close()">Cancel</button>
+      <button class="btn-danger me-auto" (click)="rejectRequest()">Reject Request</button>
+      <button class="btn-submit" (click)="confirmConversion()">
+        Complete Order & Generate GRN
+      </button>
+    </div>
+  </div>
+</div>

@@ -45,6 +45,7 @@ export class AdminSideComponent implements OnInit {
     { name: 'Quotations', icon: 'bi-file-earmark-text-fill', route: '/quotation-management' },
     { name: 'Orders', icon: 'bi-cart-fill', route: '/order-management' },
     { name: 'Inventory', icon: 'bi-box-seam-fill', route: '/inventory' },
+    { name: 'Supply Requests', icon: 'bi-clipboard-check-fill', route: '/supply-request-management' },
     { name: 'Settings', icon: 'bi-gear-fill', route: '/settings' }
   ];
 

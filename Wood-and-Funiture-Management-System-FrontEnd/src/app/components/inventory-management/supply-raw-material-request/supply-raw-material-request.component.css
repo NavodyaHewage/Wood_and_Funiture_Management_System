@@ -1,0 +1,29 @@
+.dashboard-layout {
+  display: flex;
+  min-height: 100vh;
+  background: #fdfce8; /* Matching the Order Management background */
+}
+
+.main-content {
+  flex-grow: 1;
+  margin-left: 280px;
+  width: calc(100% - 280px);
+}
+
+.content-body {
+  padding: 30px;
+}
+
+.premium-title {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #38240D;
+  margin-bottom: 5px;
+  letter-spacing: -0.5px;
+}
+
+.premium-subtitle {
+  color: #9a7a5a;
+  font-size: 1rem;
+  font-weight: 500;
+}
