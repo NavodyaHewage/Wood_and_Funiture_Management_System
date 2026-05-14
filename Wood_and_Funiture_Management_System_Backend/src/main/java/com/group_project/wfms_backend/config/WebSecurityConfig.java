@@ -63,17 +63,40 @@ public class WebSecurityConfig {
                         // Public endpoints
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/public/**").permitAll()
+                        .requestMatchers("/users/change-password").permitAll()
+                        .requestMatchers("/users/me").permitAll()
+                        .requestMatchers("/attendance/**").permitAll()
+                        .requestMatchers("/test/**").permitAll()
 
                         // Admin only endpoints
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        // User endpoints
-                        .requestMatchers("/users/change-password").permitAll()
-                        .requestMatchers("/users/me").permitAll()
                         .requestMatchers("/users/**", "/users").hasRole("ADMIN")
-                        .requestMatchers("/api/attendance/**").permitAll()
 
-                        .requestMatchers("/api/employees/**", "/api/suppliers/**", "/api/customers/**", "/api/payroll/**")
-                        .hasAnyRole("ADMIN", "MANAGER")
+                        // Management endpoints - Admin and Manager
+                        .requestMatchers(
+                                "/employees/**",
+                                "/suppliers/**",
+                                "/customers/**",
+                                "/payroll/**",
+                                "/assets/**",
+                                "/orders/**",
+                                "/v1/cutting-fees/**",
+                                "/designation-salary/**",
+                                "/loans/**",
+                                "/paysheet-details/**",
+                                "/salary-payments/**",
+                                "/equity/**",
+                                "/expenses/**",
+                                "/income-account/**",
+                                "/loan-rules/**",
+                                "/payroll-records/**",
+                                "/product-categories/**",
+                                "/profit/**",
+                                "/quotations/**",
+                                "/v1/raw-material-items/**",
+                                "/receipts/**",
+                                "/v1/supply-raw-materials/**"
+                        ).hasAnyRole("ADMIN", "MANAGER")
 
                         // Any other request must be authenticated
                         .anyRequest().authenticated());

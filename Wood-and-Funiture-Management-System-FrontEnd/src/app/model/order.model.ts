@@ -19,6 +19,7 @@ export interface CustomerOrderRequestDTO {
 
 export interface CustomerOrderResponseDTO {
     orderId: number;
+    orderNumber: string;
     customerId: number;
     customerName: string;
     quotationNumber: string;

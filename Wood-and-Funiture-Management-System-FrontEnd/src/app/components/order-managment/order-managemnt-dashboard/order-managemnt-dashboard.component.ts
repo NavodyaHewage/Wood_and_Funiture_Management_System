@@ -5,6 +5,7 @@ import { OrderService } from '../../../service/order.service';
 import { CustomerOrderResponseDTO, CustomerOrderRequestDTO, OrderDetailDTO } from '../../../model/order.model';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
+import { ToastService } from '../../../service/toast.service';
 
 @Component({
   selector: 'app-order-management',
@@ -22,8 +23,6 @@ export class OrderManagementDashboardComponent implements OnInit {
   searchTerm = '';
   statusFilter = '';
   isLoading = false;
-  errorMessage = '';
-  successMessage = '';
 
   // Modal states
   showCreateModal = false;
@@ -51,7 +50,10 @@ export class OrderManagementDashboardComponent implements OnInit {
 
   statusOptions = ['PENDING', 'PROCESSING', 'COMPLETED', 'CANCELLED'];// hardcode backend enum //typescripte enum can be created
 
-  constructor(private orderService: OrderService) {}
+  constructor(
+    private orderService: OrderService,
+    private toastService: ToastService
+  ) {}
 
   ngOnInit(): void {
     this.loadOrders();
@@ -67,7 +69,7 @@ export class OrderManagementDashboardComponent implements OnInit {
       },
       error: (err: any) => {
         console.error('Error loading orders', err);
-        this.errorMessage = 'Failed to load orders.';
+        this.toastService.showError('Failed to load orders.');
         this.isLoading = false;
       }
     });
@@ -125,6 +127,7 @@ export class OrderManagementDashboardComponent implements OnInit {
 
   openEditModal(order: CustomerOrderResponseDTO): void {
     this.isEditMode = true;
+    this.selectedOrder = order;
     this.editOrderId = order.orderId;
     this.orderForm = {
       customerId: order.customerId,
@@ -147,22 +150,20 @@ export class OrderManagementDashboardComponent implements OnInit {
     if (this.isEditMode && this.editOrderId !== null) {
       this.orderService.updateOrder(this.editOrderId, this.orderForm).subscribe({
         next: () => {
-          this.successMessage = 'Order updated successfully!';
+          this.toastService.showSuccess('Order updated successfully!');
           this.closeModal();
           this.loadOrders();
-          this.clearMessages();
         },
-        error: () => { this.errorMessage = 'Failed to update order.'; }
+        error: () => { this.toastService.showError('Failed to update order.'); }
       });
     } else {
       this.orderService.createOrder(this.orderForm).subscribe({
         next: () => {
-          this.successMessage = 'Order created successfully!';
+          this.toastService.showSuccess('Order created successfully!');
           this.closeModal();
           this.loadOrders();
-          this.clearMessages();
         },
-        error: () => { this.errorMessage = 'Failed to create order.'; }
+        error: () => { this.toastService.showError('Failed to create order.'); }
       });
     }
   }
@@ -176,13 +177,12 @@ export class OrderManagementDashboardComponent implements OnInit {
     if (this.orderToDelete === null) return;
     this.orderService.deleteOrder(this.orderToDelete).subscribe({
       next: () => {
-        this.successMessage = 'Order deleted successfully!';
+        this.toastService.showSuccess('Order deleted successfully!');
         this.showDeleteConfirm = false;
         this.orderToDelete = null;
         this.loadOrders();
-        this.clearMessages();
       },
-      error: () => { this.errorMessage = 'Failed to delete order.'; }
+      error: () => { this.toastService.showError('Failed to delete order.'); }
     });
   }
 
@@ -225,12 +225,5 @@ export class OrderManagementDashboardComponent implements OnInit {
       'Cancelled': 'badge-cancelled'
     };
     return map[status] || 'badge-pending';
-  }
-
-  clearMessages(): void {
-    setTimeout(() => {
-      this.successMessage = '';
-      this.errorMessage = '';
-    }, 3000);
   }
 }

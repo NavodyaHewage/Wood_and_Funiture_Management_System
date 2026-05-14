@@ -133,3 +133,66 @@ CREATE TABLE IF NOT EXISTS Employee_Paysheet (
     CONSTRAINT FK_Emp_Paysheet FOREIGN KEY (Employee_id) REFERENCES Employee(Id),
     UNIQUE KEY unique_paysheet_record (Employee_id, Month, Year)
 );
+
+-- 7. QUOTATION TABLE: Add Quotation_Number and Stored Procedure
+ALTER TABLE timber_business.quotation
+ADD COLUMN Quotation_Number VARCHAR(20) NULL AFTER Quotation_Id;
+
+DELIMITER $$
+
+CREATE PROCEDURE Generate_Quotation_Number()
+BEGIN
+    DECLARE last_seq INT DEFAULT 0;
+    DECLARE current_year CHAR(2);
+    DECLARE quotation_number VARCHAR(20);
+    
+    SET current_year = RIGHT(YEAR(CURDATE()), 2);
+    
+    -- Get last sequence from Quotation_Number column for current year
+    SELECT COALESCE(MAX(CAST(RIGHT(Quotation_Number, 5) AS UNSIGNED)), 0)
+    INTO last_seq
+    FROM timber_business.quotation
+    WHERE LEFT(Quotation_Number, 5) = CONCAT('QUO', current_year);
+    
+    SET last_seq = last_seq + 1;
+    
+    SET quotation_number = CONCAT('QUO', current_year, LPAD(last_seq, 5, '0'));
+    
+    SELECT quotation_number AS Quotation_Number;
+    
+END$$
+
+DELIMITER ;
+
+-- 8. CUSTOMER ORDER TABLE: Add Order_Number and Stored Procedure
+ALTER TABLE timber_business.customer_order
+ADD COLUMN Order_Number VARCHAR(20) NULL AFTER Order_Id;
+
+DELIMITER $$
+
+CREATE PROCEDURE Generate_Order_Number()
+BEGIN
+    DECLARE last_seq INT DEFAULT 0;
+    DECLARE current_year CHAR(2);
+    DECLARE order_number VARCHAR(20);
+    
+    SET current_year = RIGHT(YEAR(CURDATE()), 2);
+    
+    -- Get last sequence from Order_Number column for current year
+    SELECT COALESCE(MAX(CAST(RIGHT(Order_Number, 6) AS UNSIGNED)), 0)
+    INTO last_seq
+    FROM timber_business.customer_order
+    WHERE LEFT(Order_Number, 5) = CONCAT('ORD', current_year);
+    
+    SET last_seq = last_seq + 1;
+    
+    -- ORD + 2-digit year + 6-digit sequence = ORD26000001
+    SET order_number = CONCAT('ORD', current_year, LPAD(last_seq, 6, '0'));
+    
+    SELECT order_number AS Order_Number;
+    
+END$$
+
+DELIMITER ;
+
+

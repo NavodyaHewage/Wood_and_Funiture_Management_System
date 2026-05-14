@@ -19,6 +19,9 @@ public class Quotation {
     @Column(name = "Quotation_Id")
     private Integer quotationId;
 
+    @Column(name = "Quotation_Number", length = 20)
+    private String quotationNumber;
+
     @ManyToOne
     @JoinColumn(name = "Customer_Id", nullable = false)
     private Customer customer;
