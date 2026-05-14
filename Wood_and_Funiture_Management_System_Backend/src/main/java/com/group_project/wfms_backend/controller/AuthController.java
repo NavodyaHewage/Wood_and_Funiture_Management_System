@@ -138,6 +138,7 @@ public class AuthController {
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
         try {
+
             String username = request.get("username");
             if (username == null || username.isEmpty()) {
                 return ResponseEntity.badRequest().body(new MessageResponse("Username is required"));

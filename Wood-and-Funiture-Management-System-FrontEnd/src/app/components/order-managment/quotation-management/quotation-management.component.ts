@@ -60,7 +60,8 @@ export class QuotationManagementComponent implements OnInit {
     this.loadProductCategories();
   }
 
-  initForm(): void {
+  
+initForm(): void {
     const currentUserId = this.authService.currentUserValue?.userId || null;
     this.quotationForm = this.fb.group({
       customerId: ['', Validators.required],
@@ -73,7 +74,6 @@ export class QuotationManagementComponent implements OnInit {
     });
   }
 
-
   createItemRow(): FormGroup {
     return this.fb.group({
       productCatId: [null, Validators.required],
@@ -84,6 +84,7 @@ export class QuotationManagementComponent implements OnInit {
       price: [0, [Validators.required, Validators.min(0)]]
     });
   }
+  
 
   get details(): FormArray {
     return this.quotationForm.get('details') as FormArray;

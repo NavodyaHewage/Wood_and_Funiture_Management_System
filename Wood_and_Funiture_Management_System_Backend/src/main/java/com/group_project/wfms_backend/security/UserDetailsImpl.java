@@ -13,6 +13,7 @@ import java.util.Collections;
 
 @Data
 @AllArgsConstructor
+//userdeatils is a common interface
 public class UserDetailsImpl implements UserDetails {
 
     private Integer id;

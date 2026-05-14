@@ -49,7 +49,7 @@ export class OrderManagementDashboardComponent implements OnInit {
     { id: 3, name: 'Processed Wood' }
   ];
 
-  statusOptions = ['PENDING', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
+  statusOptions = ['PENDING', 'PROCESSING', 'COMPLETED', 'CANCELLED'];// hardcode backend enum //typescripte enum can be created
 
   constructor(private orderService: OrderService) {}
 
