@@ -7,10 +7,25 @@
         <app-header></app-header>
 
         <div class="content-body">
-            <div class="dashboard-controls mb-4">
+            <div class="dashboard-controls mb-4 d-flex justify-content-between align-items-end">
                 <div class="title-section">
                     <h1 class="premium-title">Supplier Dashboard</h1>
-                    <p class="text-muted premium-subtitle">Welcome to your supplier portal. Manage your supplies here.</p>
+                    <p class="text-muted premium-subtitle">Welcome, {{ currentSupplier?.supName || currentUser?.username }}. Manage your supplies here.</p>
+                </div>
+                
+                <!-- Date Filters -->
+                <div class="filter-section d-flex gap-3 align-items-end">
+                    <div class="filter-group">
+                        <label class="filter-label">Start Date</label>
+                        <input type="date" class="form-control premium-input" [(ngModel)]="startDate" (change)="applyFilters()">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">End Date</label>
+                        <input type="date" class="form-control premium-input" [(ngModel)]="endDate" (change)="applyFilters()">
+                    </div>
+                    <button class="btn btn-outline-secondary premium-btn-outline" (click)="clearFilters()">
+                        <i class="bi bi-x-circle"></i> Clear
+                    </button>
                 </div>
             </div>
 
@@ -24,7 +39,7 @@
                             </div>
                             <div class="ms-3">
                                 <h6 class="text-muted mb-1">Total Supplies</h6>
-                                <h2 class="mb-0 fw-bold">124</h2>
+                                <h2 class="mb-0 fw-bold">{{ totalSuppliesCount }}</h2>
                             </div>
                         </div>
                     </div>
@@ -33,11 +48,11 @@
                     <div class="premium-card info-card card-success">
                         <div class="card-body d-flex align-items-center">
                             <div class="icon-circle">
-                                <i class="bi bi-check-circle"></i>
+                                <i class="bi bi-currency-dollar"></i>
                             </div>
                             <div class="ms-3">
-                                <h6 class="text-muted mb-1">Approved</h6>
-                                <h2 class="mb-0 fw-bold">110</h2>
+                                <h6 class="text-muted mb-1">Total Net Amount</h6>
+                                <h2 class="mb-0 fw-bold">{{ totalNetAmount | currency:'LKR ':'symbol':'1.2-2' }}</h2>
                             </div>
                         </div>
                     </div>
@@ -46,11 +61,11 @@
                     <div class="premium-card info-card card-warning">
                         <div class="card-body d-flex align-items-center">
                             <div class="icon-circle">
-                                <i class="bi bi-clock-history"></i>
+                                <i class="bi bi-receipt"></i>
                             </div>
                             <div class="ms-3">
-                                <h6 class="text-muted mb-1">Pending Validation</h6>
-                                <h2 class="mb-0 fw-bold">14</h2>
+                                <h6 class="text-muted mb-1">Total Gross Amount</h6>
+                                <h2 class="mb-0 fw-bold">{{ totalGrossAmount | currency:'LKR ':'symbol':'1.2-2' }}</h2>
                             </div>
                         </div>
                     </div>
@@ -58,9 +73,48 @@
             </div>
 
             <!-- Dashboard Content -->
-            <div class="premium-card p-4">
-                <h4 class="mb-3">Recent Activity</h4>
-                <p class="text-muted">No recent activity to display.</p>
+            <div class="premium-card p-0 overflow-hidden">
+                <div class="card-header-premium p-4 d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0 fw-bold"><i class="bi bi-list-task me-2"></i>Supply History</h4>
+                    <span class="badge premium-badge">{{ filteredSupplies.length }} Records</span>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table premium-table mb-0">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Invoice #</th>
+                                <th>Raw Material</th>
+                                <th>Gross Total</th>
+                                <th>Transport</th>
+                                <th>Net Amount</th>
+                                <th>Logs</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let supply of filteredSupplies">
+                                <td class="fw-medium">{{ supply.supplyDate | date:'mediumDate' }}</td>
+                                <td><span class="invoice-badge">{{ supply.invoiceNumber }}</span></td>
+                                <td>{{ supply.rmName }}</td>
+                                <td>{{ supply.totalAmount | currency:'LKR ' }}</td>
+                                <td class="text-danger">- {{ supply.transport | currency:'LKR ' }}</td>
+                                <td class="fw-bold text-success">{{ supply.netAmount | currency:'LKR ' }}</td>
+                                <td>
+                                    <span class="badge bg-light text-dark border">{{ supply.supplyDetails?.length || 0 }} Logs</span>
+                                </td>
+                            </tr>
+                            <tr *ngIf="filteredSupplies.length === 0">
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="empty-state">
+                                        <i class="bi bi-inbox display-4 text-muted"></i>
+                                        <p class="mt-3 text-muted">No supply records found for the selected criteria.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>

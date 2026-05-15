@@ -16,10 +16,14 @@ public class ExpenseType {
     @Column(name = "expence_type_id")
     private Integer expenseTypeId;
 
-    @Column(name = "type_name", nullable = false, length = 100)
-    private String typeName;
-
     @Column(name = "description", nullable = false, length = 200)
     private String description;
 
+    public String getTypeName() {
+        return this.description;
+    }
+
+    public void setTypeName(String typeName) {
+        this.description = typeName;
+    }
 }

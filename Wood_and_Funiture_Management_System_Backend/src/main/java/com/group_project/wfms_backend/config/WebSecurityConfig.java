@@ -75,7 +75,6 @@ public class WebSecurityConfig {
                         // Management endpoints - Admin and Manager
                         .requestMatchers(
                                 "/employees/**",
-                                "/suppliers/**",
                                 "/customers/**",
                                 "/payroll/**",
                                 "/assets/**",
@@ -93,10 +92,15 @@ public class WebSecurityConfig {
                                 "/product-categories/**",
                                 "/profit/**",
                                 "/quotations/**",
-                                "/v1/raw-material-items/**",
-                                "/receipts/**",
-                                "/v1/supply-raw-materials/**"
+                                "/receipts/**"
                         ).hasAnyRole("ADMIN", "MANAGER")
+
+                        // Supplier accessible endpoints
+                        .requestMatchers(
+                                "/suppliers/**",
+                                "/v1/supply-raw-materials/**",
+                                "/v1/raw-material-items/**"
+                        ).hasAnyRole("ADMIN", "MANAGER", "SUPPLIER")
 
                         // Any other request must be authenticated
                         .anyRequest().authenticated());

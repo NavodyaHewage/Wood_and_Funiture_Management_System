@@ -96,8 +96,8 @@ public class AuthService {
 
         } catch (BadCredentialsException e) {
             userService.handleFailedLogin(loginRequest.getUsername());
+            throw e;
         }
-        return null; // Should not reach here
     }
 
     /**

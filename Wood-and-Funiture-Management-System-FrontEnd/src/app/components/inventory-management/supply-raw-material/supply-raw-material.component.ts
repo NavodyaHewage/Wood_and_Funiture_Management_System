@@ -59,7 +59,8 @@ export class SupplyRawMaterialComponent implements OnInit {
     // Set current user ID
     this.authService.currentUser.subscribe((user: any) => {
       if (user) {
-        this.supplyForm.patchValue({ createdById: user.id });
+        // Corrected: user.userId instead of user.id
+        this.supplyForm.patchValue({ createdById: user.userId });
       }
     });
   }
@@ -81,21 +82,24 @@ export class SupplyRawMaterialComponent implements OnInit {
   }
 
   addLogRow(): void {
-    const mainRmId = this.supplyForm.get('rmId')?.value;
-    const selectedWood = this.rawMaterials.find(rm => rm.rmId == mainRmId);
-    
-    const row = this.fb.group({
-      rmId: [mainRmId || '', Validators.required],
-      logNumber: ['', Validators.required],
-      lengthFt: [0, [Validators.required, Validators.min(0.1)]],
-      girthFt: [0, [Validators.required, Validators.min(0.1)]],
-      totalQuantityCft: [{ value: 0, disabled: true }],
-      price: [selectedWood?.pricePerCft || 0, [Validators.required, Validators.min(1)]],
-      lineTotal: [{ value: 0, disabled: true }]
-    });
+  const mainRmId = this.supplyForm.get('rmId')?.value;
+  const selectedWood = this.rawMaterials.find(rm => rm.rmId == mainRmId);
 
-    this.supplyDetails.push(row);
-  }
+  // ✅ Auto log number — existing rows count + 1
+  const nextLogNumber = this.supplyDetails.length + 1;
+
+  const row = this.fb.group({
+    rmId:             [mainRmId || '', Validators.required],
+    logNumber:        [nextLogNumber, Validators.required],
+    lengthFt:         ['', [Validators.required, Validators.min(0.1)]], // Changed to empty string to avoid immediate invalid state
+    girthFt:          ['', [Validators.required, Validators.min(0.1)]], // Changed to empty string to avoid immediate invalid state
+    totalQuantityCft: [{ value: 0, disabled: true }],
+    price:            [selectedWood?.pricePerCft || '', [Validators.required, Validators.min(1)]],
+    lineTotal:        [{ value: 0, disabled: true }]
+  });
+
+  this.supplyDetails.push(row);
+}
 
   onMainWoodTypeChange(): void {
     const mainRmId = this.supplyForm.get('rmId')?.value;
@@ -140,10 +144,12 @@ export class SupplyRawMaterialComponent implements OnInit {
     const l = row.get('lengthFt')?.value || 0;
     const g = row.get('girthFt')?.value || 0;
     
-    // Formula: (L * G * G) / 2304
-    const cft = (l * g * g) / 2304;
-    row.patchValue({ totalQuantityCft: parseFloat(cft.toFixed(4)) });
-    this.calculateLineTotal(index);
+    if (l > 0 && g > 0) {
+      // Formula: (L * G * G) / 2304
+      const cft = (l * g * g) / 2304;
+      row.patchValue({ totalQuantityCft: parseFloat(cft.toFixed(4)) });
+      this.calculateLineTotal(index);
+    }
   }
 
   calculateLineTotal(index: number): void {
@@ -173,16 +179,35 @@ export class SupplyRawMaterialComponent implements OnInit {
   onSubmit(): void {
     if (this.supplyForm.invalid) {
       this.toast.error('Please fill all required fields correctly.');
+      // Mark all as touched to show errors
+      this.supplyForm.markAllAsTouched();
       return;
     }
 
-    if (this.isTreeSeller && this.supplyForm.get('cuttingFee')?.value > 0 && !this.supplyForm.get('cuttingFeeEmployeeId')?.value) {
+    if (this.isTreeSeller && (this.supplyForm.get('cuttingFee')?.value || 0) > 0 && !this.supplyForm.get('cuttingFeeEmployeeId')?.value) {
       this.toast.error('Please select an employee for the cutting fee.');
       return;
     }
 
     this.isSubmitting = true;
-    const payload = this.supplyForm.getRawValue();
+    
+    // Prepare payload
+    const formValue = this.supplyForm.getRawValue();
+    const payload = {
+      ...formValue,
+      // Ensure numeric fields are numbers
+      transport: formValue.transport || 0,
+      cuttingFee: formValue.cuttingFee || 0,
+      cuttingFeeEmployeeId: formValue.cuttingFeeEmployeeId ? Number(formValue.cuttingFeeEmployeeId) : null,
+      // Clean up details (remove extra fields not in DTO)
+      supplyDetails: formValue.supplyDetails.map((d: any) => ({
+        rmId: d.rmId,
+        logNumber: d.logNumber,
+        lengthFt: d.lengthFt,
+        girthFt: d.girthFt,
+        price: d.price
+      }))
+    };
     
     this.supplyService.create(payload).subscribe({
       next: (res: any) => {
@@ -190,7 +215,8 @@ export class SupplyRawMaterialComponent implements OnInit {
         this.router.navigate(['/admin-dashboard']);
       },
       error: (err: any) => {
-        this.toast.error('Failed to record supply. ' + (err.error?.message || ''));
+        console.error('Submission error:', err);
+        this.toast.error('Failed to record supply. ' + (err.error?.message || 'Check connection.'));
         this.isSubmitting = false;
       }
     });

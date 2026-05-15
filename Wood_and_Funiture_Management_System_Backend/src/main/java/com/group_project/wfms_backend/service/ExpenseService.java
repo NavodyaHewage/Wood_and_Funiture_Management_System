@@ -59,8 +59,6 @@ public class ExpenseService {
         dto.setDate(entity.getDate());
         dto.setAmount(entity.getAmount());
         dto.setDescription(entity.getDescription());
-        dto.setPaidTo(entity.getPaidTo());
-        dto.setRemarks(entity.getRemarks());
 
         dto.setExpenseTypeId(entity.getExpenseType().getExpenseTypeId());
         dto.setUserId(entity.getUser().getUserId());
@@ -85,8 +83,6 @@ public class ExpenseService {
         entity.setDate(dto.getDate());
         entity.setAmount(dto.getAmount());
         entity.setDescription(dto.getDescription());
-        entity.setPaidTo(dto.getPaidTo());
-        entity.setRemarks(dto.getRemarks());
 
         // Foreign Key සම්බන්දතා පරීක්ෂා කිරීම
         entity.setExpenseType(typeRepo.findById(dto.getExpenseTypeId())

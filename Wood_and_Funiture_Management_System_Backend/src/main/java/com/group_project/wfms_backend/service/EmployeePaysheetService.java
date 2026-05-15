@@ -203,7 +203,6 @@ public class EmployeePaysheetService {
         expense.setDate(java.time.LocalDate.now());
         expense.setAmount(response.getNetSalary());
         expense.setDescription("Salary for " + employee.getFullName() + " - " + request.getMonth() + "/" + request.getYear());
-        expense.setPaidTo(employee.getFullName());
         expense.setExpenseType(salaryType);
         expense.setUser(userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Logged in user not found")));
         expenseAccountRepository.save(expense);

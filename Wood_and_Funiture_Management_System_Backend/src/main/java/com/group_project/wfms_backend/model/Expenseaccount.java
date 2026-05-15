@@ -30,19 +30,13 @@ public class Expenseaccount {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "paid_to")
-    private String paidTo;
-
-    @Column(name = "remarks")
-    private String remarks;
-
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expense_type_id", nullable = false)
+    @JoinColumn(name = "Expence_Type_Id", nullable = false)
     private ExpenseType expenseType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "grn_id") // මෙහි nullable = true (default) නිසා SQL එකේ NULL වලට ගැලපේ
+    @JoinColumn(name = "GRN_ID")
     private GRN grn;
 
     @ManyToOne(fetch = FetchType.LAZY)
