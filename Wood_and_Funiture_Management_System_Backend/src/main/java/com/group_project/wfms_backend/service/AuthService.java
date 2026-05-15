@@ -60,7 +60,7 @@ public class AuthService {
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
-            // Generate tokens
+            // Generate tokens//acess token
             String jwt = jwtUtils.generateJwtToken(authentication);
             String refreshToken = jwtUtils.generateRefreshToken(loginRequest.getUsername());
 

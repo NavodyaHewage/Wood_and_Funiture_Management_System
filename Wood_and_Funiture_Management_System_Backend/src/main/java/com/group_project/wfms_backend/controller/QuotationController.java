@@ -36,7 +36,7 @@ public class QuotationController {
     public ResponseEntity<List<QuotationResponseDTO>> getAllQuotations() {
         return ResponseEntity.ok(quotationService.getAllQuotations());
     }
-
+//create endpoint service modules wlata
     @GetMapping("/{id}")
     public ResponseEntity<QuotationResponseDTO> getQuotationById(@PathVariable Integer id) {
         return ResponseEntity.ok(quotationService.getQuotationById(id));

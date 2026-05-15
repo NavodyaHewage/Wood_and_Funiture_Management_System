@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-@Slf4j
+@Slf4j//for loging errors
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(DuplicateAttendanceException.class)

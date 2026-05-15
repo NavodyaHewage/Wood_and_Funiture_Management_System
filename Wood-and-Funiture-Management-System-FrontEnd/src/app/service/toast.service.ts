@@ -8,7 +8,7 @@ export interface Toast {
     title?: string;
     duration?: number;
 }
-
+//service
 @Injectable({
     providedIn: 'root'
 })
