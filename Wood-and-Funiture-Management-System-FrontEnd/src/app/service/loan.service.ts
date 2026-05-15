@@ -26,12 +26,14 @@ export class LoanService {
 
   // --- Loan Endpoints ---
 
+  // Fetches all employee loans from the backend. Maps to the EmployeeLoanDTO interface.
   getAllLoans(): Observable<EmployeeLoanDTO[]> {
     return this.http.get<EmployeeLoanDTO[]>(this.loanUrl).pipe(
       catchError(err => this.handleError(err, 'Failed to load loans'))
     );
   }
 
+  // Submits new loan application data. Handles business validation errors (e.g., existing active loans).
   createLoan(loan: EmployeeLoanDTO): Observable<EmployeeLoanDTO> {
     return this.http.post<EmployeeLoanDTO>(this.loanUrl, loan).pipe(
       catchError(err => this.handleError(err, 'Failed to create loan'))
@@ -44,6 +46,7 @@ export class LoanService {
     );
   }
 
+  // Dynamically requests the maximum allowable loan limit (3x monthly salary) for the selected employee.
   getMaxLoanLimit(employeeId: number): Observable<number> {
     return this.http.get<number>(`${this.loanUrl}/max-limit/${employeeId}`).pipe(
       catchError(err => this.handleError(err, 'Failed to load max loan limit'))

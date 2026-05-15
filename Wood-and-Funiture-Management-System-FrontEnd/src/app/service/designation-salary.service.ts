@@ -29,12 +29,14 @@ export class DesignationSalaryService {
     private toastService: ToastService
   ) { }
 
+  // Fetches all designation salary mappings. This serves as the master configuration for base pay and loan limits.
   getAll(): Observable<DesignationSalary[]> {
     return this.http.get<DesignationSalary[]>(this.apiUrl).pipe(
       catchError(err => this.handleError(err))
     );
   }
 
+  // Creates or updates a designation salary configuration (Daily or Monthly rate).
   save(ds: DesignationSalary): Observable<DesignationSalary> {
     return this.http.post<DesignationSalary>(this.apiUrl, ds).pipe(
       catchError(err => this.handleError(err))

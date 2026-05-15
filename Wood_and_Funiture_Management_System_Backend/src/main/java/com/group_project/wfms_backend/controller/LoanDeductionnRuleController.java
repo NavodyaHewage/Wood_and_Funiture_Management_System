@@ -1,8 +1,8 @@
 package com.group_project.wfms_backend.controller;
 
 
-import com.group_project.wfms_backend.model.Loan_Deduction_Rule;
-import com.group_project.wfms_backend.repository.LoanDeductionRuleRepository;
+import com.group_project.wfms_backend.dto.auth.LoanDeductionRuleDTO;
+import com.group_project.wfms_backend.service.LoanDeductionRuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,18 +11,18 @@ import java.util.List;
 @RestController
 @RequestMapping("/loan-rules")
 @CrossOrigin(origins = "http://localhost:4200")
-
 public class LoanDeductionnRuleController {
+
     @Autowired
-    private LoanDeductionRuleRepository ruleRepository;
+    private LoanDeductionRuleService ruleService;
 
     @GetMapping
-    public List<Loan_Deduction_Rule> getAllRules() {
-        return ruleRepository.findAll();
+    public List<LoanDeductionRuleDTO> getAllRules() {
+        return ruleService.getAllRules();
     }
 
     @PostMapping
-    public Loan_Deduction_Rule createRule(@RequestBody Loan_Deduction_Rule rule) {
-        return ruleRepository.save(rule);
+    public LoanDeductionRuleDTO createRule(@RequestBody LoanDeductionRuleDTO ruleDto) {
+        return ruleService.createRule(ruleDto);
     }
 }

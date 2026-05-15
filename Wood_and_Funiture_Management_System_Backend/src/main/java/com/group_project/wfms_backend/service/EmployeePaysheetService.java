@@ -55,6 +55,7 @@ public class EmployeePaysheetService {
                 .orElseThrow(() -> new RuntimeException("Salary Mapping Error: No salary record found for designation '" + employee.getDesignation() + "'. Please add it in the Designation Salary section."));
 
         BigDecimal baseSalary;
+        // Divergent logic: Daily workers are paid per attended day, whereas monthly workers receive a fixed base regardless of exact days, unless unpaid leave is applied.
         if ("DAILY".equalsIgnoreCase(request.getPaymentType())) {
             // Calculate for TODAY only
             baseSalary = ds.getBasicSalary(); // Assuming basicSalary in meta-table is the Daily Rate for Daily types
@@ -89,6 +90,7 @@ public class EmployeePaysheetService {
         response.setOvertimeHours(totalOtHours);
 
         // OT Rate Calculation (Assumed 1.5x of hourly rate)
+        // Overtime is calculated at 1.5x the standard hourly rate based on the employee's designation.
         BigDecimal hourlyRate = (ds.getSalaryType() == SalaryRateType.DAILY) 
                 ? ds.getBasicSalary().divide(BigDecimal.valueOf(8), 2, RoundingMode.HALF_UP)
                 : ds.getBasicSalary().divide(BigDecimal.valueOf(200), 2, RoundingMode.HALF_UP); // 200h/month approx
@@ -136,6 +138,7 @@ public class EmployeePaysheetService {
 
     @Transactional
     public void confirmPayroll(PayrollRequestDTO request, Integer userId) {
+        // This method is fully transactional. It ensures that Paysheets, Expense ledgers, and Loan balances are all updated atomically to prevent data inconsistency.
         PayrollResponseDTO response = calculatePayroll(request);
         Employee employee = employeeRepository.findById(request.getEmployeeId()).orElseThrow();
         User currentUser = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("Logged in user not found"));

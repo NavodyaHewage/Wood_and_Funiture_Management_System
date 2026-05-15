@@ -4,6 +4,7 @@ export interface EmployeeLoanDTO {
   employeeName?: string;
   loanAmount: number;
   issuedDate: string; // LocalDate as ISO string
+  dueDate?: string; // LocalDate as ISO string
   reason: string;
   totalDeducted: number;
   balance: number; // Read-only from backend

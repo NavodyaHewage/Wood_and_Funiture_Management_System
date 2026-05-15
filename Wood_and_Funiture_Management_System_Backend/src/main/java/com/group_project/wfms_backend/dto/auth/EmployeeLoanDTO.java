@@ -12,6 +12,7 @@ public class EmployeeLoanDTO {
     private String employeeName; // For display convenience
     private BigDecimal loanAmount;
     private LocalDate issuedDate;
+    private LocalDate dueDate;
     private String reason;
     private BigDecimal totalDeducted;
     private BigDecimal balance; // Read-only in backend

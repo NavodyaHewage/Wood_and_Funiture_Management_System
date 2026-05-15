@@ -74,6 +74,9 @@ UPDATE Employee_Loan SET Status = 'COMPLETED' WHERE Status = 'Settled';
 ALTER TABLE Employee_Loan 
 MODIFY COLUMN Status ENUM('ACTIVE', 'PARTIALLY_PAID', 'COMPLETED', 'CANCELLED') DEFAULT 'ACTIVE';
 
+-- Step D: Add Due Date column (ignore if exists)
+ALTER TABLE Employee_Loan 
+ADD COLUMN Due_Date DATE NULL AFTER Issued_Date;
 
 
 -- ==============================================================================

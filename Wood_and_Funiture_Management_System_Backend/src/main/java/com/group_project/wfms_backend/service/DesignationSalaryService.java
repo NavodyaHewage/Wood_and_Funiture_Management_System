@@ -19,6 +19,7 @@ public class DesignationSalaryService {
     }
 
     public DesignationSalary getByDesignation(String name) {
+        // Critical lookup method used by Payroll and Loan services to determine the base rate for an employee's designation.
         return repository.findByDesignationNameAndIsActiveTrue(name)
                 .orElseThrow(() -> new EntityNotFoundException("No active salary mapping found for designation: " + name));
     }

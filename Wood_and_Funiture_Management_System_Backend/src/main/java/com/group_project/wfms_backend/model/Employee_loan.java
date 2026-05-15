@@ -31,6 +31,9 @@ public class Employee_loan {
     @Column(name = "Issued_Date", nullable = false)
     private LocalDate issuedDate;
 
+    @Column(name = "Due_Date")
+    private LocalDate dueDate;
+
     @Column(name = "Reason", length = 255)
     private String reason;
 

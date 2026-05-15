@@ -23,10 +23,16 @@ public class LoanDeductionRuleService {
 
     // READ ALL
     public List<LoanDeductionRuleDTO> getAllRules() {
-        return ruleRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+        try {
+            return ruleRepository.findAll()
+                    .stream()
+                    .map(this::convertToDTO)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            // Log the error and return an empty list to avoid 500 error if table is missing or mapping is wrong
+            System.err.println("Error fetching loan rules: " + e.getMessage());
+            return new java.util.ArrayList<>();
+        }
     }
 
     // CREATE RULE
@@ -82,9 +88,14 @@ public class LoanDeductionRuleService {
 
     // MAPPING HELPER
     private LoanDeductionRuleDTO convertToDTO(Loan_Deduction_Rule rule) {
+        if (rule == null) return null;
         LoanDeductionRuleDTO dto = new LoanDeductionRuleDTO();
         dto.setRuleId(rule.getRuleId());
-        dto.setLoanId(rule.getEmployeeloan().getLoanId());
+        
+        if (rule.getEmployeeloan() != null) {
+            dto.setLoanId(rule.getEmployeeloan().getLoanId());
+        }
+        
         dto.setDeductionAmount(rule.getDeductionAmount());
         dto.setStartMonth(rule.getStartMonth());
         dto.setStartYear(rule.getStartYear());

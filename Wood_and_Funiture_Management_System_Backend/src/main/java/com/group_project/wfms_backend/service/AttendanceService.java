@@ -142,6 +142,7 @@ public class AttendanceService {
     }
 
     private void validateAttendanceLogic(AttendanceStatus status, LocalTime in, LocalTime out) {
+        // Data Integrity Check: Prevents conflicting data such as clock-in times on days marked as ABSENT or LEAVE.
         if (status == AttendanceStatus.ABSENT || status == AttendanceStatus.LEAVE || 
             status == AttendanceStatus.HOLIDAY || status == AttendanceStatus.WEEKEND) {
             if (in != null || out != null) {
@@ -173,6 +174,7 @@ public class AttendanceService {
     }
 
     private double calculateOT(EmployeeAttendance a) {
+        // Company Policy: Standard shift ends at 17:00. Overtime is calculated in decimal hours for any duration worked past this time.
         if (a.getCheckOut() != null && a.getCheckOut().isAfter(LocalTime.of(17, 0))) {
             long seconds = java.time.Duration.between(LocalTime.of(17, 0), a.getCheckOut()).getSeconds();
             return seconds / 3600.0;

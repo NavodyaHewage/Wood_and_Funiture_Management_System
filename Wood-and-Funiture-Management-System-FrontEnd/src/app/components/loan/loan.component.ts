@@ -65,6 +65,7 @@ export class LoanComponent implements OnInit, OnDestroy {
       autoDeduction: [true],
       deductionAmount: [null, [Validators.required, Validators.min(1)]],
       issuedDate: [new Date().toISOString().split('T')[0], Validators.required],
+      dueDate: [{ value: null, disabled: true }],
       reason: ['', [Validators.required, Validators.minLength(5)]],
       remarks: ['']
     });
@@ -80,6 +81,18 @@ export class LoanComponent implements OnInit, OnDestroy {
           const preview = Math.ceil(val.loanAmount / val.installments);
           if (preview !== val.deductionAmount) {
             this.loanForm.patchValue({ deductionAmount: preview }, { emitEvent: false });
+          }
+        }
+        
+        // Calculate Due Date based on Issue Date and Installments
+        const rawValues = this.loanForm.getRawValue();
+        if (rawValues.issuedDate && rawValues.installments) {
+          const issueDate = new Date(rawValues.issuedDate);
+          issueDate.setMonth(issueDate.getMonth() + Number(rawValues.installments));
+          const calculatedDueDate = issueDate.toISOString().split('T')[0];
+          
+          if (rawValues.dueDate !== calculatedDueDate) {
+            this.loanForm.patchValue({ dueDate: calculatedDueDate }, { emitEvent: false });
           }
         }
       });
@@ -182,7 +195,7 @@ export class LoanComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const payload = this.loanForm.value;
+    const payload = this.loanForm.getRawValue();
 
     // Business Logic: Block exceeding max amount only for loans
     if (payload.type === 'Loan' && this.selectedEmployeeMaxLoan > 0 && payload.loanAmount > this.selectedEmployeeMaxLoan) {
@@ -215,6 +228,7 @@ export class LoanComponent implements OnInit, OnDestroy {
       employeeId: +payload.employeeId,
       loanAmount: payload.loanAmount,
       issuedDate: payload.issuedDate,
+      dueDate: payload.dueDate,
       reason: payload.reason,
       remarks: payload.remarks,
       status: LoanStatus.ACTIVE,

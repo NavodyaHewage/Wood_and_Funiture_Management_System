@@ -74,6 +74,7 @@ export class AttendanceService {
     return isPlatformBrowser(this.platformId);
   }
 
+  // Submits daily attendance. Handles validation errors like duplicate records or invalid times.
   markAttendance(dto: AttendanceCreateDTO): Observable<AttendanceResponseDTO> {
     return this.http.post<AttendanceResponseDTO>(this.apiUrl, dto).pipe(
       catchError(err => this.handleError(err))
@@ -86,6 +87,7 @@ export class AttendanceService {
     );
   }
 
+  // Retrieves attendance logs based on date boundaries and specific employee IDs.
   getFilteredAttendance(startDate?: string, endDate?: string, employeeId?: number): Observable<AttendanceResponseDTO[]> {
     let params = new HttpParams();
     if (startDate) params = params.set('startDate', startDate);
@@ -115,6 +117,7 @@ export class AttendanceService {
     );
   }
 
+  // Retrieves aggregated metrics (present, absent, total OT hours) for a given month and year to feed payroll calculations.
   getSummary(month: number, year: number, employeeId: number): Observable<AttendanceSummaryDTO> {
     let params = new HttpParams()
       .set('month', month.toString())

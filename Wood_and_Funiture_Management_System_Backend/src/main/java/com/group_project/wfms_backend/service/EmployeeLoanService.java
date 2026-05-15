@@ -38,8 +38,9 @@ public class EmployeeLoanService {
     private org.springframework.jdbc.core.JdbcTemplate jdbcTemplate;
 
     // READ ALL - Using JdbcTemplate to bypass "Unknown column 'Balance'" error
+    // Using JdbcTemplate instead of JPA to manually calculate the 'Balance' field without requiring a physical database column.
     public List<EmployeeLoanDTO> getAllLoans() {
-        String sql = "SELECT l.Loan_ID, l.Employee_id, e.Full_Name as Employee_Name, l.Loan_Amount, l.Issued_Date, l.Reason, l.Total_Deducted, l.Status, l.Remarks " +
+        String sql = "SELECT l.Loan_ID, l.Employee_id, e.Full_Name as Employee_Name, l.Loan_Amount, l.Issued_Date, l.Due_Date, l.Reason, l.Total_Deducted, l.Status, l.Remarks " +
                      "FROM Employee_loan l " +
                      "JOIN Employee e ON l.Employee_id = e.Id";
         
@@ -54,6 +55,9 @@ public class EmployeeLoanService {
             
             java.sql.Date sqlDate = rs.getDate("Issued_Date");
             dto.setIssuedDate(sqlDate != null ? sqlDate.toLocalDate() : null);
+
+            java.sql.Date sqlDueDate = rs.getDate("Due_Date");
+            dto.setDueDate(sqlDueDate != null ? sqlDueDate.toLocalDate() : null);
             
             dto.setReason(rs.getString("Reason"));
             
@@ -71,7 +75,7 @@ public class EmployeeLoanService {
 
     // READ BY ID
     public EmployeeLoanDTO getLoanById(Integer id) {
-        String sql = "SELECT l.Loan_ID, l.Employee_id, e.Full_Name as Employee_Name, l.Loan_Amount, l.Issued_Date, l.Reason, l.Total_Deducted, l.Status, l.Remarks " +
+        String sql = "SELECT l.Loan_ID, l.Employee_id, e.Full_Name as Employee_Name, l.Loan_Amount, l.Issued_Date, l.Due_Date, l.Reason, l.Total_Deducted, l.Status, l.Remarks " +
                      "FROM Employee_loan l " +
                      "JOIN Employee e ON l.Employee_id = e.Id " +
                      "WHERE l.Loan_ID = ?";
@@ -85,6 +89,8 @@ public class EmployeeLoanService {
             dto.setLoanAmount(amount);
             java.sql.Date sqlDate = rs.getDate("Issued_Date");
             dto.setIssuedDate(sqlDate != null ? sqlDate.toLocalDate() : null);
+            java.sql.Date sqlDueDate = rs.getDate("Due_Date");
+            dto.setDueDate(sqlDueDate != null ? sqlDueDate.toLocalDate() : null);
             dto.setReason(rs.getString("Reason"));
             BigDecimal totalDeducted = rs.getBigDecimal("Total_Deducted");
             dto.setTotalDeducted(totalDeducted != null ? totalDeducted : BigDecimal.ZERO);
@@ -103,6 +109,7 @@ public class EmployeeLoanService {
         // Map simple fields
         loan.setLoanAmount(dto.getLoanAmount());
         loan.setIssuedDate(dto.getIssuedDate());
+        loan.setDueDate(dto.getDueDate());
         loan.setReason(dto.getReason());
         loan.setRemarks(dto.getRemarks());
         loan.setTotalDeducted(BigDecimal.ZERO);
@@ -113,6 +120,7 @@ public class EmployeeLoanService {
                 .orElseThrow(() -> new RuntimeException("Employee not found"));
         
         // BUSINESS RULE: Cannot have multiple active loans simultaneously
+        // Business Rule: Ensure employee clears existing loans before applying for a new one to prevent debt overlap.
         boolean hasActive = loanRepository.findAll().stream()
                 .filter(l -> l.getEmployee().getId().equals(employee.getId()))
                 .anyMatch(l -> l.getStatus() != com.group_project.wfms_backend.model.LoanStatus.SETTLED);
@@ -177,6 +185,7 @@ public class EmployeeLoanService {
         }
 
         // Use the new DesignationSalary table for calculations
+        // Limit is strictly 3x the monthly basic salary. For daily wage earners, 26 working days are assumed for the monthly estimation.
         return designationSalaryRepository.findByDesignationNameAndIsActiveTrue(employee.getDesignation())
                 .map(ds -> {
                     BigDecimal monthlyEstimate = ds.getBasicSalary();
@@ -225,6 +234,7 @@ public class EmployeeLoanService {
         dto.setEmployeeName(loan.getEmployee().getFullName());
         dto.setLoanAmount(loan.getLoanAmount());
         dto.setIssuedDate(loan.getIssuedDate());
+        dto.setDueDate(loan.getDueDate());
         dto.setReason(loan.getReason());
         dto.setTotalDeducted(loan.getTotalDeducted() != null ? loan.getTotalDeducted() : BigDecimal.ZERO);
         

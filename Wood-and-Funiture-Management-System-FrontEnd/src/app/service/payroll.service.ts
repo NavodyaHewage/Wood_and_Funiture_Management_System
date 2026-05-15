@@ -46,12 +46,14 @@ export class PayrollService {
     return isPlatformBrowser(this.platformId);
   }
 
+  // Sends a request to generate a preview of the payslip without committing any changes to the database.
   calculatePayroll(request: PayrollRequestDTO): Observable<PayrollResponseDTO> {
     return this.http.post<PayrollResponseDTO>(`${this.apiUrl}/calculate`, request).pipe(
       catchError(err => this.handleError(err))
     );
   }
 
+  // Submits final approval to execute deductions, log expenses, and record the payment atomically. Passes the user ID for auditing.
   confirmPayroll(request: PayrollRequestDTO, userId: number): Observable<string> {
     return this.http.post<string>(`${this.apiUrl}/confirm`, request, {
       params: { userId: userId.toString() },
