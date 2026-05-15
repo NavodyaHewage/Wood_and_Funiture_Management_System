@@ -21,6 +21,8 @@ import { FormsModule } from '@angular/forms';
 export class QuotationManagementComponent implements OnInit {
   quotations: any[] = [];
   customers: any[] = [];
+  selectedCustomerNIC: string = '';
+  selectedCustomerMobile: string = '';
   productCategories: any[] = [];
   filteredCategories: any[] = [];
   categorySearchTerm: string = '';
@@ -58,6 +60,27 @@ export class QuotationManagementComponent implements OnInit {
     this.loadQuotations();
     this.loadCustomers();
     this.loadProductCategories();
+
+    // Subscribe to customer changes to update display fields
+    this.quotationForm.get('customerId')?.valueChanges.subscribe(id => {
+      this.updateSelectedCustomerDetails(id);
+    });
+  }
+
+  updateSelectedCustomerDetails(customerId: any): void {
+    if (!customerId) {
+      this.selectedCustomerNIC = '';
+      this.selectedCustomerMobile = '';
+      return;
+    }
+    const customer = this.customers.find(c => c.id == customerId);
+    if (customer) {
+      this.selectedCustomerNIC = customer.nic || 'N/A';
+      this.selectedCustomerMobile = customer.mobile || 'N/A';
+    } else {
+      this.selectedCustomerNIC = '';
+      this.selectedCustomerMobile = '';
+    }
   }
 
   initForm(): void {
@@ -129,7 +152,12 @@ export class QuotationManagementComponent implements OnInit {
   loadCustomers(): void {
     this.customerService.getAllCustomers().subscribe({
       next: (data) => {
-        this.customers = data.map((c: any) => ({ id: c.cusId, name: c.cusName }));
+        this.customers = data.map((c: any) => ({ 
+          id: c.cusId, 
+          name: c.cusName,
+          nic: c.nic,
+          mobile: c.mobile
+        }));
       },
       error: (err) => console.error('Error loading customers', err)
     });
@@ -192,6 +220,8 @@ export class QuotationManagementComponent implements OnInit {
     this.details.clear();
     this.details.push(this.createItemRow());
     this.grandTotal = 0;
+    this.selectedCustomerNIC = '';
+    this.selectedCustomerMobile = '';
     this.showModal = true;
   }
 
@@ -220,6 +250,7 @@ export class QuotationManagementComponent implements OnInit {
     });
 
     this.calculateTotals();
+    this.updateSelectedCustomerDetails(q.customerId);
     this.showModal = true;
   }
 

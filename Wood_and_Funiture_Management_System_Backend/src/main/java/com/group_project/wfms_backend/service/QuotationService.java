@@ -51,8 +51,8 @@ public class QuotationService {
         quotation.setRemarks(requestDTO.getRemarks());
         quotation.setCreatedBy(createdBy);
 
-        // Generate Quotation Number
-        quotation.setQuotationNumber(quotationRepository.generateQuotationNumber());
+        // Generate Quotation Number (Commented out as column/procedure is missing)
+        // quotation.setQuotationNumber(quotationRepository.generateQuotationNumber());
 
         if (requestDTO.getDetails() != null && !requestDTO.getDetails().isEmpty()) {
             List<QuotationDetails> detailsList = mapToDetailEntities(requestDTO.getDetails(), quotation);
@@ -205,7 +205,8 @@ public class QuotationService {
     private QuotationResponseDTO mapToResponseDTO(Quotation q) {
         QuotationResponseDTO dto = new QuotationResponseDTO();
         dto.setQuotationId(q.getQuotationId());
-        dto.setQuotationNumber(q.getQuotationNumber());
+        // Fallback for missing database column
+        dto.setQuotationNumber("QTN-" + String.format("%05d", q.getQuotationId()));
         dto.setCustomerId(q.getCustomer().getCusId());
         dto.setCustomerName(q.getCustomer().getCusName());
         dto.setTotalAmount(q.getTotalAmount());
