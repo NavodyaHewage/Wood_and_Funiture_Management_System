@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder, FormGroup, FormArray,
+  Validators, ReactiveFormsModule
+} from '@angular/forms';
 import { SuppliyerService } from '../../../service/suppliyer.service';
 import { RawMaterialService } from '../../../service/raw-material.service';
 import { EmployeeService } from '../../../service/employee.service';
@@ -14,11 +17,17 @@ import { AdminSideComponent } from '../../user-management/admin-side/admin-side.
 @Component({
   selector: 'app-supply-raw-material',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HeaderComponent, AdminSideComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    HeaderComponent,
+    AdminSideComponent
+  ],
   templateUrl: './supply-raw-material.component.html',
   styleUrls: ['./supply-raw-material.component.css']
 })
 export class SupplyRawMaterialComponent implements OnInit {
+
   supplyForm: FormGroup;
   suppliers: any[] = [];
   rawMaterials: any[] = [];
@@ -40,40 +49,55 @@ export class SupplyRawMaterialComponent implements OnInit {
     private router: Router
   ) {
     this.supplyForm = this.fb.group({
-      supplierId: ['', Validators.required],
-      rmId: ['', Validators.required],
-      invoiceNumber: ['', Validators.required],
-      transport: [0],
-      cuttingFee: [0],
+      supplierId:           ['', Validators.required],
+      rmId:                 ['', Validators.required],
+      invoiceNumber:        ['', Validators.required],
+      transport:            [0],
+      cuttingFee:           [0],
       cuttingFeeEmployeeId: [''],
-      supplyDate: [new Date().toISOString().split('T')[0], Validators.required],
-      createdById: [null],
-      supplyDetails: this.fb.array([])
+      supplyDate:           [new Date().toISOString().split('T')[0], Validators.required],
+      createdById:          [null],
+      supplyDetails:        this.fb.array([])
     });
   }
 
   ngOnInit(): void {
     this.loadInitialData();
     this.addLogRow();
-    
-    // Set current user ID
+
+    // Current user set
     this.authService.currentUser.subscribe((user: any) => {
       if (user) {
         this.supplyForm.patchValue({ createdById: user.id });
       }
     });
+
+    // Transport change → netAmount update
+    this.supplyForm.get('transport')?.valueChanges.subscribe(() => {
+      this.updateGrandTotals();
+    });
+
+    // CuttingFee change → netAmount update
+    this.supplyForm.get('cuttingFee')?.valueChanges.subscribe(() => {
+      this.updateGrandTotals();
+    });
   }
 
   loadInitialData(): void {
-    this.supplierService.getAllSuppliers().subscribe((res: any[]) => this.suppliers = res);
+    this.supplierService.getAllSuppliers().subscribe((res: any[]) => {
+      this.suppliers = res;
+    });
+
     this.rmService.getAllRawMaterialItems().subscribe((res: any[]) => {
       this.rawMaterials = res;
-      // If there's an initial row, update its price if a wood type is already selected
       if (this.supplyDetails.length > 0) {
         this.onMainWoodTypeChange();
       }
     });
-    this.employeeService.getAllEmployees().subscribe((res: any[]) => this.employees = res);
+
+    this.employeeService.getAllEmployees().subscribe((res: any[]) => {
+      this.employees = res;
+    });
   }
 
   get supplyDetails(): FormArray {
@@ -83,15 +107,15 @@ export class SupplyRawMaterialComponent implements OnInit {
   addLogRow(): void {
     const mainRmId = this.supplyForm.get('rmId')?.value;
     const selectedWood = this.rawMaterials.find(rm => rm.rmId == mainRmId);
-    
+
     const row = this.fb.group({
-      rmId: [mainRmId || '', Validators.required],
-      logNumber: ['', Validators.required],
-      lengthFt: [0, [Validators.required, Validators.min(0.1)]],
-      girthFt: [0, [Validators.required, Validators.min(0.1)]],
+      rmId:             [mainRmId || '', Validators.required],
+      logNumber:        ['', Validators.required],
+      lengthFt:         [0, [Validators.required, Validators.min(0.1)]],
+      girthFt:          [0, [Validators.required, Validators.min(0.1)]],
       totalQuantityCft: [{ value: 0, disabled: true }],
-      price: [selectedWood?.pricePerCft || 0, [Validators.required, Validators.min(1)]],
-      lineTotal: [{ value: 0, disabled: true }]
+      price:            [selectedWood?.pricePerCft || 0, [Validators.required, Validators.min(1)]],
+      lineTotal:        [{ value: 0, disabled: true }]
     });
 
     this.supplyDetails.push(row);
@@ -100,13 +124,12 @@ export class SupplyRawMaterialComponent implements OnInit {
   onMainWoodTypeChange(): void {
     const mainRmId = this.supplyForm.get('rmId')?.value;
     const selectedWood = this.rawMaterials.find(rm => rm.rmId == mainRmId);
-    
+
     if (selectedWood) {
-      // Update all rows in the form array
       this.supplyDetails.controls.forEach((control, index) => {
-        control.patchValue({ 
-          rmId: mainRmId,
-          price: selectedWood.pricePerCft 
+        control.patchValue({
+          rmId:  mainRmId,
+          price: selectedWood.pricePerCft
         });
         this.calculateLineTotal(index);
       });
@@ -121,36 +144,46 @@ export class SupplyRawMaterialComponent implements OnInit {
   }
 
   onSupplierChange(event: any): void {
-    const selectedId = event.target.value;
-    const supplier = this.suppliers.find(s => s.supId == selectedId);
-    
+    const selectedId = +(event.target as HTMLSelectElement).value;
+    const supplier = this.suppliers.find((s: any) => s.supId === selectedId);
+
     if (supplier) {
-      this.isTreeSeller = (supplier.supCat === 'Tree Seller');
+      this.isTreeSeller = supplier.supCat === 'Tree Seller';
+
+      console.log('Supplier:', supplier.supName);
+      console.log('Category:', supplier.supCat);
+      console.log('isTreeSeller:', this.isTreeSeller);
+
       if (!this.isTreeSeller) {
-        this.supplyForm.patchValue({ transport: 0, cuttingFee: 0, cuttingFeeEmployeeId: '' });
+        this.supplyForm.patchValue({
+          transport:            0,
+          cuttingFee:           0,
+          cuttingFeeEmployeeId: ''
+        });
       }
     } else {
       this.isTreeSeller = false;
     }
+
     this.updateGrandTotals();
   }
 
   calculateCft(index: number): void {
     const row = this.supplyDetails.at(index);
-    const l = row.get('lengthFt')?.value || 0;
-    const g = row.get('girthFt')?.value || 0;
-    
-    // Formula: (L * G * G) / 2304
+    const l = parseFloat(row.get('lengthFt')?.value) || 0;
+    const g = parseFloat(row.get('girthFt')?.value) || 0;
+
+    // CFT Formula: (Length × Girth × Girth) / 2304
     const cft = (l * g * g) / 2304;
-    row.patchValue({ totalQuantityCft: parseFloat(cft.toFixed(4)) });
+    row.patchValue({ totalQuantityCft: parseFloat(cft.toFixed(3)) });
     this.calculateLineTotal(index);
   }
 
   calculateLineTotal(index: number): void {
     const row = this.supplyDetails.at(index);
-    const cft = row.get('totalQuantityCft')?.value || 0;
-    const price = row.get('price')?.value || 0;
-    
+    const cft   = parseFloat(row.get('totalQuantityCft')?.value) || 0;
+    const price = parseFloat(row.get('price')?.value) || 0;
+
     const total = cft * price;
     row.patchValue({ lineTotal: parseFloat(total.toFixed(2)) });
     this.updateGrandTotals();
@@ -158,16 +191,20 @@ export class SupplyRawMaterialComponent implements OnInit {
 
   updateGrandTotals(): void {
     let gross = 0;
-    this.supplyDetails.controls.forEach(control => {
-      gross += control.get('lineTotal')?.value || 0;
+    this.supplyDetails.controls.forEach((control: any) => {
+      gross += parseFloat(control.get('lineTotal')?.value) || 0;
     });
-    
     this.grossTotal = parseFloat(gross.toFixed(2));
-    
-    const transport = this.supplyForm.get('transport')?.value || 0;
-    const cuttingFee = this.supplyForm.get('cuttingFee')?.value || 0;
-    
-    this.netAmount = parseFloat((this.grossTotal - transport - cuttingFee).toFixed(2));
+
+    // Tree Seller නම් පමණක් deductions
+    if (this.isTreeSeller) {
+      const transport  = parseFloat(this.supplyForm.get('transport')?.value)  || 0;
+      const cuttingFee = parseFloat(this.supplyForm.get('cuttingFee')?.value) || 0;
+      this.netAmount   = parseFloat((this.grossTotal - transport - cuttingFee).toFixed(2));
+    } else {
+      // Regular Supplier — no deductions
+      this.netAmount = this.grossTotal;
+    }
   }
 
   onSubmit(): void {
@@ -176,17 +213,29 @@ export class SupplyRawMaterialComponent implements OnInit {
       return;
     }
 
-    if (this.isTreeSeller && this.supplyForm.get('cuttingFee')?.value > 0 && !this.supplyForm.get('cuttingFeeEmployeeId')?.value) {
+    if (
+      this.isTreeSeller &&
+      this.supplyForm.get('cuttingFee')?.value > 0 &&
+      !this.supplyForm.get('cuttingFeeEmployeeId')?.value
+    ) {
       this.toast.error('Please select an employee for the cutting fee.');
       return;
     }
 
     this.isSubmitting = true;
     const payload = this.supplyForm.getRawValue();
-    
+
+    // Regular Supplier නම් deductions remove
+    if (!this.isTreeSeller) {
+      payload.transport            = 0;
+      payload.cuttingFee           = 0;
+      payload.cuttingFeeEmployeeId = null;
+    }
+
     this.supplyService.create(payload).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.toast.success('Supply recorded successfully! GRN generated.');
+        this.isSubmitting = false;
         this.router.navigate(['/admin-dashboard']);
       },
       error: (err: any) => {

@@ -13,13 +13,13 @@ import lombok.Setter;
 public class ExpenseType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "expence_type_id")
+    @Column(name = "Expence_Type_Id")
     private Integer expenseTypeId;
 
     @Column(name = "type_name", nullable = false, length = 100)
     private String typeName;
 
-    @Column(name = "description", nullable = false, length = 200)
+    @Column(name = "Description", nullable = false, length = 200)
     private String description;
 
 }
