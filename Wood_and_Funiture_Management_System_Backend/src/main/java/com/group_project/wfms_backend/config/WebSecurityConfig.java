@@ -73,6 +73,7 @@ public class WebSecurityConfig {
                         .requestMatchers("/users/**", "/users").hasRole("ADMIN")
 
                         // Management endpoints - Admin and Manager
+                        .requestMatchers("/v1/supply-raw-materials/supplier/**").hasAnyRole("ADMIN", "MANAGER", "SUPPLIER")
                         .requestMatchers(
                                 "/employees/**",
                                 "/suppliers/**",

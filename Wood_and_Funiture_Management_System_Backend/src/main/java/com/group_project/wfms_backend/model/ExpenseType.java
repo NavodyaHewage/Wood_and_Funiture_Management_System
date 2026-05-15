@@ -16,10 +16,10 @@ public class ExpenseType {
     @Column(name = "Expence_Type_Id")
     private Integer expenseTypeId;
 
-    @Column(name = "type_name", nullable = false, length = 100)
-    private String typeName;
+    @Column(name = "Description", nullable = false, length = 100)
+    private String typeName; // Mapping this to Description column to satisfy existing code
 
-    @Column(name = "Description", nullable = false, length = 200)
+    @Column(name = "Description", nullable = false, length = 200, insertable = false, updatable = false)
     private String description;
 
 }

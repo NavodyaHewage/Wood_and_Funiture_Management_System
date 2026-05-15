@@ -37,6 +37,7 @@ export class SupplyRawMaterialComponent implements OnInit {
   isSubmitting: boolean = false;
   grossTotal: number = 0;
   netAmount: number = 0;
+  lastUsedLogNumber: number = 0;
 
   constructor(
     private fb: FormBuilder,
@@ -63,12 +64,12 @@ export class SupplyRawMaterialComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadInitialData();
-    this.addLogRow();
+    this.fetchLatestLogNumber();
 
     // Current user set
     this.authService.currentUser.subscribe((user: any) => {
       if (user) {
-        this.supplyForm.patchValue({ createdById: user.id });
+        this.supplyForm.patchValue({ createdById: user.userId || user.id });
       }
     });
 
@@ -100,6 +101,16 @@ export class SupplyRawMaterialComponent implements OnInit {
     });
   }
 
+  fetchLatestLogNumber(): void {
+    this.supplyService.getLatestLogNumber().subscribe((num: number) => {
+      this.lastUsedLogNumber = num;
+      // Add first row after fetching the number
+      if (this.supplyDetails.length === 0) {
+        this.addLogRow();
+      }
+    });
+  }
+
   get supplyDetails(): FormArray {
     return this.supplyForm.get('supplyDetails') as FormArray;
   }
@@ -108,9 +119,12 @@ export class SupplyRawMaterialComponent implements OnInit {
     const mainRmId = this.supplyForm.get('rmId')?.value;
     const selectedWood = this.rawMaterials.find(rm => rm.rmId == mainRmId);
 
+    // Increment log number
+    this.lastUsedLogNumber++;
+
     const row = this.fb.group({
       rmId:             [mainRmId || '', Validators.required],
-      logNumber:        ['', Validators.required],
+      logNumber:        [this.lastUsedLogNumber, Validators.required],
       lengthFt:         [0, [Validators.required, Validators.min(0.1)]],
       girthFt:          [0, [Validators.required, Validators.min(0.1)]],
       totalQuantityCft: [{ value: 0, disabled: true }],

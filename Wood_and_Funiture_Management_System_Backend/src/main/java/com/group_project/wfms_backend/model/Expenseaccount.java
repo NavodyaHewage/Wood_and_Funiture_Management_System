@@ -18,34 +18,34 @@ public class Expenseaccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "expense_id")
+    @Column(name = "Expence_Id")
     private Integer expenseId;
 
-    @Column(name = "date", nullable = false)
+    @Column(name = "Date", nullable = false)
     private LocalDate date;
 
-    @Column(name = "amount", nullable = false, precision = 15, scale = 2)
+    @Column(name = "Amount", nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Column(name = "Description", columnDefinition = "TEXT")
     private String description;
 
-    @Column(name = "paid_to")
+    @Column(name = "Paid_to")
     private String paidTo;
 
-    @Column(name = "remarks")
+    @Column(name = "Remarks")
     private String remarks;
 
     // Relationships
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "expense_type_id", nullable = false)
+    @JoinColumn(name = "Expence_Type_Id", nullable = false)
     private ExpenseType expenseType;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "grn_id") // මෙහි nullable = true (default) නිසා SQL එකේ NULL වලට ගැලපේ
+    @JoinColumn(name = "GRN_ID") 
     private GRN grn;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "Created_by")
     private User user;
 }

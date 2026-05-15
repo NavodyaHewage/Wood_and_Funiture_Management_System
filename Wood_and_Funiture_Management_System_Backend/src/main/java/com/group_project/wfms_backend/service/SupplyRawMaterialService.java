@@ -22,7 +22,6 @@ public class SupplyRawMaterialService {
     private final SupplyRawMaterialRepository supplyRawMaterialRepository;
     private final SupplyRawMaterialDetailsRepository supplyRawMaterialDetailsRepository;
     private final SupplierRepository supplierRepository;
-    private final CustomerRepository customerRepository;
     private final RawMaterialItemRepository rawMaterialItemRepository;
     private final UserRepository userRepository;
     private final GRNRepository grnRepository;
@@ -36,11 +35,6 @@ public class SupplyRawMaterialService {
     public SupplyRawMaterialResponseDTO createSupplyRawMaterial(SupplyRawMaterialRequestDTO request) {
         Supplier supplier = supplierRepository.findById(request.getSupplierId())
                 .orElseThrow(() -> new EntityNotFoundException("Supplier not found with id: " + request.getSupplierId()));
-        
-        // We still need to fetch Customer to satisfy the JPA mapping in SupplyRawMaterial
-        // Assuming they share IDs or linked. If not, this might need further DB mapping fix.
-        Customer customerPlaceholder = customerRepository.findById(request.getSupplierId())
-                .orElseThrow(() -> new EntityNotFoundException("Customer record for supplier not found with id: " + request.getSupplierId()));
 
         RawMaterialItem mainRmItem = rawMaterialItemRepository.findById(request.getRmId())
                 .orElseThrow(() -> new EntityNotFoundException("Raw Material Item not found with id: " + request.getRmId()));
@@ -52,7 +46,7 @@ public class SupplyRawMaterialService {
         }
 
         SupplyRawMaterial supply = new SupplyRawMaterial();
-        supply.setSupplier(customerPlaceholder);
+        supply.setSupplier(supplier);
         supply.setRawMaterialItem(mainRmItem);
         supply.setInvoiceNumber(request.getInvoiceNumber());
         supply.setSupplyDate(request.getSupplyDate());
@@ -196,6 +190,19 @@ public class SupplyRawMaterialService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(readOnly = true)
+    public List<SupplyRawMaterialResponseDTO> getSuppliesBySupplierEmail(String email) {
+        return supplyRawMaterialRepository.findBySupplier_Email(email).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public Integer getLatestLogNumber() {
+        Integer maxLogNumber = supplyRawMaterialDetailsRepository.findMaxLogNumber();
+        return maxLogNumber != null ? maxLogNumber : 0;
+    }
+
     @Transactional
     public void deleteSupplyRawMaterial(Integer id) {
         if (!supplyRawMaterialRepository.existsById(id)) {
@@ -214,8 +221,8 @@ public class SupplyRawMaterialService {
         SupplyRawMaterialResponseDTO dto = new SupplyRawMaterialResponseDTO();
         dto.setSupplyId(supply.getSupplyId());
         if (supply.getSupplier() != null) {
-            dto.setSupplierId(supply.getSupplier().getCusId());
-            dto.setSupplierName(supply.getSupplier().getCusName());
+            dto.setSupplierId(supply.getSupplier().getSupId());
+            dto.setSupplierName(supply.getSupplier().getSupName());
         }
         if (supply.getRawMaterialItem() != null) {
             dto.setRmId(supply.getRawMaterialItem().getRmId());

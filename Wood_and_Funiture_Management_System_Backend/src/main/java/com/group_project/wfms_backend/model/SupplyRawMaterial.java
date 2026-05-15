@@ -24,10 +24,10 @@ public class SupplyRawMaterial {
     @Column(name = "Supply_id")
     private Integer supplyId;
 
-    // Note: Supplier_id references Customer table in your DB
+    // Note: Supplier_id references Supplier table
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Supplier_id", nullable = false)
-    private Customer supplier;
+    private Supplier supplier;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RM_id", nullable = false)

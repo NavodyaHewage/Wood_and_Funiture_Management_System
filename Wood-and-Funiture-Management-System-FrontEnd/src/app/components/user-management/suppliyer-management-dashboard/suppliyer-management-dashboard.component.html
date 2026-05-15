@@ -24,7 +24,7 @@
                             </div>
                             <div class="ms-3">
                                 <h6 class="text-muted mb-1">Total Supplies</h6>
-                                <h2 class="mb-0 fw-bold">124</h2>
+                                <h2 class="mb-0 fw-bold">{{ totalSupplies }}</h2>
                             </div>
                         </div>
                     </div>
@@ -37,7 +37,7 @@
                             </div>
                             <div class="ms-3">
                                 <h6 class="text-muted mb-1">Approved</h6>
-                                <h2 class="mb-0 fw-bold">110</h2>
+                                <h2 class="mb-0 fw-bold">{{ totalApproved }}</h2>
                             </div>
                         </div>
                     </div>
@@ -50,17 +50,69 @@
                             </div>
                             <div class="ms-3">
                                 <h6 class="text-muted mb-1">Pending Validation</h6>
-                                <h2 class="mb-0 fw-bold">14</h2>
+                                <h2 class="mb-0 fw-bold">{{ totalPending }}</h2>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Dashboard Content -->
+            <!-- My Supplies Section -->
             <div class="premium-card p-4">
-                <h4 class="mb-3">Recent Activity</h4>
-                <p class="text-muted">No recent activity to display.</p>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h4 class="mb-0">My Supplies</h4>
+                    <div class="d-flex gap-2">
+                        <div class="filter-group d-flex align-items-center gap-2">
+                            <label for="dateFilter" class="small text-muted mb-0">Filter by Date:</label>
+                            <input type="date" id="dateFilter" class="form-control form-control-sm" [(ngModel)]="filterDate" (change)="onFilterChange()">
+                        </div>
+                        <button class="btn btn-outline-secondary btn-sm" (click)="clearFilters()" *ngIf="filterDate">
+                            <i class="bi bi-x-lg"></i> Clear
+                        </button>
+                        <button class="btn btn-primary btn-sm" (click)="loadSupplies()">
+                            <i class="bi bi-arrow-clockwise"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Invoice #</th>
+                                <th>Date</th>
+                                <th>Wood Type</th>
+                                <th>Logs</th>
+                                <th>Total Amt (Rs)</th>
+                                <th>Transport (Rs)</th>
+                                <th>Net Amt (Rs)</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let supply of filteredSupplies">
+                                <td><span class="fw-bold">{{ supply.invoiceNumber }}</span></td>
+                                <td>{{ supply.supplyDate | date:'mediumDate' }}</td>
+                                <td>{{ supply.rmName }}</td>
+                                <td>{{ supply.supplyDetails?.length }}</td>
+                                <td>{{ supply.totalAmount | number:'1.2-2' }}</td>
+                                <td>{{ supply.transport | number:'1.2-2' }}</td>
+                                <td class="fw-bold text-success">{{ supply.netAmount | number:'1.2-2' }}</td>
+                                <td>
+                                    <button class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-eye"></i> Details
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr *ngIf="filteredSupplies.length === 0">
+                                <td colspan="8" class="text-center py-5 text-muted">
+                                    <i class="bi bi-inbox display-4 d-block mb-3"></i>
+                                    {{ isLoading ? 'Loading supplies...' : 'No supplies found for the selected criteria.' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </main>

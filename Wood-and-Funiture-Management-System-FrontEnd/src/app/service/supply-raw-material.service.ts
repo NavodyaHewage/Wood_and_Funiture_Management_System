@@ -30,4 +30,12 @@ export class SupplyRawMaterialService {
   delete(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  getLatestLogNumber(): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/latest-log-number`);
+  }
+
+  getSuppliesBySupplierEmail(email: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/supplier/${email}`);
+  }
 }

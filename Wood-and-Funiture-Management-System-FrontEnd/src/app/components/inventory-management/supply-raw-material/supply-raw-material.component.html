@@ -70,7 +70,7 @@
                                     <tr *ngFor="let detail of supplyDetails.controls; let i = index" [formGroupName]="i">
                                         <td><span class="badge-id">{{ i + 1 }}</span></td>
                                         <td>
-                                            <input type="text" formControlName="logNumber" class="inline-input">
+                                            <input type="text" formControlName="logNumber" class="inline-input" readonly style="background-color: #f8f9fa; cursor: not-allowed; font-weight: bold; color: #713600;">
                                         </td>
                                         <td>
                                             <input type="number" formControlName="lengthFt" class="inline-input" (input)="calculateCft(i)">

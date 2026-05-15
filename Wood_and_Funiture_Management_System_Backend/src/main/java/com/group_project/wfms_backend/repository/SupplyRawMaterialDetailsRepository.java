@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SupplyRawMaterialDetailsRepository extends JpaRepository<SupplyRawMaterialDetails, Integer> {
+    @org.springframework.data.jpa.repository.Query("SELECT MAX(s.logNumber) FROM SupplyRawMaterialDetails s")
+    Integer findMaxLogNumber();
 }
