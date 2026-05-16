@@ -33,19 +33,18 @@
                 </li>
             </ng-container>
             <ng-template #adminMenu>
-                <li *ngFor="let item of menuItems">
-                    <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
-                        <i class="bi" [ngClass]="item.icon"></i>
-                        <span>{{ item.name }}</span>
-                    </a>
-                </li>
+                <div class="menu-group" *ngFor="let group of menuGroups">
+                    <h3 class="group-label">{{ group.label }}</h3>
+                    <ul class="nav-list p-0">
+                        <li *ngFor="let item of group.items">
+                            <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
+                                <i class="bi" [ngClass]="item.icon"></i>
+                                <span>{{ item.name }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </ng-template>
-            <li>
-                <a class="nav-item cursor-pointer" (click)="openCftCalculator()">
-                    <i class="bi bi-calculator-fill"></i>
-                    <span>CFT Calculator</span>
-                </a>
-            </li>
         </ul>
     </nav>
 

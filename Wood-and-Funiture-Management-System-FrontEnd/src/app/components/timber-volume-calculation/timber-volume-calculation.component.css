@@ -1,294 +1,176 @@
-.cft-overlay {
+.cft-widget-container {
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(12px);
-    z-index: 2000;
+    bottom: 30px;
+    right: 30px;
+    z-index: 9999;
     display: flex;
-    align-items: center; justify-content: center;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 15px;
+    font-family: 'Inter', sans-serif;
 }
 
-.cft-modal-card {
-    background: white;
-    width: 90%;
-    max-width: 900px;
-    border-radius: 32px;
-    overflow: hidden;
-    position: relative;
-    box-shadow: 0 40px 100px rgba(0,0,0,0.3);
-}
-
-.cft-split-container {
-    display: flex;
-    min-height: 500px;
-}
-
-/* Left Panel */
-.input-panel {
-    flex: 1.2;
-    padding: 3.5rem;
-}
-
-.title-with-icon { display: flex; align-items: center; gap: 15px; color: #3E1C00; }
-.title-with-icon i { font-size: 2rem; }
-.title-with-icon h2 { font-weight: 800; font-size: 2.2rem; margin: 0; }
-
-.subtitle { color: #888; font-size: 1rem; margin-top: 10px; margin-bottom: 2.5rem; max-width: 350px; }
-
-label { 
-    display: block; 
-    font-size: 0.8rem; 
-    font-weight: 700; 
-    color: #666; 
-    margin-bottom: 0.6rem; 
-    letter-spacing: 1px; 
-    text-transform: uppercase;
-}
-
-.premium-input {
-    position: relative;
-    display: flex; 
-    align-items: center;
-    background: #FFFFFF;
-    border: 2px solid #F3E8FF; /* Light purple border from image */
-    border-radius: 12px; /* Highly rounded as in image */
-    padding: 10px 15px;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
-}
-
-.premium-input:focus-within { 
-    border-color: #D8B4FE; 
-    background: white;
-    box-shadow: 0 8px 25px rgba(168, 85, 247, 0.1);
-}
-
-.premium-input i { 
-    color: #A67C52; 
-    font-size: 1.4rem; 
-    margin-right: 10px; 
-}
-
-.premium-input input, .premium-input select {
-    border: none; 
-    background: transparent; 
-    flex: 1;
-    min-width: 0;
-    font-size: 1.2rem; 
-    font-weight: 600; 
-    color: #3E1C00; 
-    outline: none;
-}
-
-.premium-input .unit { 
-    background: #F1EFE9; /* Light grey/beige box from image */
-    padding: 6px 14px;
-    border-radius: 12px;
-    font-size: 0.75rem; 
-    font-weight: 800; 
-    color: #8D6E63;
-    margin-left: 10px;
-    min-width: 50px;
-    text-align: center;
+/* Floating Action Button */
+.cft-fab {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #C05800 0%, #713600 100%);
+    color: white;
+    border: none;
     display: flex;
     align-items: center;
     justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 10px 25px rgba(113, 54, 0, 0.3);
 }
 
-.btn-reset-tool {
-    width: 100%; 
-    border: 1px solid #F3E8FF; 
+.cft-fab:hover {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 15px 35px rgba(113, 54, 0, 0.4);
+}
+
+.cft-fab.active {
+    background: #38240D;
+    transform: rotate(180deg);
+}
+
+/* Floating Card (The Calculator Window) */
+.cft-floating-card {
+    width: 350px;
     background: white;
-    padding: 15px; 
-    border-radius: 12px; 
-    font-weight: 700;
-    color: #666; 
-    cursor: pointer; 
-    transition: 0.2s;
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    gap: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.btn-reset-tool:hover { 
-    background: #FDFBFF; 
-    border-color: #D8B4FE;
-    color: #3E1C00; 
-}
-
-/* Responsive Layout */
-@media (max-width: 800px) {
-    .cft-split-container {
-        flex-direction: column;
-    }
-    
-    .cft-modal-card {
-        width: 95%;
-        max-height: 90vh;
-        overflow-y: auto;
-    }
-
-    .input-panel, .output-panel {
-        padding: 2rem;
-    }
-    
-    .output-panel {
-        order: -1; /* Show results on top for mobile? Or keep bottom? Let's keep bottom. */
-    }
-}
-
-.output-panel {
-    flex: 1;
-    background: linear-gradient(135deg, #C05800 0%, #713600 100%);
-    color: white;
-    padding: 3.5rem;
-    display: flex;
-    flex-direction: column;
-    overflow-x: hidden;
-}
-
-.result-section {
-    max-width: 100%;
-}
-
-.output-panel label { color: rgba(255, 255, 255, 0.4); }
-
-.display-value { 
-    display: flex; 
-    align-items: baseline; 
-    gap: 12px; 
-    min-height: 5.5rem; /* Stabilize height to prevent jumping */
-    overflow: hidden;
-}
-
-.display-value.volume .number { 
-    font-size: 3.8rem; /* Reduced from 5rem for stability */
-    font-weight: 900; 
-    line-height: 1;
-}
-.display-value.volume .unit-text { font-size: 1.2rem; font-weight: 700; color: #A67C52; }
-
-.display-value.price { min-height: 4rem; }
-.display-value.price .currency { font-size: 1.2rem; opacity: 0.6; }
-.display-value.price .number { 
-    font-size: 2.8rem; /* Reduced from 3.5rem */
-    font-weight: 800; 
-    color: #FFCC66; 
-    line-height: 1;
-}
-
-.formula-footer {
-    margin-top: auto;
-    padding: 15px 20px;
-    
-    font-size: 0.75rem;
-    text-align: center;
-    color: rgb(255, 255, 255);
-    letter-spacing: 1px;
-    font-family: monospace;
-
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 12px;
-
-    /* pill shape */
     border-radius: 20px;
-
-    /* glass effect */
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(8px);
-
-    /* subtle border */
-    border: 1px solid rgba(255, 255, 255, 0.08);
-
-    /* center it */
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(113, 54, 0, 0.1);
+    display: flex;
+    flex-direction: column;
 }
 
-.formula-info {
+.card-header {
+    background: #38240D;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: white;
+}
+
+.title-with-icon {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
 
-.formula-note {
-    margin: 0;
-    font-size: 0.7rem;
-    color: rgba(255, 255, 255, 0.5);
-    font-style: italic;
+.title-with-icon i {
+    font-size: 1.2rem;
+    color: #FFCC66;
 }
-.formula-label {
-    font-size: 11px;
-    font-weight: 500;
-    text-transform: uppercase;
+
+.title-with-icon h2 {
+    font-size: 1rem;
+    font-weight: 700;
+    margin: 0;
     letter-spacing: 0.5px;
 }
 
-/* The fraction layout */
-.fraction {
-    display: inline-flex;
-    flex-direction: column;
+.small-close {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+.small-close:hover {
+    color: white;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+label {
+    display: block;
+    font-size: 0.65rem;
+    font-weight: 800;
+    color: #713600;
+    margin-bottom: 5px;
+    letter-spacing: 1px;
+}
+
+.premium-input-sm {
+    background: #fdfce8;
+    border: 1.5px solid rgba(113, 54, 0, 0.1);
+    border-radius: 10px;
+    padding: 8px 12px;
+    transition: all 0.2s;
+}
+
+.premium-input-sm:focus-within {
+    border-color: #C05800;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(192, 88, 0, 0.1);
+}
+
+.premium-input-sm input, 
+.premium-input-sm select {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    font-weight: 700;
+    color: #38240D;
+    font-size: 1rem;
+}
+
+/* Results Box */
+.results-box {
+    margin-top: 15px;
+    background: #fdfce8;
+    border-radius: 15px;
+    padding: 15px;
+    border: 1px solid rgba(192, 88, 0, 0.1);
+}
+
+.result-item {
+    display: flex;
+    justify-content: space-between;
     align-items: center;
-    font-family: 'Courier New', monospace; /* Gives it a technical/handwritten feel */
 }
 
-/* Top part (Numerator) with the line underneath */
-.numerator {
-    border-bottom: 1.5px solid #b8a99a; /* The separation line */
-    padding-bottom: 4px;
-    margin-bottom: 4px;
-    color: #d4a574; /* Lighter color for contrast */
-    font-size: 12px;
-    font-weight: bold;
+.result-item span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #713600;
 }
 
-/* Bottom part (Denominator) */
-.denominator {
-    color: #b8a99a;
-    font-size: 14px;
-    font-weight: bold;
+.res-val {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: #38240D;
 }
 
-
-
-.premium-input.has-error {
-    border-color: #ef4444;
-    background: #fef2f2;
+.res-val.price {
+    color: #C05800;
 }
 
-.premium-input.has-warning {
-    border-color: #f59e0b;
-    background: #fffbeb;
-}
-
-.validation-msg {
+.res-val small {
     font-size: 0.7rem;
     font-weight: 600;
-    margin-top: 4px;
-    padding: 0 4px;
 }
 
-.validation-msg.error {
-    color: #ef4444;
+.has-error {
+    border-color: #dc3545 !important;
 }
 
-.validation-msg.warning {
-    color: #f59e0b;
-}
-
-.absolute-close {
-    position: absolute; top: 20px; right: 20px;
-    background: none; border: none; color: #ffffff; font-size: 1.2rem;
-    opacity: 1; cursor: pointer;
-}
-
-svg {
-  margin-right: 8px; /* space between icon and input */
+@media (max-width: 450px) {
+    .cft-floating-card {
+        width: calc(100vw - 40px);
+        bottom: 100px;
+        right: 20px;
+    }
 }

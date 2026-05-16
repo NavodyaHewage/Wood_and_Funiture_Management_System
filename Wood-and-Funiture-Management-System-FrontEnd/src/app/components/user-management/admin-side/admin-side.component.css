@@ -49,8 +49,21 @@
 
 .sidebar-nav {
     flex-grow: 1;
-    padding: 20px 0;
+    padding: 10px 0;
     overflow-y: auto;
+}
+
+.menu-group {
+    margin-bottom: 20px;
+}
+
+.group-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: rgba(253, 251, 212, 0.4);
+    padding: 0 25px 8px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
 }
 
 .nav-list {

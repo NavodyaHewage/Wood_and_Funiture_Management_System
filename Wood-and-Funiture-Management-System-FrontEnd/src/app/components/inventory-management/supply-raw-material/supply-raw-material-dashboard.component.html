@@ -12,9 +12,15 @@
             <h1>Log Management</h1>
             <p>View and manage all recorded raw material supply orders</p>
           </div>
-          <button class="btn-primary" (click)="navigateToAdd()">
-            <i class="bi bi-plus-lg"></i> New Supply Order
-          </button>
+          <div class="header-actions">
+            <div class="search-box-premium">
+              <i class="bi bi-search"></i>
+              <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Search by Supplier or Invoice...">
+            </div>
+            <button class="btn-primary" (click)="navigateToAdd()">
+              <i class="bi bi-plus-lg"></i> New Supply Order
+            </button>
+          </div>
         </div>
 
         <!-- Stats Section -->
@@ -89,9 +95,9 @@
           </table>
 
           <!-- Pagination Controls -->
-          <div class="pagination-footer" *ngIf="supplies.length > pageSize">
+          <div class="pagination-footer" *ngIf="filteredSupplies.length > pageSize">
             <div class="pagination-info">
-              Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, supplies.length) }} of {{ supplies.length }}
+              Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, filteredSupplies.length) }} of {{ filteredSupplies.length }}
             </div>
             <div class="pagination-btns">
               <button class="btn-secondary" (click)="prevPage()" [disabled]="currentPage === 1">
