@@ -8,8 +8,12 @@
       <div class="order-page">
 
         <!-- ── TOP BAR ─────────────────────────────────────────── -->
-        <div class="page-topbar">
-          <div class="topbar-left">
+        <div class="header-section">
+          <div class="title-group">
+            <h1>Order Management Dashboard</h1>
+            <p>Track and manage customer orders, payments and fulfillment</p>
+          </div>
+          <div class="header-actions">
             <div class="search-box">
               <i class="bi bi-search"></i>
               <input type="text" placeholder="Search by customer or quotation..." [(ngModel)]="searchTerm" (input)="onSearch()" />
@@ -18,10 +22,10 @@
               <option value="">All Status</option>
               <option *ngFor="let s of statusOptions" [value]="s">{{ getStatusLabel(s) }}</option>
             </select>
+            <button class="btn-create" (click)="openCreateModal()">
+              <i class="bi bi-plus-lg"></i> New Order
+            </button>
           </div>
-          <button class="btn-create" (click)="openCreateModal()">
-            <i class="bi bi-plus-lg"></i> New Order
-          </button>
         </div>
 
         <!-- ── STATS CARDS ──────────────────────────────────────── -->

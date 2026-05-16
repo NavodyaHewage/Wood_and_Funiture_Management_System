@@ -81,6 +81,7 @@ public class WebSecurityConfig {
                                 "/assets/**",
                                 "/orders/**",
                                 "/v1/cutting-fees/**",
+                                "/v1/grn/**",
                                 "/designation-salary/**",
                                 "/loans/**",
                                 "/paysheet-details/**",
@@ -95,8 +96,10 @@ public class WebSecurityConfig {
                                 "/quotations/**",
                                 "/v1/raw-material-items/**",
                                 "/receipts/**",
-                                "/v1/supply-raw-materials/**"
+                                "/v1/supply-raw-materials/**",
+                                "/v1/raw-material-cutting/**"
                         ).hasAnyRole("ADMIN", "MANAGER")
+                        .requestMatchers("/supply-requests/**").hasAnyRole("ADMIN", "MANAGER", "SUPPLIER")
 
                         // Any other request must be authenticated
                         .anyRequest().authenticated());

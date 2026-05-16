@@ -94,7 +94,7 @@ public class CuttingFeeService {
             dto.setSupplyId(cuttingFee.getSupplyRawMaterial().getSupplyId());
             dto.setInvoiceNumber(cuttingFee.getSupplyRawMaterial().getInvoiceNumber());
             if (cuttingFee.getSupplyRawMaterial().getSupplier() != null) {
-                dto.setSupplierName(cuttingFee.getSupplyRawMaterial().getSupplier().getCusName());
+                dto.setSupplierName(cuttingFee.getSupplyRawMaterial().getSupplier().getSupName());
             }
         }
         

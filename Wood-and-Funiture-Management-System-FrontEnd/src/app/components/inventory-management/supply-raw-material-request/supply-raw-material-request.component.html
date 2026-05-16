@@ -1,0 +1,49 @@
+<div class="dashboard-layout">
+  <app-admin-side></app-admin-side>
+
+  <main class="main-content">
+    <app-header></app-header>
+
+    <div class="content-body">
+      <div class="container-fluid py-4">
+        <div class="row mb-4">
+          <div class="col-12">
+            <h2 class="premium-title">Raw Material Supply Requests</h2>
+            <p class="premium-subtitle">Manage supplier requests and convert them to inventory supply orders</p>
+          </div>
+        </div>
+
+        <!-- List Component -->
+        <app-raw-material-request-list 
+          (onCreate)="openForm()"
+          (onReview)="openApproval($event)"
+          (onConvert)="openConvert($event)">
+        </app-raw-material-request-list>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modals -->
+  <app-raw-material-request-form 
+    *ngIf="showForm" 
+    [show]="showForm" 
+    (onClose)="showForm = false" 
+    (onSaved)="refreshList()">
+  </app-raw-material-request-form>
+
+  <app-supplier-approval-form 
+    *ngIf="showApproval" 
+    [show]="showApproval" 
+    [request]="selectedRequest"
+    (onClose)="showApproval = false" 
+    (onSaved)="refreshList()">
+  </app-supplier-approval-form>
+
+  <app-convert-to-order-modal 
+    *ngIf="showConvert" 
+    [show]="showConvert" 
+    [request]="selectedRequest"
+    (onClose)="showConvert = false" 
+    (onSaved)="refreshList()">
+  </app-convert-to-order-modal>
+</div>

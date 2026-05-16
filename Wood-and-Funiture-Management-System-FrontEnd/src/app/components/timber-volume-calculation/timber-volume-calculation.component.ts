@@ -197,14 +197,15 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
     this.lengthWarning = '';
   }
 
-  closeModal(event?: MouseEvent) {
-    if (event) {
-      const target = event.target as HTMLElement;
-      if (target.classList.contains('cft-overlay')) {
-        this.cftService.close();
-      }
-    } else {
+  toggleWidget() {
+    if (this.isOpen) {
       this.cftService.close();
+    } else {
+      this.cftService.open();
     }
+  }
+
+  closeModal() {
+    this.cftService.close();
   }
 }

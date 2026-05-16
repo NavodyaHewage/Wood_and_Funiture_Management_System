@@ -24,10 +24,9 @@ public class SupplyRawMaterial {
     @Column(name = "Supply_id")
     private Integer supplyId;
 
-    // Note: Supplier_id references Customer table in your DB
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Supplier_id", nullable = false)
-    private Customer supplier;
+    private Supplier supplier;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RM_id", nullable = false)
@@ -41,6 +40,9 @@ public class SupplyRawMaterial {
 
     @Column(name = "Transport", precision = 10, scale = 2)
     private BigDecimal transport = BigDecimal.ZERO;
+
+    @Column(name = "Cutting_Fee", precision = 10, scale = 2)
+    private BigDecimal cuttingFee = BigDecimal.ZERO;
 
     @Column(name = "Cutting_Fee_id")
     private Integer cuttingFeeId;

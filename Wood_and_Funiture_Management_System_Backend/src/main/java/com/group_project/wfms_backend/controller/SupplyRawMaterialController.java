@@ -36,6 +36,11 @@ public class SupplyRawMaterialController {
         return ResponseEntity.ok(supplyRawMaterialService.getAllSupplyRawMaterials());
     }
 
+    @GetMapping("/grn-by-invoice/{invoiceNumber}")
+    public ResponseEntity<Integer> getGrnIdByInvoiceNumber(@PathVariable String invoiceNumber) {
+        return ResponseEntity.ok(supplyRawMaterialService.getGrnIdByInvoiceNumber(invoiceNumber));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSupplyRawMaterial(@PathVariable Integer id) {
         supplyRawMaterialService.deleteSupplyRawMaterial(id);

@@ -10,11 +10,13 @@ import java.util.List;
 public class SupplyRawMaterialResponseDTO {
 
     private Integer supplyId;
+    private Integer grnId;
     private Integer supplierId;
     private String supplierName;
     private Integer rmId;
     private String rmName;
     private String invoiceNumber;
+    private BigDecimal totalQuantityCft;
     private BigDecimal totalAmount;
     private BigDecimal transport;
     private BigDecimal netAmount;

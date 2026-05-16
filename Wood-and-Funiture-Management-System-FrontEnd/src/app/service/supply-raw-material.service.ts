@@ -30,4 +30,8 @@ export class SupplyRawMaterialService {
   delete(id: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/${id}`);
   }
+
+  getGrnIdByInvoiceNumber(invoiceNumber: string): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/grn-by-invoice/${invoiceNumber}`);
+  }
 }

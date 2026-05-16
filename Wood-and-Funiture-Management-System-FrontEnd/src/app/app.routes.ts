@@ -19,14 +19,17 @@ import { PayrollManagementComponent } from './components/payroll/payroll-managem
 import { DesignationSalaryConfigComponent } from './components/payroll/designation-salary-config/designation-salary-config.component';
 import { SuppliyerManagementDashboardComponent } from './components/user-management/suppliyer-management-dashboard/suppliyer-management-dashboard.component';
 import { SupplyRawMaterialComponent } from './components/inventory-management/supply-raw-material/supply-raw-material.component';
+import { SupplyRawMaterialDashboardComponent } from './components/inventory-management/supply-raw-material/supply-raw-material-dashboard.component';
+import { SupplyRawMaterialRequestComponent } from './components/inventory-management/supply-raw-material-request/supply-raw-material-request.component';
+import { GrnInvoiceComponent } from './components/inventory-management/grn-invoice/grn-invoice.component';
+import { RawMaterialCuttingComponent } from './components/inventory-management/raw-material-cutting/raw-material-cutting.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login, data: { title: 'User Login' } },
     { path: 'register', component: Register, data: { title: 'Register New User' } },
   
-
-     { path: 'admin-dashboard', component: AdminDashComponent, canActivate: [roleGuard], data: { title: 'Admin Dashboard', requiredRole: 'Admin' } },
+    { path: 'admin-dashboard', component: AdminDashComponent, canActivate: [roleGuard], data: { title: 'Admin Dashboard', requiredRole: 'Admin' } },
     { path: 'user-management', component: UserManagementDashboardComponent, canActivate: [roleGuard], data: { title: 'User Management', requiredRole: 'Admin' } },
     { path: 'employee-management', component: EmployeeManagementComponent, canActivate: [roleGuard], data: { title: 'Employee Management', requiredRole: 'Admin' } },
     { path: 'supplier-management', component: SupplierManagementComponent, canActivate: [roleGuard], data: { title: 'Supplier Management', requiredRole: 'Admin' } },
@@ -43,6 +46,9 @@ export const routes: Routes = [
     { path: 'payroll-management', component: PayrollManagementComponent, data: { title: 'Payroll Automation' } },
     { path: 'designation-salary', component: DesignationSalaryConfigComponent, data: { title: 'Designation Salary Settings' } },
 
-    { path: 'log-management', component: SupplyRawMaterialComponent, canActivate: [roleGuard], data: { title: 'Log Management', requiredRole: 'Admin' } },
+    { path: 'log-management', component: SupplyRawMaterialDashboardComponent, canActivate: [roleGuard], data: { title: 'Log Management History', requiredRole: 'Admin' } },
+    { path: 'log-management/add', component: SupplyRawMaterialComponent, canActivate: [roleGuard], data: { title: 'Add Supply Order', requiredRole: 'Admin' } },
+    { path: 'log-management/cutting', component: RawMaterialCuttingComponent, canActivate: [roleGuard], data: { title: 'Raw Material Cutting', requiredRole: 'Admin' } },
+    { path: 'supply-request-management', component: SupplyRawMaterialRequestComponent, canActivate: [roleGuard], data: { title: 'Supply Request Management' } },
+    { path: 'inventory/grn-invoice/:id', component: GrnInvoiceComponent, canActivate: [roleGuard], data: { title: 'GRN Invoice', requiredRole: 'Admin' } },
 ];
-

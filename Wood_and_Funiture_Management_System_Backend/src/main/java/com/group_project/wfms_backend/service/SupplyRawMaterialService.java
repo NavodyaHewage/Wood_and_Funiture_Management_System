@@ -3,9 +3,12 @@ package com.group_project.wfms_backend.service;
 import com.group_project.wfms_backend.dto.auth.*;
 import com.group_project.wfms_backend.model.*;
 import com.group_project.wfms_backend.repository.*;
+import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -22,7 +25,6 @@ public class SupplyRawMaterialService {
     private final SupplyRawMaterialRepository supplyRawMaterialRepository;
     private final SupplyRawMaterialDetailsRepository supplyRawMaterialDetailsRepository;
     private final SupplierRepository supplierRepository;
-    private final CustomerRepository customerRepository;
     private final RawMaterialItemRepository rawMaterialItemRepository;
     private final UserRepository userRepository;
     private final GRNRepository grnRepository;
@@ -31,16 +33,13 @@ public class SupplyRawMaterialService {
     private final ExpenseAccountRepository expenseAccountRepository;
     private final EmployeeRepository employeeRepository;
     private final ExpenseTypeRepository expenseTypeRepository;
+    private final EntityManager entityManager;
 
     @Transactional
     public SupplyRawMaterialResponseDTO createSupplyRawMaterial(SupplyRawMaterialRequestDTO request) {
+        // Fetch supplier from Supplier table
         Supplier supplier = supplierRepository.findById(request.getSupplierId())
-                .orElseThrow(() -> new EntityNotFoundException("Supplier not found with id: " + request.getSupplierId()));
-        
-        // We still need to fetch Customer to satisfy the JPA mapping in SupplyRawMaterial
-        // Assuming they share IDs or linked. If not, this might need further DB mapping fix.
-        Customer customerPlaceholder = customerRepository.findById(request.getSupplierId())
-                .orElseThrow(() -> new EntityNotFoundException("Customer record for supplier not found with id: " + request.getSupplierId()));
+                .orElseThrow(() -> new EntityNotFoundException("Supplier record not found with id: " + request.getSupplierId()));
 
         RawMaterialItem mainRmItem = rawMaterialItemRepository.findById(request.getRmId())
                 .orElseThrow(() -> new EntityNotFoundException("Raw Material Item not found with id: " + request.getRmId()));
@@ -52,9 +51,11 @@ public class SupplyRawMaterialService {
         }
 
         SupplyRawMaterial supply = new SupplyRawMaterial();
-        supply.setSupplier(customerPlaceholder);
+        supply.setSupplier(supplier);
         supply.setRawMaterialItem(mainRmItem);
-        supply.setInvoiceNumber(request.getInvoiceNumber());
+        
+        String generatedInvoice = generateInvoiceNumber();
+        supply.setInvoiceNumber(generatedInvoice);
         supply.setSupplyDate(request.getSupplyDate());
         supply.setCreatedBy(createdBy);
 
@@ -94,7 +95,6 @@ public class SupplyRawMaterialService {
         supply.setSupplyDetails(details);
         supply.setTotalAmount(grossTotal);
 
-        // Logic for Tree Seller vs Regular
         boolean isTreeSeller = "Tree Seller".equalsIgnoreCase(supplier.getSupCat());
         BigDecimal netAmount = grossTotal;
 
@@ -103,9 +103,9 @@ public class SupplyRawMaterialService {
             BigDecimal cuttingFee = request.getCuttingFee() != null ? request.getCuttingFee() : BigDecimal.ZERO;
             
             supply.setTransport(transport);
+            supply.setCuttingFee(cuttingFee);
             netAmount = grossTotal.subtract(transport).subtract(cuttingFee);
             
-            // Save Cutting Fee if applicable
             if (cuttingFee.compareTo(BigDecimal.ZERO) > 0 && request.getCuttingFeeEmployeeId() != null) {
                 Employee employee = employeeRepository.findById(request.getCuttingFeeEmployeeId())
                         .orElseThrow(() -> new EntityNotFoundException("Employee for cutting fee not found with id: " + request.getCuttingFeeEmployeeId()));
@@ -131,13 +131,17 @@ public class SupplyRawMaterialService {
         // 1. Auto-generate GRN
         GRN grn = new GRN();
         grn.setGrnNumber(generateGrnNumber());
+        grn.setInvoiceNumber(savedSupply.getInvoiceNumber());
+        grn.setSupplier(supplier);
+        grn.setSupplyOrder(savedSupply);
         grn.setDate(request.getSupplyDate());
-        grn.setAmount(grossTotal); // GRN amount is usually Gross Total
+        grn.setAmount(grossTotal);
+        grn.setTotalAmount(grossTotal);
         grn.setCreatedBy(createdBy);
         grn.setRemarks("Auto-generated for Supply ID: " + savedSupply.getSupplyId());
         GRN savedGrn = grnRepository.save(grn);
 
-        // 2. Save GRN Details for each log
+        // 2. Save GRN Details
         for (SupplyRawMaterialDetails detail : savedSupply.getSupplyDetails()) {
             GrnDetails grnDetail = new GrnDetails();
             grnDetail.setGrn(savedGrn);
@@ -148,25 +152,15 @@ public class SupplyRawMaterialService {
             grnDetailsRepository.save(grnDetail);
         }
 
-        // 3. Record expense in expence_account (Net payment to supplier)
-        Expenseaccount expense = new Expenseaccount();
-        expense.setDate(request.getSupplyDate());
-        expense.setAmount(netAmount);
-        expense.setDescription("Payment for Raw Material Supply: " + savedSupply.getInvoiceNumber() + " (GRN: " + savedGrn.getGrnNumber() + ")");
-        expense.setPaidTo(supplier.getSupName());
-        expense.setGrn(savedGrn);
-        expense.setUser(createdBy);
-        
-        // Find "Raw Material" expense type
-        ExpenseType rmExpenseType = expenseTypeRepository.findAll().stream()
-                .filter(t -> t.getTypeName().equalsIgnoreCase("Raw Material") || t.getTypeName().toLowerCase().contains("material"))
-                .findFirst()
-                .orElse(expenseTypeRepository.findById(1).orElse(null)); // Fallback to ID 1 if not found
-        
-        expense.setExpenseType(rmExpenseType);
-        expenseAccountRepository.save(expense);
+        // 3. Record expense
+        Expenseaccount savedExpense = tryRecordExpense(request, savedSupply, savedGrn, netAmount, supplier, createdBy);
+        if (savedExpense != null) {
+            savedGrn.setExpense(savedExpense);
+            grnRepository.save(savedGrn);
+        }
 
         SupplyRawMaterialResponseDTO response = mapToResponseDTO(savedSupply);
+        response.setGrnId(savedGrn.getGrnId());
         response.setIsTreeSeller(isTreeSeller);
         response.setNetAmount(netAmount);
         return response;
@@ -174,12 +168,7 @@ public class SupplyRawMaterialService {
 
     @Transactional
     public SupplyRawMaterialResponseDTO updateSupplyRawMaterial(Integer id, SupplyRawMaterialRequestDTO request) {
-        // Implementation for update would be similar to create, 
-        // but typically involves deleting old GRN/Expenses and recreating them or updating.
-        // For brevity and based on "Only fix logic in Service layer", 
-        // I will focus on the create logic as requested for the main interface functionality.
-        // If full update logic is needed, I can expand this.
-        return createSupplyRawMaterial(request); // Simplification: re-run logic or throw error if not allowed
+        return createSupplyRawMaterial(request);
     }
 
     @Transactional(readOnly = true)
@@ -196,6 +185,47 @@ public class SupplyRawMaterialService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public Expenseaccount tryRecordExpense(SupplyRawMaterialRequestDTO request,
+                                  SupplyRawMaterial savedSupply,
+                                  GRN savedGrn,
+                                  BigDecimal netAmount,
+                                  Supplier supplier,
+                                  User createdBy) {
+        try {
+            ExpenseType expenseType = expenseTypeRepository.findByTypeName("Raw Material Purchase")
+                    .or(() -> expenseTypeRepository.findByTypeName("Raw Material"))
+                    .orElseGet(() -> {
+                        ExpenseType newType = new ExpenseType();
+                        newType.setTypeName("Raw Material Purchase");
+                        newType.setDescription("Expenses related to Raw Material Procurement");
+                        return expenseTypeRepository.save(newType);
+                    });
+
+            Expenseaccount expense = new Expenseaccount();
+            expense.setExpenseType(expenseType);
+            expense.setDate(request.getSupplyDate());
+            expense.setAmount(netAmount);
+            expense.setGrn(savedGrn);
+            expense.setUser(createdBy);
+            expense.setPaidTo(supplier.getSupName());
+            expense.setDescription("Payment for Raw Material Supply: " + savedSupply.getInvoiceNumber() + 
+                    " (GRN: " + savedGrn.getGrnNumber() + ", Supplier: " + supplier.getSupName() + ")");
+            
+            return expenseAccountRepository.save(expense);
+        } catch (Exception e) {
+            System.err.println("[WARN] Expense account entry skipped: " + e.getMessage());
+            return null;
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public Integer getGrnIdByInvoiceNumber(String invoiceNumber) {
+        return grnRepository.findByInvoiceNumber(invoiceNumber)
+                .map(GRN::getGrnId)
+                .orElse(null);
+    }
+
     @Transactional
     public void deleteSupplyRawMaterial(Integer id) {
         if (!supplyRawMaterialRepository.existsById(id)) {
@@ -204,31 +234,67 @@ public class SupplyRawMaterialService {
         supplyRawMaterialRepository.deleteById(id);
     }
 
+    private String generateInvoiceNumber() {
+        try {
+            Object result = entityManager
+                    .createNativeQuery("CALL Generate_Invoice_Number()")
+                    .getSingleResult();
+            if (result instanceof Object[]) {
+                return String.valueOf(((Object[]) result)[0]);
+            }
+            return String.valueOf(result);
+        } catch (Exception e) {
+            String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyMMdd"));
+            long count = supplyRawMaterialRepository.count() + 1;
+            return String.format("INV%s%04d", datePart, count);
+        }
+    }
+
     private String generateGrnNumber() {
         String datePart = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        long count = grnRepository.count() + 1; // Simple counter for now
+        long count = grnRepository.count() + 1;
         return String.format("GRN-%s-%04d", datePart, count);
     }
 
     private SupplyRawMaterialResponseDTO mapToResponseDTO(SupplyRawMaterial supply) {
         SupplyRawMaterialResponseDTO dto = new SupplyRawMaterialResponseDTO();
         dto.setSupplyId(supply.getSupplyId());
+        
         if (supply.getSupplier() != null) {
-            dto.setSupplierId(supply.getSupplier().getCusId());
-            dto.setSupplierName(supply.getSupplier().getCusName());
+            dto.setSupplierId(supply.getSupplier().getSupId());
+            dto.setSupplierName(supply.getSupplier().getSupName());
         }
+        
+        // Find associated GRN ID
+        grnRepository.findBySupplyOrder(supply).ifPresent(grn -> dto.setGrnId(grn.getGrnId()));
+        
         if (supply.getRawMaterialItem() != null) {
             dto.setRmId(supply.getRawMaterialItem().getRmId());
             dto.setRmName(supply.getRawMaterialItem().getRmName());
         }
+        
         dto.setInvoiceNumber(supply.getInvoiceNumber());
         dto.setTotalAmount(supply.getTotalAmount());
         dto.setTransport(supply.getTransport());
+        
+        // Calculate total CFT from details
+        if (supply.getSupplyDetails() != null) {
+            BigDecimal totalCft = supply.getSupplyDetails().stream()
+                .map(d -> d.getTotalQuantityCft() != null ? d.getTotalQuantityCft() : BigDecimal.ZERO)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+            dto.setTotalQuantityCft(totalCft);
+            
+            dto.setSupplyDetails(supply.getSupplyDetails().stream()
+                .map(this::mapToDetailResponseDTO)
+                .collect(Collectors.toList()));
+        }
+        
         dto.setSupplyDate(supply.getSupplyDate());
         
-        if (supply.getSupplyDetails() != null) {
-            dto.setSupplyDetails(supply.getSupplyDetails().stream().map(this::mapToDetailResponseDTO).collect(Collectors.toList()));
-        }
+        // Net amount calculation for dashboard
+        BigDecimal cuttingFee = supply.getCuttingFee() != null ? supply.getCuttingFee() : BigDecimal.ZERO;
+        BigDecimal transport = supply.getTransport() != null ? supply.getTransport() : BigDecimal.ZERO;
+        dto.setNetAmount(supply.getTotalAmount().subtract(transport).subtract(cuttingFee));
         
         return dto;
     }

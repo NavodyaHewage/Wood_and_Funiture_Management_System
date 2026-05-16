@@ -46,8 +46,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     java.time.LocalDateTime now = java.time.LocalDateTime.now();
                     java.time.LocalDateTime lastActivity = user.getLastActivity();
 
-                    // 5 minutes = 300 seconds
-                    if (lastActivity != null && lastActivity.plusMinutes(5).isBefore(now)) {
+                    // 30 minutes inactivity timeout
+                    if (lastActivity != null && lastActivity.plusMinutes(30).isBefore(now)) {
                         log.warn("User {} session expired due to inactivity on backend", username);
                         SecurityContextHolder.clearContext();
                         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

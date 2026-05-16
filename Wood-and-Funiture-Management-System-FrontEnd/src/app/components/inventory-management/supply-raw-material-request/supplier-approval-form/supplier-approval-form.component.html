@@ -1,0 +1,66 @@
+<div class="modal-overlay" *ngIf="show" (click)="close()">
+  <div class="modal-box large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h5>Review Request #{{request?.requestId}}</h5>
+      <button class="modal-close" (click)="close()"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="modal-body" *ngIf="request">
+      <div class="view-grid mb-4">
+        <div class="view-item">
+          <label>Supplier</label>
+          <span>{{request.supplierName}}</span>
+        </div>
+        <div class="view-item">
+          <label>Date</label>
+          <span>{{request.requestDate | date:'mediumDate'}}</span>
+        </div>
+        <div class="view-item">
+          <label>Transport</label>
+          <span>{{request.transportBySupplier ? 'By Supplier' : 'Not Specified'}}</span>
+        </div>
+      </div>
+      
+      <div class="section-title">
+        <span>Approve Quantities & Set Prices</span>
+      </div>
+
+      <div class="details-table-wrap">
+        <table class="details-table">
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th>Requested CFT</th>
+              <th>Approved CFT</th>
+              <th>Unit Price (Rs.)</th>
+              <th>Total (Est.)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of request.details">
+              <td>{{d.rmName}}</td>
+              <td>{{d.adminRequestedCft}}</td>
+              <td>
+                <input type="number" [(ngModel)]="d.supplierApprovedCft" min="0" placeholder="0.000" [disabled]="isReadOnly" />
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="d.unitPrice" min="0" placeholder="0.00" [disabled]="isReadOnly" />
+              </td>
+              <td class="line-total">
+                Rs. {{ (d.supplierApprovedCft * d.unitPrice) | number:'1.2-2' }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer" *ngIf="!isReadOnly">
+      <button class="btn-danger" (click)="rejectRequest()">Reject</button>
+      <button class="btn-submit" (click)="saveApproval()">Approve Request</button>
+    </div>
+    <div class="modal-footer" *ngIf="isReadOnly">
+      <button class="btn-submit" (click)="close()">Close</button>
+    </div>
+  </div>
+</div>

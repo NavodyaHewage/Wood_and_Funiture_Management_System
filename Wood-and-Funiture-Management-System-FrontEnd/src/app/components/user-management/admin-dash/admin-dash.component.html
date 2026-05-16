@@ -46,18 +46,11 @@
                         <p>Client Directory</p>
                     </div>
                 </div>
-                <div class="stat-card">
-                    <i class="bi bi-box-seam"></i>
+                <div class="stat-card" routerLink="/supply-request-management" style="cursor: pointer;">
+                    <i class="bi bi-clipboard-check"></i>
                     <div class="stat-info">
-                        <h3>150+</h3>
-                        <p>Total Products</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <i class="bi bi-cart"></i>
-                    <div class="stat-info">
-                        <h3>24</h3>
-                        <p>Pending Orders</p>
+                        <h3>Supply</h3>
+                        <p>Material Requests</p>
                     </div>
                 </div>
             </div>
@@ -70,17 +63,33 @@
                         <i class="bi bi-person-plus"></i>
                         <span>Add New Staff</span>
                     </button>
-                    <button class="btn btn-action-card" routerLink="/employee-management">
-                        <i class="bi bi-person-badge"></i>
-                        <span>Employee List</span>
+                    <button class="btn btn-action-card" routerLink="/supply-request-management">
+                        <i class="bi bi-clipboard-plus"></i>
+                        <span>New Supply Request</span>
                     </button>
-                    <button class="btn btn-action-card" routerLink="/supplier-management">
-                        <i class="bi bi-truck"></i>
-                        <span>Manage Suppliers</span>
+                    <button class="btn btn-action-card" routerLink="/quotation-management">
+                        <i class="bi bi-file-earmark-plus"></i>
+                        <span>Create Quotation</span>
                     </button>
-                    <button class="btn btn-action-card" routerLink="/customer-management">
-                        <i class="bi bi-person-heart"></i>
-                        <span>Customer Directory</span>
+                    <button class="btn btn-action-card" routerLink="/order-management">
+                        <i class="bi bi-cart-plus"></i>
+                        <span>Create Order</span>
+                    </button>
+                    <button class="btn btn-action-card" routerLink="/log-management">
+                        <i class="bi bi-tree"></i>
+                        <span>Log Management</span>
+                    </button>
+                    <button class="btn btn-action-card" routerLink="/log-management/cutting">
+                        <i class="bi bi-scissors"></i>
+                        <span>Material Cutting</span>
+                    </button>
+                    <button class="btn btn-action-card" routerLink="/attendance-management">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Record Attendance</span>
+                    </button>
+                    <button class="btn btn-action-card" routerLink="/payroll-management">
+                        <i class="bi bi-wallet2"></i>
+                        <span>Run Payroll</span>
                     </button>
                 </div>
             </div>

@@ -1,13 +1,12 @@
 package com.group_project.wfms_backend.model;
 
-
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "Supply_RAW_Material_Details")
@@ -48,4 +47,11 @@ public class SupplyRawMaterialDetails {
     // Generated column — (Length * Girth * Girth / 12) * Price
     @Column(name = "Line_Total", precision = 15, scale = 2, insertable = false, updatable = false)
     private BigDecimal lineTotal;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private CuttingStatus status = CuttingStatus.PENDING;
+
+    @Column(name = "cut_day")
+    private LocalDate cutDay;
 }

@@ -1,0 +1,180 @@
+<div class="grn-page-wrapper">
+  <!-- Action Buttons (Hidden during Print) -->
+  <div class="action-bar no-print">
+    <button class="btn btn-secondary" (click)="goBack()">
+      <i class="fas" [ngClass]="grnId ? 'fa-times' : 'fa-arrow-left'"></i> 
+      {{ grnId ? 'Close' : 'Back to Logs' }}
+    </button>
+    <div class="right-actions">
+      <button class="btn btn-primary" (click)="downloadPDF()">
+        <i class="fas fa-file-pdf"></i> Download PDF
+      </button>
+      <button class="btn btn-success" (click)="printInvoice()">
+        <i class="fas fa-print"></i> Print Invoice
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p>Preparing your GRN Invoice...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="error-state glass-card">
+    <i class="fas fa-exclamation-triangle"></i>
+    <h3>{{ error }}</h3>
+    <button class="btn btn-primary" (click)="goBack()">Go Back</button>
+  </div>
+
+  <!-- Invoice Content -->
+  <div *ngIf="!loading && !error && grnData" class="invoice-container shadow-lg" id="grn-invoice-container">
+    <!-- Header -->
+    <header class="invoice-header">
+      <div class="company-brand">
+        <div class="logo-box">
+          <img src="/logo.jpg" alt="Sachintha Timber Mall Logo" class="company-logo">
+        </div>
+        <div class="company-info">
+          <h1>SACHINTHA SEW MILL</h1>
+          <p class="reg-no">Business Reg No: TD/448</p>
+          <p class="address">Sachintha Sew Mill, Kudalu Deniya, Galdola, Kotapola.</p>
+          <p class="contact">Tel: 077-2333722 | Email: wfmscahinthasewmill&#64;gmail.com</p>
+        </div>
+      </div>
+      <div class="invoice-title-block">
+        <h2>GOODS RECEIVED NOTE</h2>
+        <div class="grn-meta">
+          <div class="meta-item">
+            <span class="label">GRN NO:</span>
+            <span class="value">{{ grnData.grnNumber }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">DATE:</span>
+            <span class="value">{{ grnData.date | date:'mediumDate' }}</span>
+          </div>
+          <div class="meta-item">
+            <span class="label">INVOICE NO:</span>
+            <span class="value">{{ grnData.invoiceNumber }}</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="invoice-body">
+      <!-- Party Details -->
+      <div class="details-grid">
+        <div class="detail-box">
+          <h3>Supplier Details</h3>
+          <div class="info-row">
+            <span class="lbl">Name:</span>
+            <span class="val">{{ grnData.supplierName }}</span>
+          </div>
+          <div class="info-row" *ngIf="grnData.supplierAddress">
+            <span class="lbl">Address:</span>
+            <span class="val">{{ grnData.supplierAddress }}</span>
+          </div>
+          <div class="info-row" *ngIf="grnData.supplierMobile">
+            <span class="lbl">Contact:</span>
+            <span class="val">{{ grnData.supplierMobile }}</span>
+          </div>
+          <div class="info-row" *ngIf="grnData.supplierEmail">
+            <span class="lbl">Email:</span>
+            <span class="val">{{ grnData.supplierEmail }}</span>
+          </div>
+        </div>
+        <div class="detail-box">
+          <h3>Supply Order Reference</h3>
+          <div class="info-row">
+            <span class="lbl">Order ID:</span>
+            <span class="val">#{{ grnData.supplyOrderId }}</span>
+          </div>
+          <div class="info-row">
+            <span class="lbl">Ref Invoice:</span>
+            <span class="val">{{ grnData.supplyOrderInvoiceNumber }}</span>
+          </div>
+          <div class="info-row">
+            <span class="lbl">Status:</span>
+            <span class="val badge-completed">RECEIVED</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Items Table -->
+      <div class="table-responsive">
+        <table class="table invoice-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Material Description</th>
+              <th>Log No</th>
+              <th>Length (Ft)</th>
+              <th>Girth (Ft)</th>
+              <th class="text-end">Qty (CFT)</th>
+              <th class="text-end">Unit Price</th>
+              <th class="text-end">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of grnData.grnDetails; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>
+                <strong>{{ item.rmName }}</strong>
+              </td>
+              <td>{{ item.logNumber }}</td>
+              <td>{{ item.lengthFt }}'</td>
+              <td>{{ item.girthFt }}'</td>
+              <td class="text-end">{{ item.totalQuantityCft | number:'1.2-4' }}</td>
+              <td class="text-end">{{ item.unitPrice | currency:'LKR ':'symbol':'1.2-2' }}</td>
+              <td class="text-end">{{ item.amount | currency:'LKR ':'symbol':'1.2-2' }}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="7" class="text-end text-uppercase fw-bold">Gross Total</td>
+              <td class="text-end fw-bold">{{ grnData.totalAmount | currency:'LKR ':'symbol':'1.2-2' }}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      <!-- Notes and Summary -->
+      <div class="invoice-footer-section">
+        <div class="notes-area">
+          <h4>Remarks:</h4>
+          <p>{{ grnData.remarks || 'No additional remarks provided.' }}</p>
+        </div>
+        <div class="summary-area">
+          <div class="summary-line grand-total">
+            <span class="lbl">Grand Total:</span>
+            <span class="val">{{ grnData.totalAmount | currency:'LKR ':'symbol':'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signatures-grid">
+      <div class="sig-box">
+        <div class="line"></div>
+        <p>Prepared By</p>
+      </div>
+      <div class="sig-box">
+        <div class="line"></div>
+        <p>Checked By</p>
+      </div>
+      <div class="sig-box">
+        <div class="line"></div>
+        <p>Supplier's Signature</p>
+      </div>
+    </div>
+
+    <footer class="print-footer">
+      <p>This is a computer-generated Goods Received Note. No signature required for validity.</p>
+      <p>Generated on: {{ grnData.createdAt | date:'medium' }}</p>
+    </footer>
+  </div>
+</div>

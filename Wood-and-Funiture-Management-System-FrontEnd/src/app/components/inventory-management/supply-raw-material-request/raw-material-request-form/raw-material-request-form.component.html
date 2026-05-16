@@ -1,0 +1,82 @@
+<div class="modal-overlay" *ngIf="show" (click)="close()">
+  <div class="modal-box large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h5>Create New Supply Request</h5>
+      <button class="modal-close" (click)="close()"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Supplier</label>
+          <select [(ngModel)]="newRequest.supplierId">
+            <option [ngValue]="null">Select Supplier</option>
+            <option *ngFor="let s of suppliers" [ngValue]="s.supId">{{s.supName}}</option>
+          </select>
+        </div>
+        <div class="form-group d-flex align-items-center mt-4">
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="transportBySupplier" [(ngModel)]="newRequest.transportBySupplier">
+            <label class="form-check-label ms-2" for="transportBySupplier">
+              Transport by Supplier
+            </label>
+          </div>
+        </div>
+        <div class="form-group col-span-2" *ngIf="newRequest.transportBySupplier">
+          <label>Transport Notes</label>
+          <input type="text" [(ngModel)]="newRequest.transportNotes" placeholder="Delivery instructions, vehicle info, etc." />
+        </div>
+        <div class="form-group col-span-2">
+          <label>Remarks</label>
+          <input type="text" [(ngModel)]="newRequest.remarks" placeholder="General notes for this request" />
+        </div>
+      </div>
+
+      <div class="section-title">
+        <span>Requested Materials</span>
+        <button class="btn-add-row" (click)="addDetail()">
+          <i class="bi bi-plus"></i> Add Material
+        </button>
+      </div>
+
+      <div class="details-table-wrap">
+        <table class="details-table">
+          <thead>
+            <tr>
+              <th>Material</th>
+              <th>Requested CFT</th>
+              <th>Remarks</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let d of newRequest.details; let i = index">
+              <td>
+                <select [(ngModel)]="d.rmId">
+                  <option [ngValue]="null">Select Material</option>
+                  <option *ngFor="let rm of rawMaterials" [ngValue]="rm.rmId">{{rm.rmName}}</option>
+                </select>
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="d.adminRequestedCft" min="0" placeholder="0.000" />
+              </td>
+              <td>
+                <input type="text" [(ngModel)]="d.remarks" placeholder="Item specific notes" />
+              </td>
+              <td>
+                <button class="remove-row-btn" (click)="removeDetail(i)" *ngIf="newRequest.details.length > 1">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="close()">Cancel</button>
+      <button class="btn-submit" (click)="saveRequest()">Send Request</button>
+    </div>
+  </div>
+</div>
