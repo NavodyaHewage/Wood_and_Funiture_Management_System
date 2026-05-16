@@ -21,6 +21,12 @@ export class RawMaterialRequestListComponent implements OnInit {
   isAdmin: boolean = false;
   isSupplier: boolean = false;
 
+  // Pagination
+  currentPage: number = 1;
+  pageSize: number = 8;
+  totalPages: number = 1;
+  Math = Math;
+
   @Output() onCreate = new EventEmitter<void>();
   @Output() onReview = new EventEmitter<any>();
   @Output() onConvert = new EventEmitter<any>();
@@ -63,6 +69,29 @@ export class RawMaterialRequestListComponent implements OnInit {
       
       return matchesSearch && matchesStatus;
     });
+    this.currentPage = 1;
+    this.calculatePagination();
+  }
+
+  calculatePagination() {
+    this.totalPages = Math.ceil(this.filteredRequests.length / this.pageSize);
+  }
+
+  get paginatedRequests(): any[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.filteredRequests.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage() {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
   onSearch() {

@@ -78,8 +78,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let req of filteredRequests; let i = index">
-            <td class="row-num">{{ i + 1 }}</td>
+          <tr *ngFor="let req of paginatedRequests; let i = index">
+            <td class="row-num">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
             <td><span class="fw-bold">#{{ req.requestId }}</span></td>
             <td class="customer-cell">
               <span class="customer-avatar">{{ req.supplierName.charAt(0) }}</span>
@@ -127,6 +127,22 @@
           </tr>
         </tbody>
       </table>
+
+      <!-- ── PAGINATION ────────────────────────────────────────── -->
+      <div class="pagination-footer" *ngIf="filteredRequests.length > pageSize">
+        <div class="pagination-info">
+          Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, filteredRequests.length) }} of {{ filteredRequests.length }}
+        </div>
+        <div class="pagination-btns">
+          <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">
+            <i class="bi bi-chevron-left"></i>
+          </button>
+          <span class="page-indicator">Page {{ currentPage }} of {{ totalPages }}</span>
+          <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">
+            <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
