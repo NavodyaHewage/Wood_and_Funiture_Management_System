@@ -28,13 +28,13 @@ public class QuotationDetails {
     @Column(name = "Name")
     private String name;
 
-    @Column(name = "quantity", nullable = false)
+    @Column(name = "Quantity", nullable = false)
     private BigDecimal quantity;
 
-    @Column(name = "price", nullable = false)
+    @Column(name = "Price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "line_total", insertable = false, updatable = false)
+    @Column(name = "Line_Total", insertable = false, updatable = false)
     private BigDecimal lineTotal;
 }
 

@@ -19,15 +19,14 @@ public class Quotation {
     @Column(name = "Quotation_Id")
     private Integer quotationId;
 
-    // @Column(name = "Quotation_Number", length = 20)
-    @Transient
+    @Column(name = "Quotation_Number", length = 20)
     private String quotationNumber;
 
     @ManyToOne
     @JoinColumn(name = "Customer_Id", nullable = false)
     private Customer customer;
 
-    @Column(name = "total_amount")
+    @Column(name = "Total_Amount")
     private BigDecimal totalAmount;
 
     @Column(name = "Status")
