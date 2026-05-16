@@ -6,6 +6,7 @@ import { EmployeeService } from '../../../../service/employee.service';
 import { RawMaterialService } from '../../../../service/raw-material.service';
 import { ToastService } from '../../../../service/toast.service';
 import { AuthService } from '../../../../service/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-convert-to-order-modal',
@@ -40,7 +41,8 @@ export class ConvertToOrderModalComponent implements OnInit, OnChanges {
     private employeeService: EmployeeService,
     private rmService: RawMaterialService,
     private toastService: ToastService,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -59,17 +61,23 @@ export class ConvertToOrderModalComponent implements OnInit, OnChanges {
   }
 
   loadRawMaterials() {
-    this.rmService.getAllRawMaterialItems().subscribe(res => this.rawMaterials = res);
+    this.rmService.getAllRawMaterialItems().subscribe(res => {
+      this.rawMaterials = res;
+      // If modal is already open, re-initialize to pick up prices
+      if (this.show && this.request) {
+        this.initConversionData();
+      }
+    });
   }
 
-  getExpectedPrice(rmId: number): number {
-    const rm = this.rawMaterials.find(m => m.rmId === rmId);
-    return rm ? rm.pricePerCft : 0;
+  getExpectedPrice(rmId: any): number {
+    if (!rmId || !this.rawMaterials) return 0;
+    const rm = this.rawMaterials.find(m => m.rmId == rmId);
+    return rm ? (rm.pricePerCft || 0) : 0;
   }
 
   initConversionData() {
     this.conversionData = {
-      invoiceNumber: 'INV-' + Date.now(),
       transport: 0,
       cuttingFee: 0,
       cuttingFeeEmployeeId: null,
@@ -85,14 +93,17 @@ export class ConvertToOrderModalComponent implements OnInit, OnChanges {
     });
   }
 
-  addLog(rmId: number, rmName: string, price: number) {
+  addLog(rmId: number, rmName: string, supplierPrice: number) {
+    const apiPrice = this.getExpectedPrice(rmId);
     this.conversionData.supplyDetails.push({
       rmId: rmId,
       rmName: rmName,
       logNumber: this.conversionData.supplyDetails.filter((d: any) => d.rmId === rmId).length + 1,
       lengthFt: 0,
       girthFt: 0,
-      price: price || 0
+      supplierPrice: supplierPrice || 0,
+      apiPrice: apiPrice || 0,
+      price: supplierPrice || 0 // This will be the Negotiated Price (editable)
     });
   }
 
@@ -123,21 +134,21 @@ export class ConvertToOrderModalComponent implements OnInit, OnChanges {
   }
 
   confirmConversion() {
-    if (!this.conversionData.invoiceNumber) {
-      this.toastService.showError('Please enter an invoice number');
-      return;
-    }
-
     if (this.conversionData.supplyDetails.some((l: any) => l.lengthFt <= 0 || l.girthFt <= 0)) {
       this.toastService.showError('Please enter valid dimensions for all logs');
       return;
     }
 
     this.requestService.convertToOrder(this.request.requestId, this.conversionData).subscribe({
-      next: () => {
+      next: (response: any) => {
         this.toastService.showSuccess('Converted to Supply Order and GRN generated');
         this.onSaved.emit();
         this.close();
+        
+        // Redirect to the GRN Invoice page
+        if (response && response.grnId) {
+          this.router.navigate(['/inventory/grn-invoice', response.grnId]);
+        }
       },
       error: (err) => this.toastService.showError('Error during conversion')
     });

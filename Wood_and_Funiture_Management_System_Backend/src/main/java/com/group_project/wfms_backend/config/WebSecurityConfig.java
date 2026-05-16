@@ -81,6 +81,7 @@ public class WebSecurityConfig {
                                 "/assets/**",
                                 "/orders/**",
                                 "/v1/cutting-fees/**",
+                                "/v1/grn/**",
                                 "/designation-salary/**",
                                 "/loans/**",
                                 "/paysheet-details/**",

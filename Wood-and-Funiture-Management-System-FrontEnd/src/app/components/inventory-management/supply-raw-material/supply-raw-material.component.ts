@@ -41,8 +41,7 @@ export class SupplyRawMaterialComponent implements OnInit {
   ) {
     this.supplyForm = this.fb.group({
       supplierId: ['', Validators.required],
-      rmId: ['', Validators.required],
-      invoiceNumber: ['', Validators.required],
+      invoiceNumber: [{ value: 'AUTO-GENERATED', disabled: true }],
       transport: [0],
       cuttingFee: [0],
       cuttingFeeEmployeeId: [''],
@@ -59,7 +58,7 @@ export class SupplyRawMaterialComponent implements OnInit {
     // Set current user ID
     this.authService.currentUser.subscribe((user: any) => {
       if (user) {
-        this.supplyForm.patchValue({ createdById: user.id });
+        this.supplyForm.patchValue({ createdById: user.userId || user.id });
       }
     });
   }
@@ -68,9 +67,13 @@ export class SupplyRawMaterialComponent implements OnInit {
     this.supplierService.getAllSuppliers().subscribe((res: any[]) => this.suppliers = res);
     this.rmService.getAllRawMaterialItems().subscribe((res: any[]) => {
       this.rawMaterials = res;
-      // If there's an initial row, update its price if a wood type is already selected
-      if (this.supplyDetails.length > 0) {
-        this.onMainWoodTypeChange();
+      // Pre-select first wood type for initial row
+      if (this.rawMaterials.length > 0 && this.supplyDetails.length > 0) {
+        const firstRow = this.supplyDetails.at(0);
+        if (!firstRow.get('rmId')?.value) {
+          firstRow.patchValue({ rmId: this.rawMaterials[0].rmId });
+          this.onRowWoodTypeChange(0);
+        }
       }
     });
     this.employeeService.getAllEmployees().subscribe((res: any[]) => this.employees = res);
@@ -81,35 +84,45 @@ export class SupplyRawMaterialComponent implements OnInit {
   }
 
   addLogRow(): void {
-    const mainRmId = this.supplyForm.get('rmId')?.value;
-    const selectedWood = this.rawMaterials.find(rm => rm.rmId == mainRmId);
+    // Auto-generate log number based on the last row's value + 1
+    let nextLogNum = 1;
+    let prevRmId = '';
     
+    if (this.supplyDetails.length > 0) {
+      const lastRow = this.supplyDetails.at(this.supplyDetails.length - 1);
+      const lastNum = parseInt(lastRow.get('logNumber')?.value);
+      if (!isNaN(lastNum)) {
+        nextLogNum = lastNum + 1;
+      }
+      prevRmId = lastRow.get('rmId')?.value || '';
+    }
+
     const row = this.fb.group({
-      rmId: [mainRmId || '', Validators.required],
-      logNumber: ['', Validators.required],
+      rmId: [prevRmId, Validators.required],
+      logNumber: [nextLogNum, Validators.required],
       lengthFt: [0, [Validators.required, Validators.min(0.1)]],
       girthFt: [0, [Validators.required, Validators.min(0.1)]],
       totalQuantityCft: [{ value: 0, disabled: true }],
-      price: [selectedWood?.pricePerCft || 0, [Validators.required, Validators.min(1)]],
+      price: [0, [Validators.required, Validators.min(1)]],
       lineTotal: [{ value: 0, disabled: true }]
     });
 
     this.supplyDetails.push(row);
+    
+    // Trigger price update if we copied a wood type
+    if (prevRmId) {
+      this.onRowWoodTypeChange(this.supplyDetails.length - 1);
+    }
   }
 
-  onMainWoodTypeChange(): void {
-    const mainRmId = this.supplyForm.get('rmId')?.value;
-    const selectedWood = this.rawMaterials.find(rm => rm.rmId == mainRmId);
+  onRowWoodTypeChange(index: number): void {
+    const row = this.supplyDetails.at(index);
+    const rmId = row.get('rmId')?.value;
+    const selectedWood = this.rawMaterials.find(rm => rm.rmId == rmId);
     
     if (selectedWood) {
-      // Update all rows in the form array
-      this.supplyDetails.controls.forEach((control, index) => {
-        control.patchValue({ 
-          rmId: mainRmId,
-          price: selectedWood.pricePerCft 
-        });
-        this.calculateLineTotal(index);
-      });
+      row.patchValue({ price: selectedWood.pricePerCft });
+      this.calculateLineTotal(index);
     }
   }
 
@@ -126,9 +139,6 @@ export class SupplyRawMaterialComponent implements OnInit {
     
     if (supplier) {
       this.isTreeSeller = (supplier.supCat === 'Tree Seller');
-      if (!this.isTreeSeller) {
-        this.supplyForm.patchValue({ transport: 0, cuttingFee: 0, cuttingFeeEmployeeId: '' });
-      }
     } else {
       this.isTreeSeller = false;
     }
@@ -184,10 +194,19 @@ export class SupplyRawMaterialComponent implements OnInit {
     this.isSubmitting = true;
     const payload = this.supplyForm.getRawValue();
     
+    // Set rmId to the first row's rmId for backward compatibility with main table
+    if (payload.supplyDetails && payload.supplyDetails.length > 0) {
+      payload.rmId = payload.supplyDetails[0].rmId;
+    }
+    
     this.supplyService.create(payload).subscribe({
       next: (res: any) => {
         this.toast.success('Supply recorded successfully! GRN generated.');
-        this.router.navigate(['/admin-dashboard']);
+        if (res && res.grnId) {
+          this.router.navigate(['/inventory/grn-invoice', res.grnId]);
+        } else {
+          this.router.navigate(['/log-management']);
+        }
       },
       error: (err: any) => {
         this.toast.error('Failed to record supply. ' + (err.error?.message || ''));

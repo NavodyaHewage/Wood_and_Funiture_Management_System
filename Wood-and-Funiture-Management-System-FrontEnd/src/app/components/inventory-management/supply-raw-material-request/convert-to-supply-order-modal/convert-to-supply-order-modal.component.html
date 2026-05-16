@@ -21,7 +21,7 @@
       <div class="form-grid">
         <div class="form-group">
           <label>Invoice Number</label>
-          <input type="text" [(ngModel)]="conversionData.invoiceNumber" placeholder="INV-001" />
+          <input type="text" value="AUTO-GENERATED" readonly style="background: #f1f1f1; color: #666;" />
         </div>
         <div class="form-group">
           <label>Supply Date</label>
@@ -63,11 +63,12 @@
               <th>Log #</th>
               <th>Length (ft)</th>
               <th>Girth (ft)</th>
-               <th>Price/CFT</th>
-               <th>Expected (Exp.)</th>
-               <th>CFT</th>
-               <th>Total</th>
-               <th></th>
+              <th>Supplier (Rs)</th>
+              <th>API Price (Rs)</th>
+              <th>Negotiated (Rs)</th>
+              <th>CFT</th>
+              <th>Total</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
@@ -82,12 +83,14 @@
               <td>
                 <input type="number" [(ngModel)]="log.girthFt" min="0" class="short-input" />
               </td>
-              <td>
-                <input type="number" [(ngModel)]="log.price" min="0" class="short-input" />
-                <div class="small text-muted">Supplier Price</div>
+              <td class="text-secondary small">
+                {{log.supplierPrice | number:'1.2-2'}}
               </td>
               <td class="text-secondary small">
-                Rs. {{getExpectedPrice(log.rmId) | number:'1.2-2'}}
+                {{log.apiPrice | number:'1.2-2'}}
+              </td>
+              <td>
+                <input type="number" [(ngModel)]="log.price" min="0" class="short-input negotiated-price" />
               </td>
               <td class="fw-bold text-primary">
                 {{calculateCft(log) | number:'1.2-3'}}
@@ -104,14 +107,20 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="6" class="total-label">Grand Totals</td>
-              <td class="grand-total" [class.text-danger]="getTotalCft() > getMaxAllowedCft()">
-                {{getTotalCft() | number:'1.2-3'}} CFT
-                <div class="small text-muted" *ngIf="getMaxAllowedCft() > 0">
+              <td colspan="7" class="total-label">Grand Summary</td>
+              <td class="grand-total">
+                <div>{{getTotalCft() | number:'1.2-3'}} CFT</div>
+                <div class="target-badge" 
+                     [class.over]="getTotalCft() > getMaxAllowedCft()"
+                     [class.under]="getTotalCft() <= getMaxAllowedCft()">
+                  <i class="bi" [class.bi-exclamation-triangle-fill]="getTotalCft() > getMaxAllowedCft()" 
+                               [class.bi-check-circle-fill]="getTotalCft() <= getMaxAllowedCft()"></i>
                   Target: {{getMaxAllowedCft() | number:'1.2-3'}}
                 </div>
               </td>
-              <td class="grand-total">Rs. {{getTotalAmount() | number:'1.2-2'}}</td>
+              <td class="total-amount">
+                Rs. {{getTotalAmount() | number:'1.2-2'}}
+              </td>
               <td></td>
             </tr>
           </tfoot>

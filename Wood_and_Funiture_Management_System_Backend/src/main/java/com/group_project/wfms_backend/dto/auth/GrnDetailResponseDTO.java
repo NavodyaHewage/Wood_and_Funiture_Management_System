@@ -9,10 +9,13 @@ import java.time.LocalDate;
 public class GrnDetailResponseDTO {
     private Integer id;
     private Integer supplyRawMaterialDetailsId;
+    private Integer rmId;
+    private String rmName;
     private Integer logNumber;
     private BigDecimal lengthFt;
     private BigDecimal girthFt;
     private BigDecimal totalQuantityCft;
+    private BigDecimal unitPrice;
     private String grnNumber;
     private LocalDate date;
     private BigDecimal amount;

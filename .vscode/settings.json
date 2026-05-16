@@ -1,8 +1,8 @@
 {
     "java.configuration.updateBuildConfiguration": "interactive",
     "java.compile.nullAnalysis.mode": "automatic",
-    "workbench.colorTheme": "Default Dark Modern",
-    "workbench.preferredDarkColorTheme": "Default Dark Modern",
+    "workbench.colorTheme": "Dark Modern",
+    "workbench.preferredDarkColorTheme": "Dark Modern",
     "workbench.colorCustomizations": {
         "editor.background": "#000000",
         "sideBar.background": "#000000",
