@@ -96,7 +96,8 @@ public class WebSecurityConfig {
                                 "/quotations/**",
                                 "/v1/raw-material-items/**",
                                 "/receipts/**",
-                                "/v1/supply-raw-materials/**"
+                                "/v1/supply-raw-materials/**",
+                                "/v1/raw-material-cutting/**"
                         ).hasAnyRole("ADMIN", "MANAGER")
                         .requestMatchers("/supply-requests/**").hasAnyRole("ADMIN", "MANAGER", "SUPPLIER")
 

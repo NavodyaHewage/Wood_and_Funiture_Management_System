@@ -1,0 +1,197 @@
+<div class="dashboard-layout">
+    <app-admin-side></app-admin-side>
+
+    <main class="main-content">
+        <app-header></app-header>
+
+        <div class="content-body">
+            <div class="quotation-container">
+                <!-- Header Section -->
+                <div class="header-section">
+                    <div class="title-group">
+                        <h1>Raw Material Cutting Process</h1>
+                        <p>Select logs to visualize dimensions and record cutting output</p>
+                    </div>
+                    <div class="header-actions">
+                        <div class="search-box-premium">
+                            <i class="bi bi-search"></i>
+                            <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Search by Invoice or Log #...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dual-layout">
+                    <!-- Left: Log Selection Section -->
+                    <div class="table-section">
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width: 50px;">Select</th>
+                                        <th>Invoice #</th>
+                                        <th>Log #</th>
+                                        <th>Length (ft)</th>
+                                        <th>Girth (ft)</th>
+                                        <th>Volume (CFT)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let log of paginatedLogs" 
+                                        [class.selected]="isSelected(log.id)"
+                                        [class.active-row]="activeLog?.id === log.id"
+                                        (click)="toggleLogSelection(log.id, log)">
+                                        <td>
+                                            <div class="checkbox-wrapper">
+                                                <input type="checkbox" [checked]="isSelected(log.id)">
+                                                <span class="checkmark"></span>
+                                            </div>
+                                        </td>
+                                        <td><span class="invoice-badge">{{log.invoiceNumber}}</span></td>
+                                        <td><span class="fw-bold">#{{log.logNumber}}</span></td>
+                                        <td>{{log.lengthFt}}</td>
+                                        <td>{{log.girthFt}}</td>
+                                        <td><span class="volume-badge">{{log.totalQuantityCft}}</span></td>
+                                    </tr>
+                                    <tr *ngIf="filteredLogs.length === 0">
+                                        <td colspan="6" class="text-center py-5">
+                                            <i class="bi bi-inbox fs-1 text-muted"></i>
+                                            <p class="text-muted mt-2">No matching raw materials found.</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <!-- Pagination Footer -->
+                            <div class="pagination-footer" *ngIf="filteredLogs.length > pageSize">
+                                <div class="pagination-info">
+                                    {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, filteredLogs.length) }} of {{ filteredLogs.length }}
+                                </div>
+                                <div class="pagination-btns">
+                                    <button class="btn-minimal" (click)="prevPage()" [disabled]="currentPage === 1">
+                                        <i class="bi bi-chevron-left"></i>
+                                    </button>
+                                    <span class="page-number">{{ currentPage }} / {{ totalPages }}</span>
+                                    <button class="btn-minimal" (click)="nextPage()" [disabled]="currentPage === totalPages">
+                                        <i class="bi bi-chevron-right"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Visualization Section -->
+                    <div class="visualization-section">
+                        <div class="viz-card" *ngIf="activeLog; else noSelection">
+                            <div class="viz-header">
+                                <h3>Cylindrical Log Visualizer</h3>
+                                <span class="log-id">LOG #{{activeLog.logNumber}}</span>
+                            </div>
+                            
+                            <div class="viz-body">
+                                <div class="timber-3d-container">
+                                    <!-- Cylindrical Log Representation -->
+                                    <div class="log-cylinder">
+                                        <div class="cylinder-body">
+                                            <div class="bark-texture"></div>
+                                        </div>
+                                        <div class="cylinder-end cap-front">
+                                            <div class="wood-rings"></div>
+                                        </div>
+                                        <div class="cylinder-end cap-back"></div>
+                                        
+                                        <!-- Dimension Indicators -->
+                                        <div class="dimension-line length-dim">
+                                            <span class="dim-value">{{activeLog.lengthFt}} ft</span>
+                                        </div>
+                                        <div class="dimension-line girth-dim">
+                                            <span class="dim-value">{{activeLog.girthFt}} ft Girth</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="viz-footer-clean">
+                                    <div class="info-row">
+                                        <span class="label">Invoice Reference</span>
+                                        <span class="value">{{activeLog.invoiceNumber}}</span>
+                                    </div>
+                                    <div class="info-row highlight">
+                                        <span class="label">Total Volume</span>
+                                        <span class="value cft">{{activeLog.totalQuantityCft}} <small>CFT</small></span>
+                                    </div>
+                                    <p class="formula-info">Calculated via Hopper's Rule: (Girth² × Length) / 12</p>
+                                </div>
+                            </div>
+                        </div>
+                        <ng-template #noSelection>
+                            <div class="viz-card empty">
+                                <div class="empty-icon-wrapper">
+                                    <i class="bi bi-box-seam"></i>
+                                </div>
+                                <p>Select exactly one log row to visualize its dimensions</p>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+
+                <!-- Product Addition Section -->
+                <div class="section-card mt-5 animate-in" *ngIf="selectedLogIds.length > 0">
+                    <div class="card-header-clean">
+                        <div class="title-group">
+                            <h2>Generated Products</h2>
+                            <p>Specify the types and quantities obtained after cutting</p>
+                        </div>
+                        <button type="button" class="btn-add-minimal" (click)="addProduct()">
+                            <i class="bi bi-plus-circle-fill"></i> Add Another Row
+                        </button>
+                    </div>
+
+                    <form [formGroup]="cuttingForm" (ngSubmit)="onSubmit()" class="mt-4">
+                        <div class="products-list" formArrayName="cutProducts">
+                            <div *ngFor="let product of cutProducts.controls; let i=index" [formGroupName]="i" class="product-entry-clean animate-in">
+                                <div class="entry-index">{{i + 1}}</div>
+                                
+                                <div class="input-grid">
+                                    <div class="input-group-clean">
+                                        <label>Product Category</label>
+                                        <select formControlName="productCategoryId" class="minimal-select">
+                                            <option value="" disabled selected>Choose Category...</option>
+                                            <option *ngFor="let cat of productCategories" [value]="cat.productCatId">
+                                                {{cat.materialCategory}} - {{cat.description}}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                    <div class="input-group-clean">
+                                        <label>Quantity Produced</label>
+                                        <div class="number-input-wrapper">
+                                            <input type="number" formControlName="quantity" placeholder="0.00" class="minimal-input">
+                                            <span class="unit-label">{{ getUnitForCategory(product.get('productCategoryId')?.value) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button type="button" class="btn-remove-clean" (click)="removeProduct(i)" [disabled]="cutProducts.length === 1">
+                                    <i class="bi bi-trash3"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="form-footer-clean">
+                            <div class="selection-status">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <span><strong>{{selectedLogIds.length}}</strong> logs selected for processing</span>
+                            </div>
+                            <div class="action-group">
+                                <button type="button" class="btn-ghost" (click)="resetForm()">Clear All</button>
+                                <button type="submit" class="btn-process" [disabled]="isSubmitting || selectedLogIds.length === 0">
+                                    <span *ngIf="!isSubmitting"><i class="bi bi-scissors"></i> Process Cutting</span>
+                                    <span *ngIf="isSubmitting"><i class="spinner-border spinner-border-sm me-2"></i> Processing...</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

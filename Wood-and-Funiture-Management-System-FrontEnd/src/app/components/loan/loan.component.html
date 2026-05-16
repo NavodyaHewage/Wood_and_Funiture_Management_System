@@ -1,155 +1,162 @@
 <div class="dashboard-layout">
-  <!-- Navigation Sidebar -->
   <app-admin-side></app-admin-side>
 
-  <!-- Main Content Area -->
   <main class="main-content">
-    <!-- Dynamic Header -->
     <app-header></app-header>
 
-    <!-- Dashboard Body -->
     <div class="content-body">
-      <div class="loan-container">
-        <!-- Header Summary Widgets -->
-        <header class="summary-header">
-          <div class="widget">
-            <span class="widget-label">Total Active Loans</span>
-            <span class="widget-value monospace">{{ metrics.totalActive }}</span>
+      <div class="loan-container animate-fade-in">
+        
+        <!-- Header -->
+        <div class="header-section">
+          <div class="title-group">
+            <h1>Loan & Advance Management</h1>
+            <p>Track employee loans, advances, and recovery rules</p>
           </div>
-          <div class="widget">
-            <span class="widget-label">Expected Collection (Month)</span>
-            <span class="widget-value monospace">LKR {{ metrics.expectedCollection | number:'1.2-2' }}</span>
+          <button class="btn-refresh-minimal" (click)="loadLoans()">
+            <i class="bi bi-arrow-clockwise"></i> Refresh Data
+          </button>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Total Active Loans</div>
+            <div class="stat-value">{{ metrics.totalActive }}</div>
           </div>
-          
+          <div class="stat-card">
+            <div class="stat-label">Expected Collection (Monthly)</div>
+            <div class="stat-value">LKR {{ metrics.expectedCollection | number:'1.2-2' }}</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Pending Requests</div>
+            <div class="stat-value">{{ metrics.pendingCount }}</div>
+          </div>
+        </div>
 
-        </header>
-
-        <div class="main-layout">
-          <!-- Left Panel: Loan Application Form -->
-          <aside class="left-panel">
-            <div class="card elevated">
-              <h2 class="card-title">Manager Approved Loan Entry</h2>
-              <div class="alert alert-info" style="font-size: 0.85rem; padding: 10px; margin-bottom: 20px;">
-                <i class="bi bi-info-circle-fill me-1"></i> Data entered here is immediately set to <strong>ACTIVE</strong> status and cannot be modified later.
+        <div class="dual-layout">
+          <!-- Left: Loan Issuance Form -->
+          <div class="form-section">
+            <div class="premium-card">
+              <div class="card-header-clean">
+                <h3>Issue New Loan / Advance</h3>
               </div>
-              <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
-                
-                <div class="form-group">
-                  <label for="type">Select Type</label>
-                  <select id="type" formControlName="type" class="form-control">
-                    <option value="Loan">Loan</option>
-                    <option value="Advance">Advance</option>
-                  </select>
-                </div>
+              <div class="card-body-clean">
+                <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
+                  <div class="row g-3">
+                    <div class="col-12">
+                      <label class="clean-label">Select Employee</label>
+                      <select class="clean-select" formControlName="employeeId">
+                        <option value="" disabled selected>-- Select Employee --</option>
+                        <option *ngFor="let emp of employees" [value]="emp.id">
+                          {{emp.fullName}} ({{emp.designation}})
+                        </option>
+                      </select>
+                    </div>
 
-                <div class="form-group">
-                  <label for="employeeId">Select Employee</label>
-                  <select id="employeeId" formControlName="employeeId" class="form-control">
-                    <option value="">-- Select Employee --</option>
-                    <option *ngFor="let emp of employees" [value]="emp.id">
-                      {{ emp.fullName }} ({{ emp.designation }})
-                    </option>
-                  </select>
-                  <!-- Warning Badge -->
-                  <div class="alert alert-warning mt-2 mb-0 d-flex align-items-center" *ngIf="hasActiveLoanWarning">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <strong>Warning: </strong> Employee has an active outstanding balance of LKR {{ selectedEmployeeBalance | number:'1.2-2' }}
-                  </div>
-                </div>
+                    <div class="col-md-6">
+                      <label class="clean-label">Type</label>
+                      <select class="clean-select" formControlName="type">
+                        <option value="Loan">Loan</option>
+                        <option value="Advance">Advance</option>
+                      </select>
+                    </div>
 
-                <div class="row">
-                  <div class="col">
-                    <div class="form-group">
-                      <label for="loanAmount">Loan Amount (LKR)</label>
-                      <input type="number" id="loanAmount" formControlName="loanAmount" class="form-control monospace" placeholder="0.00">
-                      <small class="text-primary mt-1 d-block" *ngIf="selectedEmployeeMaxLoan > 0">
-                        <i class="bi bi-info-circle"></i> Max Limit (3x Salary): <strong>LKR {{ selectedEmployeeMaxLoan | number:'1.2-2' }}</strong>
-                      </small>
+                    <div class="col-md-6">
+                      <label class="clean-label">Amount (LKR)</label>
+                      <input type="number" class="clean-input" formControlName="loanAmount" placeholder="0.00">
+                    </div>
+
+                    <div class="col-md-6" *ngIf="loanForm.get('type')?.value === 'Loan'">
+                      <label class="clean-label">Installments (Months)</label>
+                      <input type="number" class="clean-input" formControlName="installments">
+                    </div>
+
+                    <div class="col-md-6" *ngIf="loanForm.get('type')?.value === 'Loan'">
+                      <label class="clean-label">Monthly Deduction</label>
+                      <div class="highlight-box-clean">
+                        LKR {{loanForm.get('deductionAmount')?.value | number}}
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label class="clean-label">Reason / Purpose</label>
+                      <textarea class="clean-textarea" formControlName="reason" rows="2" placeholder="Brief reason..."></textarea>
+                    </div>
+
+                    <!-- Warnings -->
+                    <div class="col-12" *ngIf="hasActiveLoanWarning">
+                      <div class="alert-clean-warning">
+                        <i class="bi bi-exclamation-triangle-fill"></i>
+                        <span>Active balance: <strong>LKR {{selectedEmployeeBalance | number}}</strong></span>
+                      </div>
+                    </div>
+
+                    <div class="col-12 mt-4">
+                      <button type="submit" class="btn-primary w-100" [disabled]="loading">
+                        {{ loading ? 'Processing...' : 'Apply Loan & Set Rule' }}
+                      </button>
                     </div>
                   </div>
-                  <div class="col">
-                    <div class="form-group">
-                      <label for="installments">Installments</label>
-                      <input type="number" id="installments" formControlName="installments" class="form-control monospace">
-                    </div>
-                  </div>
-                </div>
-
-                <div class="form-group highlight-box">
-                  <label for="deductionAmount">Monthly Deduction Preview (LKR)</label>
-                  <input type="number" id="deductionAmount" formControlName="deductionAmount" class="form-control monospace accent" placeholder="0.00">
-                  <small class="form-hint">Admin can override this manual preference.</small>
-                </div>
-
-                <div class="form-group">
-                  <label for="issuedDate">Issue Date</label>
-                  <input type="date" id="issuedDate" formControlName="issuedDate" class="form-control">
-                </div>
-
-                <div class="form-group">
-                  <label for="reason">Reason for Loan</label>
-                  <input type="text" id="reason" formControlName="reason" class="form-control" placeholder="e.g. Personal emergency">
-                </div>
-
-
-
-                <button type="submit" class="btn btn-primary w-100 mt-3" [disabled]="loading">
-                  {{ loading ? 'Processing...' : 'Apply Loan & Set Rule' }}
-                </button>
-              </form>
+                </form>
+              </div>
             </div>
-          </aside>
+          </div>
 
-          <!-- Right Panel: Loan History & Tracking -->
-          <section class="right-panel">
-            <div class="card table-card">
-              <div class="card-header d-flex justify-content-between align-items-center">
-                <h2 class="card-title m-0">Loan History & Repayment Progress</h2>
-                <button class="btn btn-sm btn-outline-secondary" (click)="loadLoans()">Refresh</button>
+          <!-- Right: Active Loans Table -->
+          <div class="list-section">
+            <div class="premium-card">
+              <div class="card-header-clean">
+                <h3>Loan History & Tracking</h3>
               </div>
-              <div class="table-responsive">
-                <table class="table custom-table">
+              <div class="table-container-clean">
+                <table class="table-premium">
                   <thead>
                     <tr>
-                      <th>Loan ID</th>
-                      <th>Employee Name</th>
+                      <th>Employee</th>
                       <th>Amount</th>
-                      <th>Balance</th>
                       <th>Progress</th>
                       <th>Status</th>
-                      <th>Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr *ngFor="let loan of loans" [class.settled-row]="loan.status === 'SETTLED'">
-                      <td class="monospace">#{{ loan.loanId }}</td>
-                      <td>{{ loan.employeeName }}</td>
-                      <td class="monospace text-end">{{ loan.loanAmount | number:'1.2-2' }}</td>
-                      <td class="monospace text-end fw-bold">{{ loan.balance | number:'1.2-2' }}</td>
-                      <td style="min-width: 120px;">
-                        <div class="progress-wrapper d-flex align-items-center">
-                          <div class="progress flex-grow-1 me-2" style="height: 6px;">
-                            <div class="progress-bar" role="progressbar" [style.width.%]="getProgressValue(loan)"></div>
-                          </div>
-                          <small class="monospace">{{ getProgressValue(loan) | number:'1.0-0' }}%</small>
+                    <tr *ngFor="let loan of loans">
+                      <td>
+                        <div class="emp-mini-info">
+                          <span class="emp-name">{{loan.employeeName}}</span>
+                          <span class="emp-id">#{{loan.loanId}}</span>
                         </div>
                       </td>
                       <td>
-                        <span class="status-chip" [ngClass]="getStatusTheme(loan.status)">
-                          {{ loan.status }}
+                        <div class="amount-info">
+                          <span class="total">LKR {{loan.loanAmount | number}}</span>
+                          <span class="balance">Bal: {{loan.balance | number}}</span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="progress-box">
+                          <div class="progress-bar-premium">
+                            <div class="progress-fill" [style.width.%]="getProgressValue(loan)"></div>
+                          </div>
+                          <span class="progress-text">{{getProgressValue(loan)}}%</span>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="status-pill" [ngClass]="getStatusTheme(loan.status!)">
+                          {{loan.status}}
                         </span>
                       </td>
-                      <td>{{ loan.issuedDate }}</td>
                     </tr>
                     <tr *ngIf="loans.length === 0 && !loading">
-                      <td colspan="7" class="text-center py-4 text-muted">No loan records found.</td>
+                      <td colspan="4" class="text-center py-4 text-muted">No records found.</td>
                     </tr>
                   </tbody>
                 </table>
               </div>
             </div>
-          </section>
+          </div>
         </div>
+
       </div>
     </div>
   </main>

@@ -53,7 +53,8 @@ export class AdminSideComponent implements OnInit {
       items: [
         { name: 'Suppliers', icon: 'bi-truck', route: '/supplier-management' },
         { name: 'Supply Requests', icon: 'bi-clipboard-check-fill', route: '/supply-request-management' },
-        { name: 'Log Management', icon: 'bi-tree-fill', route: '/log-management' }
+        { name: 'Log Management', icon: 'bi-tree-fill', route: '/log-management' },
+        { name: 'Raw Material Cutting', icon: 'bi-scissors', route: '/log-management/cutting' }
       ]
     },
     {

@@ -22,6 +22,7 @@ import { SupplyRawMaterialComponent } from './components/inventory-management/su
 import { SupplyRawMaterialDashboardComponent } from './components/inventory-management/supply-raw-material/supply-raw-material-dashboard.component';
 import { SupplyRawMaterialRequestComponent } from './components/inventory-management/supply-raw-material-request/supply-raw-material-request.component';
 import { GrnInvoiceComponent } from './components/inventory-management/grn-invoice/grn-invoice.component';
+import { RawMaterialCuttingComponent } from './components/inventory-management/raw-material-cutting/raw-material-cutting.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -47,6 +48,7 @@ export const routes: Routes = [
 
     { path: 'log-management', component: SupplyRawMaterialDashboardComponent, canActivate: [roleGuard], data: { title: 'Log Management History', requiredRole: 'Admin' } },
     { path: 'log-management/add', component: SupplyRawMaterialComponent, canActivate: [roleGuard], data: { title: 'Add Supply Order', requiredRole: 'Admin' } },
+    { path: 'log-management/cutting', component: RawMaterialCuttingComponent, canActivate: [roleGuard], data: { title: 'Raw Material Cutting', requiredRole: 'Admin' } },
     { path: 'supply-request-management', component: SupplyRawMaterialRequestComponent, canActivate: [roleGuard], data: { title: 'Supply Request Management' } },
     { path: 'inventory/grn-invoice/:id', component: GrnInvoiceComponent, canActivate: [roleGuard], data: { title: 'GRN Invoice', requiredRole: 'Admin' } },
 ];
