@@ -6,6 +6,9 @@ import { CustomerOrderResponseDTO, CustomerOrderRequestDTO, OrderDetailDTO } fro
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { ToastService } from '../../../service/toast.service';
+import { CustomerService } from '../../../service/customer.service';
+import { ProductCategoryService } from '../../../service/product-category.service';
+import { AuthService } from '../../../service/auth.service';
 
 @Component({
   selector: 'app-order-management',
@@ -36,27 +39,28 @@ export class OrderManagementDashboardComponent implements OnInit {
   orderForm: CustomerOrderRequestDTO = this.getEmptyForm();
 
   // Dropdown data
-  customers: { id: number; name: string }[] = [
-    { id: 1, name: 'John Silva' },
-    { id: 2, name: 'Mary Fernando' },
-    { id: 3, name: 'Kamal Perera' }
-  ];
-
-  productCategories: { id: number; name: string }[] = [
-    { id: 1, name: 'Timber Planks' },
-    { id: 2, name: 'Logs' },
-    { id: 3, name: 'Processed Wood' }
-  ];
+  customers: { id: number; name: string }[] = [];
+  productCategories: { id: number; name: string; price: number; description?: string }[] = [];
 
   statusOptions = ['PENDING', 'PROCESSING', 'COMPLETED', 'CANCELLED'];
 
+  // Pagination
+  currentPage = 1;
+  pageSize = 8;
+  Math = Math;
+
   constructor(
     private orderService: OrderService,
+    private customerService: CustomerService,
+    private productCategoryService: ProductCategoryService,
+    private authService: AuthService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.loadOrders();
+    this.loadCustomers();
+    this.loadProductCategories();
   }
 
   loadOrders(): void {
@@ -75,6 +79,44 @@ export class OrderManagementDashboardComponent implements OnInit {
     });
   }
 
+  loadCustomers(): void {
+    this.customerService.getAllCustomers().subscribe({
+      next: (data) => {
+        this.customers = data.map((c: any) => ({ id: c.cusId, name: c.cusName }));
+      },
+      error: (err) => {
+        console.error('Error loading customers', err);
+        this.toastService.showError('Failed to load customers.');
+      }
+    });
+  }
+
+  loadProductCategories(): void {
+    this.productCategoryService.getAll().subscribe({
+      next: (data) => {
+        this.productCategories = data.map(c => ({ 
+          id: c.productCatId || 0, 
+          name: c.materialCategory || '', 
+          price: c.unitPrice || 0,
+          description: c.description || ''
+        }));
+      },
+      error: (err) => {
+        console.error('Error loading categories', err);
+        this.toastService.showError('Failed to load product categories.');
+      }
+    });
+  }
+
+  onCategoryChange(index: number): void {
+    const detail = this.orderForm.orderDetails[index];
+    const cat = this.productCategories.find(c => c.id === Number(detail.productCatId));
+    if (cat) {
+      detail.price = cat.price;
+      detail.name = `${cat.name} (${cat.description || ''})`;
+    }
+  }
+
   applyFilters(): void {
     this.filteredOrders = this.orders.filter(order => {
       const matchSearch =
@@ -84,6 +126,28 @@ export class OrderManagementDashboardComponent implements OnInit {
       const matchStatus = !this.statusFilter || order.status === this.statusFilter;
       return matchSearch && matchStatus;
     });
+    this.currentPage = 1;
+  }
+
+  get paginatedOrders(): CustomerOrderResponseDTO[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.filteredOrders.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.filteredOrders.length / this.pageSize);
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 
   onSearch(): void {
@@ -147,6 +211,9 @@ export class OrderManagementDashboardComponent implements OnInit {
   }
 
   submitForm(): void {
+    const currentUserId = this.authService.currentUserValue?.userId || null;
+    this.orderForm.createdById = currentUserId;
+
     if (this.isEditMode && this.editOrderId !== null) {
       this.orderService.updateOrder(this.editOrderId, this.orderForm).subscribe({
         next: () => {
