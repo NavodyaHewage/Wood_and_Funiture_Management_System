@@ -44,17 +44,19 @@ public class ProductCategory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_cat_id", nullable = false)
+    @Column(name = "Product_Cat_id", nullable = false)
     private int productCatId;
 
-    @Column(name="material_category", length = 100)
+    @Column(name="Product_Cat_name", length = 150)
+    private String productCatName;
+
+    @Column(name="Material_Category", length = 100)
     private String materialCategory;
 
-    @Column(name="description", columnDefinition="TEXT")
+    @Column(name="Description", columnDefinition="TEXT")
     private String description;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name="unit_of_measurement")
+    @Column(name="Unit_of_Measurement")
     private UnitOfMeasurement unitOfMeasurement = UnitOfMeasurement.SQUARE_FEET;
 
     @Column(name="unit_price", precision = 10, scale = 2)

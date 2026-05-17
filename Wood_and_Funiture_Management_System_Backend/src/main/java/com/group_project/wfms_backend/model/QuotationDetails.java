@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 @Entity
 @Table(name = "Quotation_Details")
 @Data
@@ -19,6 +21,7 @@ public class QuotationDetails {
 
     @ManyToOne
     @JoinColumn(name = "Quotation_Id", nullable = false)
+    @JsonBackReference
     private Quotation quotation;
 
     @ManyToOne

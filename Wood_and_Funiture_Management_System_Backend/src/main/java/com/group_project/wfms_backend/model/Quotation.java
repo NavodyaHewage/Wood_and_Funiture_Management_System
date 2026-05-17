@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
 @Table(name = "Quotation")
 @Data
@@ -46,6 +48,7 @@ public class Quotation {
     private String remarks;
 
     @OneToMany(mappedBy = "quotation", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<QuotationDetails> details;
 
     public Integer getQuotationId() {
