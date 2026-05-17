@@ -89,8 +89,8 @@
                 </tr>
               </thead>
               <tbody>
-                <tr *ngFor="let order of filteredOrders; let i = index">
-                  <td class="row-num">{{ i + 1 }}</td>
+                <tr *ngFor="let order of paginatedOrders; let i = index">
+                  <td class="row-num">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
                   <td><span class="fw-bold">{{ order.orderNumber || 'N/A' }}</span></td>
                   <td class="receipt-cell">{{ order.quotationNumber || '—' }}</td>
                   <td class="customer-cell">
@@ -121,13 +121,29 @@
                   </td>
                 </tr>
                 <tr *ngIf="filteredOrders.length === 0">
-                  <td colspan="9" class="empty-row">
+                  <td colspan="10" class="empty-row">
                     <i class="bi bi-inbox fs-1 d-block mb-2"></i>
                     No orders found
                   </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+
+          <!-- ── PAGINATION FOOTER ── -->
+          <div class="pagination-footer" *ngIf="filteredOrders.length > 0">
+            <span class="pagination-info">
+              Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ Math.min(currentPage * pageSize, filteredOrders.length) }} of {{ filteredOrders.length }} orders
+            </span>
+            <div class="pagination-btns">
+              <button class="btn-secondary" (click)="prevPage()" [disabled]="currentPage === 1">
+                <i class="bi bi-chevron-left"></i> Previous
+              </button>
+              <span class="page-number">Page {{ currentPage }} of {{ totalPages || 1 }}</span>
+              <button class="btn-secondary" (click)="nextPage()" [disabled]="currentPage === totalPages || totalPages === 0">
+                Next <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -158,22 +174,16 @@
                   </select>
                 </div>
 
-                <!-- Quotation Number -->
-                <div class="form-group">
+                <!-- Quotation Number (edit only) -->
+                <div class="form-group" *ngIf="isEditMode">
                   <label>Quotation Number</label>
-                  <input type="text" [(ngModel)]="orderForm.quotationNumber" placeholder="e.g. QTN-0001" />
+                  <input type="text" [value]="selectedOrder?.quotationNumber || 'N/A'" readonly />
                 </div>
 
-                <!-- Order Date -->
+                <!-- Order Date (disabled / read-only today) -->
                 <div class="form-group">
                   <label>Order Date</label>
-                  <input type="date" [(ngModel)]="orderForm.orderDate" />
-                </div>
-
-                <!-- Paid Amount -->
-                <div class="form-group">
-                  <label>Paid Amount (Rs.)</label>
-                  <input type="number" [(ngModel)]="orderForm.paidAmount" placeholder="0.00" min="0" />
+                  <input type="date" [(ngModel)]="orderForm.orderDate" readonly disabled />
                 </div>
 
                 <!-- Status (edit only) -->
@@ -208,7 +218,7 @@
                   <tbody>
                     <tr *ngFor="let row of orderForm.orderDetails; let i = index">
                       <td>
-                        <select [(ngModel)]="row.productCatId">
+                        <select [(ngModel)]="row.productCatId" (change)="onCategoryChange(i)">
                           <option [value]="0" disabled>Select</option>
                           <option *ngFor="let p of productCategories" [value]="p.id">{{ p.name }}</option>
                         </select>
