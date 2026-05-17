@@ -1,0 +1,389 @@
+<div class="dashboard-layout">
+  <app-admin-side></app-admin-side>
+
+  <main class="main-content">
+    <app-header></app-header>
+
+    <div class="content-body">
+      <div class="add-receipt-container animate-fade-in">
+        
+        <!-- Header -->
+        <div class="header-section">
+          <div class="title-group">
+            <h1>New Payment Receipt</h1>
+            <p>Select a customer order and allocate incoming payments across line items</p>
+          </div>
+          <button class="btn-secondary" (click)="cancel()">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+          </button>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" #receiptForm="ngForm" class="receipt-form-grid">
+          
+          <!-- Left Column: Search & Allocations -->
+          <div class="form-main-column">
+            
+            <!-- Order Lookup Card -->
+            <div class="form-card">
+              <div class="card-header-premium">
+                <i class="bi bi-search"></i>
+                <h2>1. Select Customer Order</h2>
+              </div>
+              
+              <div class="card-body">
+                <div class="form-group autocomplete-wrapper">
+                  <label for="orderSearch">Search Order Number or Customer Name</label>
+                  <div class="input-with-icon">
+                    <i class="bi bi-file-earmark-text search-input-icon"></i>
+                    <input 
+                      type="text" 
+                      id="orderSearch" 
+                      name="orderSearchTerm" 
+                      [(ngModel)]="orderSearchTerm" 
+                      (input)="onSearchInput($event)"
+                      placeholder="Type order number or customer name..." 
+                      class="form-control-premium"
+                      autocomplete="off"
+                    >
+                  </div>
+                  
+                  <!-- Autocomplete Dropdown List -->
+                  <div class="autocomplete-dropdown" *ngIf="showDropdown">
+                    <div 
+                      class="dropdown-item" 
+                      *ngFor="let order of searchResults" 
+                      (click)="selectOrder(order)"
+                    >
+                      <div class="item-title">{{ order.orderNumber }}</div>
+                      <div class="item-meta">
+                        <span><i class="bi bi-person"></i> {{ order.customerName }}</span>
+                        <span class="balance-pill">Bal: LKR {{ order.balanceAmount | number:'1.2-2' }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Selected Order Info Header -->
+                <div class="selected-order-banner" *ngIf="selectedOrder">
+                  <div class="banner-info">
+                    <span class="banner-label">Active Customer</span>
+                    <strong class="banner-value">{{ selectedCustomerName }}</strong>
+                  </div>
+                  <div class="banner-info">
+                    <span class="banner-label">Order Reference</span>
+                    <strong class="banner-value text-gold">{{ selectedOrder.orderNumber }}</strong>
+                  </div>
+                  <div class="banner-info">
+                    <span class="banner-label">Total Outstanding</span>
+                    <strong class="banner-value text-red">LKR {{ selectedOrder.balanceAmount | number:'1.2-2' }}</strong>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Allocations Grid Card -->
+            <div class="form-card" *ngIf="selectedOrder">
+              <div class="card-header-premium flex-between">
+                <div class="header-title-left">
+                  <i class="bi bi-grid-3x3-gap"></i>
+                  <h2>2. Allocate Dues Across Line Items</h2>
+                </div>
+                <button 
+                  type="button" 
+                  class="btn-pay-all" 
+                  (click)="payAll()" 
+                  *ngIf="outstandingLines.length > 0"
+                >
+                  <i class="bi bi-check2-all"></i> Pay All Dues
+                </button>
+              </div>
+
+              <div class="card-body">
+                <div class="loader-container" *ngIf="isLoadingLines">
+                  <div class="spinner-premium"></div>
+                  <p>Loading outstanding items...</p>
+                </div>
+
+                <div class="no-lines-banner" *ngIf="!isLoadingLines && outstandingLines.length === 0">
+                  <i class="bi bi-check-circle-fill"></i>
+                  <p>This order is already fully paid or has no active lines.</p>
+                </div>
+
+                <div class="table-container" *ngIf="!isLoadingLines && outstandingLines.length > 0">
+                  <table class="table-premium">
+                    <thead>
+                      <tr>
+                        <th>Product / Item Description</th>
+                        <th class="text-right">Line Total</th>
+                        <th class="text-right">Outstanding</th>
+                        <th class="text-center" style="width: 200px;">Payment Allocation (LKR)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let line of outstandingLines">
+                        <td>
+                          <div class="item-name">{{ line.name }}</div>
+                          <div class="item-sub">Detail ID: #{{ line.detailId }}</div>
+                        </td>
+                        <td class="text-right font-medium">LKR {{ line.lineTotal | number:'1.2-2' }}</td>
+                        <td class="text-right text-red font-medium">LKR {{ line.outstanding | number:'1.2-2' }}</td>
+                        <td>
+                          <div class="allocation-input-wrapper">
+                            <input 
+                              type="number" 
+                              [name]="'alloc_' + line.detailId" 
+                              [(ngModel)]="allocations[line.detailId]" 
+                              (input)="validateAllocation(line)"
+                              class="form-control-allocation"
+                              [class.input-error]="validationErrors[line.detailId]"
+                              min="0"
+                              [max]="line.outstanding"
+                              placeholder="0.00"
+                            >
+                          </div>
+                          <span class="error-msg" *ngIf="validationErrors[line.detailId]">
+                            {{ validationErrors[line.detailId] }}
+                          </span>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column: Metadata & Payment Fields -->
+          <div class="form-sidebar-column">
+            
+            <!-- Metadata & Security Card -->
+            <div class="form-card">
+              <div class="card-header-premium">
+                <i class="bi bi-shield-check"></i>
+                <h2>Receipt Details</h2>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="receiptDate">Billing Date</label>
+                  <input 
+                    type="date" 
+                    id="receiptDate" 
+                    name="receiptDate" 
+                    [(ngModel)]="receiptDate"
+                    class="form-control-premium"
+                    required
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label for="cashier">Responsible Cashier</label>
+                  <input 
+                    type="text" 
+                    id="cashier" 
+                    [value]="cashierName" 
+                    class="form-control-premium disabled-input" 
+                    disabled
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Method Details Card -->
+            <div class="form-card" *ngIf="selectedOrder">
+              <div class="card-header-premium">
+                <i class="bi bi-wallet2"></i>
+                <h2>3. Payment Mode & Details</h2>
+              </div>
+              <div class="card-body">
+                
+                <!-- Payment Selection Grid -->
+                <div class="payment-method-selector">
+                  <label class="method-card" [class.active]="paymentMethod === 'CASH'">
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value="CASH" 
+                      [(ngModel)]="paymentMethod"
+                      class="hidden-radio"
+                    >
+                    <i class="bi bi-cash-stack"></i>
+                    <span>Cash</span>
+                  </label>
+
+                  <label class="method-card" [class.active]="paymentMethod === 'CARD'">
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value="CARD" 
+                      [(ngModel)]="paymentMethod"
+                      class="hidden-radio"
+                    >
+                    <i class="bi bi-credit-card"></i>
+                    <span>Card</span>
+                  </label>
+
+                  <label class="method-card" [class.active]="paymentMethod === 'CHEQUE'">
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value="CHEQUE" 
+                      [(ngModel)]="paymentMethod"
+                      class="hidden-radio"
+                    >
+                    <i class="bi bi-journal-check"></i>
+                    <span>Cheque</span>
+                  </label>
+
+                  <label class="method-card" [class.active]="paymentMethod === 'BANK_TRANSFER'">
+                    <input 
+                      type="radio" 
+                      name="paymentMethod" 
+                      value="BANK_TRANSFER" 
+                      [(ngModel)]="paymentMethod"
+                      class="hidden-radio"
+                    >
+                    <i class="bi bi-bank"></i>
+                    <span>Transfer</span>
+                  </label>
+                </div>
+
+                <!-- CARD Panel -->
+                <div class="payment-subpanel animate-slide-down" *ngIf="paymentMethod === 'CARD'">
+                  <div class="form-group">
+                    <label for="cardType">Card Type</label>
+                    <select 
+                      id="cardType" 
+                      name="cardType" 
+                      [(ngModel)]="cardType"
+                      class="form-control-premium"
+                    >
+                      <option value="Credit">Credit Card</option>
+                      <option value="Debit">Debit Card</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="cardLastDigits">Last 4 Digits</label>
+                    <input 
+                      type="text" 
+                      id="cardLastDigits" 
+                      name="cardLastDigits" 
+                      [(ngModel)]="cardLastDigits" 
+                      placeholder="e.g. 4321" 
+                      class="form-control-premium"
+                      maxlength="4"
+                    >
+                    <span class="helper-text">Enter exactly 4 numeric digits.</span>
+                  </div>
+                </div>
+
+                <!-- CHEQUE & TRANSFER Panel -->
+                <div class="payment-subpanel animate-slide-down" *ngIf="paymentMethod === 'CHEQUE' || paymentMethod === 'BANK_TRANSFER'">
+                  <div class="form-group">
+                    <label for="chequeNumber">
+                      {{ paymentMethod === 'CHEQUE' ? 'Cheque Reference Number' : 'Transaction Reference / Txn ID' }}
+                    </label>
+                    <input 
+                      type="text" 
+                      id="chequeNumber" 
+                      name="chequeNumber" 
+                      [(ngModel)]="chequeNumber" 
+                      placeholder="e.g. CHQ987654" 
+                      class="form-control-premium"
+                      required
+                    >
+                  </div>
+
+                  <div class="form-group">
+                    <label for="bankName">Origin Bank Name</label>
+                    <input 
+                      type="text" 
+                      id="bankName" 
+                      name="bankName" 
+                      [(ngModel)]="bankName" 
+                      placeholder="e.g. Bank of Ceylon" 
+                      class="form-control-premium"
+                      required
+                    >
+                  </div>
+                </div>
+
+                <!-- Remarks -->
+                <div class="form-group">
+                  <label for="remarks">Payment Remarks (Optional)</label>
+                  <textarea 
+                    id="remarks" 
+                    name="remarks" 
+                    [(ngModel)]="remarks" 
+                    placeholder="Enter special payment instructions or remarks..."
+                    class="form-control-premium"
+                    rows="3"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <!-- Invoice Summary Card -->
+            <div class="form-card">
+              <div class="card-header-premium">
+                <i class="bi bi-receipt-cutoff"></i>
+                <h2>Payment Summary</h2>
+              </div>
+              <div class="card-body summary-body">
+                <!-- No Order Selected Guidance -->
+                <div class="no-order-placeholder-summary" *ngIf="!selectedOrder" style="padding: 1.5rem 0.5rem; text-align: center; color: #8c8273;">
+                  <i class="bi bi-info-circle-fill" style="font-size: 1.75rem; color: #c05800; display: block; margin-bottom: 0.75rem;"></i>
+                  <p style="font-size: 0.85rem; line-height: 1.4; margin: 0; font-weight: 500;">
+                    Please search and select a customer order above to allocate and confirm payments.
+                  </p>
+                </div>
+
+                <ng-container *ngIf="selectedOrder">
+                  <div class="summary-row">
+                    <span>Selected Order Balance:</span>
+                    <span>LKR {{ selectedOrder.balanceAmount | number:'1.2-2' }}</span>
+                  </div>
+                  <div class="summary-row text-gold font-bold">
+                    <span>Total Allocated Amount:</span>
+                    <span>LKR {{ totalAllocated | number:'1.2-2' }}</span>
+                  </div>
+                  <div class="summary-row font-medium">
+                    <span>Remaining Order Balance:</span>
+                    <span [class.text-green]="selectedOrder.balanceAmount - totalAllocated === 0">
+                      LKR {{ (selectedOrder.balanceAmount - totalAllocated) | number:'1.2-2' }}
+                    </span>
+                  </div>
+                </ng-container>
+
+                <div class="summary-actions">
+                  <button 
+                    type="submit" 
+                    class="btn-primary-block" 
+                    [disabled]="!isFormValid || isSubmitting"
+                  >
+                    <span *ngIf="!isSubmitting">
+                      <i class="bi bi-check-circle"></i> Confirm & Generate Receipt
+                    </span>
+                    <span *ngIf="isSubmitting" class="flex-center">
+                      <div class="spinner-small"></div> Processing...
+                    </span>
+                  </button>
+
+                  <button 
+                    type="button" 
+                    class="btn-secondary-block" 
+                    (click)="cancel()"
+                  >
+                    Discard Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </main>
+</div>

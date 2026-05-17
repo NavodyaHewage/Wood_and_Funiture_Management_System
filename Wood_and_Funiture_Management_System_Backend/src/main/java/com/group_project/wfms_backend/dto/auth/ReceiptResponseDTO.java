@@ -13,9 +13,15 @@ public class ReceiptResponseDTO {
     private String paymentMethod;
     private Integer customerId;
     private String customerName;
+    private Long orderId;
+    private String orderNumber;
     private BigDecimal totalAmount;
     private Long createdById;
     private String remarks;
+    private String chequeNumber;
+    private String bankName;
+    private String cardType;
+    private String cardLastDigits;
     private List<ReceiptDetailDTO> receiptDetails;
 
 }

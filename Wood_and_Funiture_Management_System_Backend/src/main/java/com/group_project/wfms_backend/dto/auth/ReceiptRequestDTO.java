@@ -11,9 +11,14 @@ public class ReceiptRequestDTO {
     private LocalDate date;
     private String paymentMethod;   // "Cash", "Card", "Bank_Transfer", "Cheque"
     private Integer customerId;
+    private Long orderId;
     private BigDecimal totalAmount;
-    private  Integer createdById;
+    private Integer createdById;
     private String remarks;
+    private String chequeNumber;
+    private String bankName;
+    private String cardType;
+    private String cardLastDigits;
     private List<ReceiptDetailDTO> receiptDetails;
 
 }

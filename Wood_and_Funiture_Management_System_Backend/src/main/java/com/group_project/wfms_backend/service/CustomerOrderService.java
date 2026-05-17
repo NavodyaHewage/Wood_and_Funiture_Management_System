@@ -2,6 +2,7 @@ package com.group_project.wfms_backend.service;
 
 import com.group_project.wfms_backend.dto.auth.CustomerOrderRequestDTO;
 import com.group_project.wfms_backend.dto.auth.CustomerOrderResponseDTO;
+import com.group_project.wfms_backend.dto.auth.OutstandingLinesResponseDTO;
 import com.group_project.wfms_backend.model.*;
 import com.group_project.wfms_backend.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -138,6 +139,50 @@ public class CustomerOrderService {
             throw new RuntimeException("Order not found: " + id);
         }
         orderRepository.deleteById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<CustomerOrderResponseDTO> searchOrders(String q) {
+        return orderRepository.searchPendingOrProcessingOrders(q).stream()
+                .map(this::toResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public OutstandingLinesResponseDTO getOutstandingLines(Long orderId) {
+        CustomerOrder order = orderRepository.findByIdWithDetails(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
+
+        OutstandingLinesResponseDTO dto = new OutstandingLinesResponseDTO();
+        
+        OutstandingLinesResponseDTO.OrderSummary summary = new OutstandingLinesResponseDTO.OrderSummary();
+        summary.setOrderId(order.getOrderId());
+        summary.setOrderNumber(order.getOrderNumber());
+        summary.setBalanceAmount(order.getBalanceAmount());
+        dto.setOrder(summary);
+
+        List<OutstandingLinesResponseDTO.OutstandingLine> lines = order.getOrderDetails().stream()
+                .map(d -> {
+                    OutstandingLinesResponseDTO.OutstandingLine line = new OutstandingLinesResponseDTO.OutstandingLine();
+                    line.setDetailId(d.getId());
+                    if (d.getProductCategory() != null) {
+                        line.setProductCatId(d.getProductCategory().getProductCatId());
+                    }
+                    line.setName(d.getName());
+                    line.setQuantity(d.getQuantity());
+                    line.setPrice(d.getPrice());
+                    line.setLineTotal(d.getLineTotal());
+                    line.setPaidAmount(d.getPaidAmount() != null ? d.getPaidAmount() : BigDecimal.ZERO);
+                    BigDecimal lineTotal = d.getLineTotal() != null ? d.getLineTotal() : BigDecimal.ZERO;
+                    BigDecimal paid = d.getPaidAmount() != null ? d.getPaidAmount() : BigDecimal.ZERO;
+                    line.setOutstanding(lineTotal.subtract(paid));
+                    return line;
+                })
+                .filter(l -> l.getOutstanding().compareTo(BigDecimal.ZERO) > 0)
+                .collect(Collectors.toList());
+        dto.setLines(lines);
+
+        return dto;
     }
 
     //mpping

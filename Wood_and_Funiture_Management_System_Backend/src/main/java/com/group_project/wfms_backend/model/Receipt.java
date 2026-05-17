@@ -28,9 +28,21 @@ public class Receipt {
     @Column(name = "Date", nullable = false)
     private LocalDate date;
 
-    @Enumerated(EnumType.STRING)
+    @Convert(converter = PaymentMethodConverter.class)
     @Column(name = "Payment_Method")
     private PaymentMethod paymentMethod = PaymentMethod.CASH;
+
+    @Column(name = "Cheque_Number", length = 50)
+    private String chequeNumber;
+
+    @Column(name = "Bank_Name", length = 100)
+    private String bankName;
+
+    @Column(name = "Card_Type")
+    private String cardType;
+
+    @Column(name = "Card_Last_Digits", length = 4)
+    private String cardLastDigits;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Customer_Id", nullable = false)
