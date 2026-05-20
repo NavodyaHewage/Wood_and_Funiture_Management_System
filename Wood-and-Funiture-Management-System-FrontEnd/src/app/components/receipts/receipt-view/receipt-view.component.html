@@ -1,0 +1,201 @@
+<div class="dashboard-layout">
+  <app-admin-side></app-admin-side>
+
+  <main class="main-content">
+    <app-header></app-header>
+
+    <div class="content-body">
+      <div class="receipt-page-wrapper">
+        
+        <!-- Action Bar (Hidden during Print) -->
+        <div class="action-bar no-print">
+          <button class="btn-action btn-back" (click)="goBack()">
+            <i class="bi bi-arrow-left"></i> Back to Receipts
+          </button>
+          <div class="right-actions" style="display: flex; gap: 0.75rem;">
+            <button class="btn-action btn-pdf" (click)="downloadPDF()">
+              <i class="bi bi-file-earmark-pdf"></i> Download PDF
+            </button>
+            <button class="btn-action btn-print" (click)="printReceipt()">
+              <i class="bi bi-printer"></i> Print Receipt
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="spinner-premium"></div>
+          <p>Loading receipt details...</p>
+        </div>
+
+        <!-- Receipt Content Container -->
+        <div *ngIf="!isLoading && receipt" class="invoice-container shadow-premium" id="receipt-invoice-container">
+          
+          <!-- Company Brand Header -->
+          <header class="invoice-header">
+            <div class="company-brand">
+              <div class="logo-box">
+                <img src="/logo.jpg" alt="Sachintha Sew Mill Logo" class="company-logo">
+              </div>
+              <div class="company-info">
+                <h1>SACHINTHA SEW MILL</h1>
+                <p class="reg-no">Business Reg No: TD/448</p>
+                <p class="address">Sachintha Sew Mill, Kudalu Deniya, Galdola, Kotapola.</p>
+                <p class="contact">Tel: 077-2333722 | Email: wfmscahinthasewmill&#64;gmail.com</p>
+              </div>
+            </div>
+            <div class="invoice-title-block">
+              <h2>PAYMENT RECEIPT</h2>
+              <div class="receipt-meta">
+                <div class="meta-item">
+                  <span class="label">RECEIPT NO:</span>
+                  <span class="value">{{ receipt.receiptNumber }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">DATE:</span>
+                  <span class="value">{{ receipt.date | date:'mediumDate' }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">PAYMENT MODE:</span>
+                  <span class="value highlight-gold">{{ getPaymentMethodLabel(receipt.paymentMethod) }}</span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="invoice-body">
+            
+            <!-- Party Details Grid -->
+            <div class="details-grid">
+              <div class="detail-box">
+                <h3>Customer Particulars</h3>
+                <div class="info-row">
+                  <span class="lbl">Customer ID:</span>
+                  <span class="val">#{{ receipt.customerId }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="lbl">Name:</span>
+                  <span class="val font-large">{{ receipt.customerName }}</span>
+                </div>
+              </div>
+
+              <div class="detail-box">
+                <h3>Order & Account Reference</h3>
+                <div class="info-row" *ngIf="receipt.orderNumber">
+                  <span class="lbl">Order No:</span>
+                  <span class="val text-gold font-medium">{{ receipt.orderNumber }}</span>
+                </div>
+                <div class="info-row" *ngIf="receipt.orderId">
+                  <span class="lbl">Order Ref ID:</span>
+                  <span class="val">#{{ receipt.orderId }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="lbl">Receipt Status:</span>
+                  <span class="val badge-paid">PAID & GENERATED</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Conditional Payment Method Specific Fields -->
+            <div class="payment-method-details-panel" *ngIf="receipt.chequeNumber || receipt.cardLastDigits">
+              <h3>Payment Verification Details</h3>
+              <div class="verification-grid">
+                <div class="info-row" *ngIf="receipt.chequeNumber">
+                  <span class="lbl">Ref/Cheque No:</span>
+                  <span class="val">{{ receipt.chequeNumber }}</span>
+                </div>
+                <div class="info-row" *ngIf="receipt.bankName">
+                  <span class="lbl">Origin Bank:</span>
+                  <span class="val">{{ receipt.bankName }}</span>
+                </div>
+                <div class="info-row" *ngIf="receipt.cardType">
+                  <span class="lbl">Card Type:</span>
+                  <span class="val">{{ receipt.cardType }} Card</span>
+                </div>
+                <div class="info-row" *ngIf="receipt.cardLastDigits">
+                  <span class="lbl">Card Last 4:</span>
+                  <span class="val">xxxx xxxx xxxx {{ receipt.cardLastDigits }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Allocated Dues Table -->
+            <div class="table-responsive">
+              <table class="table invoice-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Order Line Item / Description</th>
+                    <th class="text-right" style="width: 250px;">Allocated Amount (LKR)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let detail of receipt.receiptDetails; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                      <div class="item-desc">
+                        <strong>{{ detail.productName || 'Order Line Item' }}</strong>
+                        <span class="sub-text">Line Ref: #{{ detail.customerOrderDetailsId }}</span>
+                      </div>
+                    </td>
+                    <td class="text-right font-medium">LKR {{ detail.amount | number:'1.2-2' }}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="2" class="text-right fw-bold text-uppercase">Total Received Amount</td>
+                    <td class="text-right fw-bold text-total">LKR {{ receipt.totalAmount | number:'1.2-2' }}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- Amount in Words -->
+            <div class="amount-in-words-container">
+              <span class="lbl">Amount in Words:</span>
+              <span class="val">{{ amountInWords }}</span>
+            </div>
+
+            <!-- Remarks and Sign-off -->
+            <div class="invoice-footer-section">
+              <div class="notes-area">
+                <h4>Payment Remarks:</h4>
+                <p>{{ receipt.remarks || 'No additional payment remarks registered.' }}</p>
+              </div>
+              <div class="summary-area">
+                <div class="summary-line grand-total">
+                  <span class="lbl">Total Paid:</span>
+                  <span class="val">LKR {{ receipt.totalAmount | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Authorized Signatures -->
+          <div class="signatures-grid">
+            <div class="sig-box">
+              <div class="line"></div>
+              <p>Prepared By (Cashier)</p>
+            </div>
+            <div class="sig-box">
+              <div class="line"></div>
+              <p>Checked By (Finance)</p>
+            </div>
+            <div class="sig-box">
+              <div class="line"></div>
+              <p>Customer Signature</p>
+            </div>
+          </div>
+
+          <!-- Print Footer -->
+          <footer class="print-footer">
+            <p>This is a computer-generated Official Payment Receipt. No manual signature is required for validity.</p>
+            <p>Sachintha Timber Mall - Wood & Furniture Management System</p>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

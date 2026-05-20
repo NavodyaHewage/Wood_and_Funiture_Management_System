@@ -38,4 +38,7 @@ public class CustomerOrderDetails {
 
     @Column(name = "Line_Total", precision = 15, scale = 2, insertable = false, updatable = false)
     private BigDecimal lineTotal;
+
+    @Column(name = "Paid_Amount", precision = 15, scale = 2, nullable = false)
+    private BigDecimal paidAmount = BigDecimal.ZERO;
 }
