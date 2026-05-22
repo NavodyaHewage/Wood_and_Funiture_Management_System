@@ -31,6 +31,8 @@ export class OrderManagementDashboardComponent implements OnInit {
   showCreateModal = false;
   showViewModal = false;
   showDeleteConfirm = false;
+  showBalanceWarning = false;
+  pendingCustomerId: number | null = null;
   orderToDelete: number | null = null;
   isEditMode = false;
   editOrderId: number | null = null;
@@ -118,7 +120,7 @@ export class OrderManagementDashboardComponent implements OnInit {
   }
 
   applyFilters(): void {
-    this.filteredOrders = this.orders.filter(order => {
+    const filtered = this.orders.filter(order => {
       const matchSearch =
         !this.searchTerm ||
         order.customerName?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
@@ -126,6 +128,16 @@ export class OrderManagementDashboardComponent implements OnInit {
       const matchStatus = !this.statusFilter || order.status === this.statusFilter;
       return matchSearch && matchStatus;
     });
+
+    this.filteredOrders = filtered.sort((a, b) => {
+      const dateA = a.orderDate ? new Date(a.orderDate).getTime() : 0;
+      const dateB = b.orderDate ? new Date(b.orderDate).getTime() : 0;
+      if (dateA !== dateB) {
+        return dateB - dateA;
+      }
+      return (b.orderId || 0) - (a.orderId || 0);
+    });
+
     this.currentPage = 1;
   }
 
@@ -265,10 +277,40 @@ export class OrderManagementDashboardComponent implements OnInit {
     return this.orderForm.orderDetails.reduce((sum: number, d: OrderDetailDTO) => sum + (d.quantity * d.price), 0);
   }
 
+  onCustomerChange(): void {
+    const selectedId = Number(this.orderForm.customerId);
+    if (!selectedId || selectedId === 0) return;
+
+    this.orderService.getOrdersByCustomer(selectedId).subscribe({
+      next: (orders) => {
+        const hasOutstanding = orders && orders.some(o => o.balanceAmount > 0);
+        if (hasOutstanding) {
+          this.pendingCustomerId = selectedId;
+          this.showBalanceWarning = true;
+        }
+      },
+      error: (err) => {
+        console.error('Error checking customer orders', err);
+      }
+    });
+  }
+
+  cancelCustomerSelection(): void {
+    this.orderForm.customerId = this.isEditMode && this.selectedOrder ? this.selectedOrder.customerId : 0;
+    this.showBalanceWarning = false;
+    this.pendingCustomerId = null;
+  }
+
+  proceedCustomerSelection(): void {
+    this.showBalanceWarning = false;
+    this.pendingCustomerId = null;
+  }
+
   closeModal(): void {
     this.showCreateModal = false;
     this.showViewModal = false;
     this.showDeleteConfirm = false;
+    this.showBalanceWarning = false;
     this.selectedOrder = null;
   }
 

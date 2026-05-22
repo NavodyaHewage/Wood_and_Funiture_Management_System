@@ -168,7 +168,7 @@
                 <!-- Customer -->
                 <div class="form-group">
                   <label>Customer</label>
-                  <select [(ngModel)]="orderForm.customerId">
+                  <select [(ngModel)]="orderForm.customerId" (change)="onCustomerChange()">
                     <option [value]="0" disabled>Select customer</option>
                     <option *ngFor="let c of customers" [value]="c.id">{{ c.name }}</option>
                   </select>
@@ -353,6 +353,31 @@
             <div class="modal-footer">
               <button class="btn-cancel" (click)="closeModal()">Cancel</button>
               <button class="btn-danger" (click)="deleteOrder()">Delete</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- CUSTOMER BALANCE WARNING MODAL                          -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <div class="modal-overlay" *ngIf="showBalanceWarning" (click)="cancelCustomerSelection()">
+          <div class="modal-box small" (click)="$event.stopPropagation()">
+            <div class="modal-header warning">
+              <h5><i class="bi bi-exclamation-triangle-fill"></i> Outstanding Balance Alert</h5>
+              <button class="modal-close" (click)="cancelCustomerSelection()"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="modal-body text-center">
+              <div class="alert-icon-wrapper">
+                <i class="bi bi-wallet2 alert-main-icon"></i>
+              </div>
+              <h4 class="warning-title">Warning: This customer has an outstanding balance.</h4>
+              <p class="warning-text">
+                This customer has unpaid amounts on previous orders. Please review their payment status before proceeding.
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn-cancel" (click)="cancelCustomerSelection()">Cancel</button>
+              <button class="btn-warning" (click)="proceedCustomerSelection()">Proceed / Continue</button>
             </div>
           </div>
         </div>

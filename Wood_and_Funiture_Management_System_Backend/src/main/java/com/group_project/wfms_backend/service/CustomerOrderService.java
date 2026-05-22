@@ -68,7 +68,7 @@ public class CustomerOrderService {
 
     @Transactional(readOnly = true)
     public List<CustomerOrderResponseDTO> getAllOrders() {
-        return orderRepository.findAll().stream()
+        return orderRepository.findAllByOrderByOrderDateDescOrderIdDesc().stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }
@@ -84,7 +84,7 @@ public class CustomerOrderService {
 
     @Transactional(readOnly = true)
     public List<CustomerOrderResponseDTO> getOrdersByCustomer(Integer customerId) {
-        return orderRepository.findByCustomer_CusId(customerId).stream()
+        return orderRepository.findByCustomer_CusIdOrderByOrderDateDescOrderIdDesc(customerId).stream()
                 .map(this::toResponseDTO)
                 .collect(Collectors.toList());
     }

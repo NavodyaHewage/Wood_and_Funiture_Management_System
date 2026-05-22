@@ -31,4 +31,8 @@ export class OrderService {
   deleteOrder(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
+
+  getOrdersByCustomer(customerId: number): Observable<CustomerOrderResponseDTO[]> {
+    return this.http.get<CustomerOrderResponseDTO[]>(`${this.apiUrl}/customer/${customerId}`);
+  }
 }

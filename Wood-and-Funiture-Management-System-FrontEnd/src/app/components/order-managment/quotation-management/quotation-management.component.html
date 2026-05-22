@@ -129,7 +129,7 @@
           <!-- Customer -->
           <div class="form-group">
             <label>Customer</label>
-            <select formControlName="customerId" class="form-control"
+            <select formControlName="customerId" class="form-control" (change)="onCustomerChange()"
               [ngClass]="{'is-invalid': f['customerId'].touched && f['customerId'].errors}">
               <option value="">Select Customer</option>
               <option *ngFor="let c of customers" [value]="c.id">{{ c.name }}</option>
@@ -311,6 +311,31 @@
         <button type="button" class="btn-primary bg-red-600 border-red-600 px-5" (click)="confirmDeletion()">
           Yes, Delete
         </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Balance Warning Modal -->
+  <div class="modal-overlay" *ngIf="showBalanceWarning" (click)="cancelCustomerSelection()">
+    <div class="modal-content confirmation-modal">
+      <div class="header-section warning">
+        <h2><i class="bi bi-exclamation-triangle-fill"></i> Outstanding Balance Alert</h2>
+        <button class="btn-icon" (click)="cancelCustomerSelection()"><i class="bi bi-x-lg"></i></button>
+      </div>
+      
+      <div class="modal-body text-center py-4">
+        <div class="alert-icon-wrapper">
+          <i class="bi bi-wallet2 alert-main-icon"></i>
+        </div>
+        <h4 class="warning-title">Warning: This customer has an outstanding balance.</h4>
+        <p class="warning-text">
+          This customer has unpaid amounts on previous orders. Please review their payment status before proceeding.
+        </p>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary px-4" (click)="cancelCustomerSelection()">Cancel</button>
+        <button type="button" class="btn-warning px-5" (click)="proceedCustomerSelection()">Proceed / Continue</button>
       </div>
     </div>
   </div>

@@ -10,6 +10,7 @@ import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { ProductCategoryService } from '../../../service/product-category.service';
 import { FormsModule } from '@angular/forms';
+import { OrderService } from '../../../service/order.service';
 
 @Component({
   selector: 'app-quotation-management',
@@ -29,6 +30,8 @@ export class QuotationManagementComponent implements OnInit {
   showModal = false;
   showApproveModal = false;
   showDeleteModal = false;
+  showBalanceWarning = false;
+  pendingCustomerId: number | null = null;
   isEditMode = false;
   editId: number | null = null;
   deleteId: number | null = null;
@@ -49,7 +52,8 @@ export class QuotationManagementComponent implements OnInit {
     private authService: AuthService,
     private productCategoryService: ProductCategoryService,
     private toastService: ToastService,
-    private router: Router
+    private router: Router,
+    private orderService: OrderService
   ) {
     this.initForm();
   }
@@ -198,6 +202,7 @@ export class QuotationManagementComponent implements OnInit {
   openEditModal(q: any): void {
     this.isEditMode = true;
     this.editId = q.quotationId;
+    this.selectedQuotation = q;
     this.quotationForm.patchValue({
       customerId: q.customerId,
       quotationDate: q.quotationDate,
@@ -324,8 +329,40 @@ export class QuotationManagementComponent implements OnInit {
     this.toastService.show(err.error?.message || msg, 'error');
   }
 
+  onCustomerChange(): void {
+    const selectedId = Number(this.quotationForm.get('customerId')?.value);
+    if (!selectedId || selectedId === 0) return;
+
+    this.orderService.getOrdersByCustomer(selectedId).subscribe({
+      next: (orders) => {
+        const hasOutstanding = orders && orders.some(o => o.balanceAmount > 0);
+        if (hasOutstanding) {
+          this.pendingCustomerId = selectedId;
+          this.showBalanceWarning = true;
+        }
+      },
+      error: (err) => {
+        console.error('Error checking customer orders', err);
+      }
+    });
+  }
+
+  cancelCustomerSelection(): void {
+    const originalId = this.isEditMode && this.selectedQuotation ? this.selectedQuotation.customerId : '';
+    this.quotationForm.get('customerId')?.setValue(originalId);
+    this.showBalanceWarning = false;
+    this.pendingCustomerId = null;
+  }
+
+  proceedCustomerSelection(): void {
+    this.showBalanceWarning = false;
+    this.pendingCustomerId = null;
+  }
+
   closeModal(): void {
     this.showModal = false;
+    this.showBalanceWarning = false;
+    this.selectedQuotation = null;
   }
 
   getStatusClass(status: string): string {
