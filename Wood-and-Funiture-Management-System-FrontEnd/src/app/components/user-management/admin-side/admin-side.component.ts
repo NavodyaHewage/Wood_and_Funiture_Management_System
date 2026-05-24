@@ -67,6 +67,12 @@ export class AdminSideComponent implements OnInit {
       ]
     },
     {
+      label: 'FINANCIALS',
+      items: [
+        { name: 'Expenses', icon: 'bi-credit-card-fill', route: '/expenses' }
+      ]
+    },
+    {
       label: 'INVENTORY',
       items: [
         { name: 'Product Category', icon: 'bi-tags-fill', route: '/product-category' },
