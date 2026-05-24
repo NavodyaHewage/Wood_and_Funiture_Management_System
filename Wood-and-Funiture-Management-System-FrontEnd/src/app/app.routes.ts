@@ -26,6 +26,7 @@ import { RawMaterialCuttingComponent } from './components/inventory-management/r
 import { ReceiptDashboardComponent } from './components/receipts/receipt-dashboard/receipt-dashboard.component';
 import { AddReceiptComponent } from './components/receipts/add-receipt/add-receipt.component';
 import { ReceiptViewComponent } from './components/receipts/receipt-view/receipt-view.component';
+import { ExpensesComponent } from './components/expenses/expenses.component';
 
 // ── SALES & CUSTOMER PAYMENT RECEIPT ROUTES ───────────────
 export const routes: Routes = [
@@ -59,4 +60,5 @@ export const routes: Routes = [
     { path: 'receipts', component: ReceiptDashboardComponent, data: { title: 'Receipt Dashboard' } },
     { path: 'receipts/add', component: AddReceiptComponent, data: { title: 'Add Receipt' } },
     { path: 'receipts/view/:id', component: ReceiptViewComponent, data: { title: 'Printable Receipt' } },
+    { path: 'expenses', component: ExpensesComponent, canActivate: [roleGuard], data: { title: 'Expense Management', requiredRole: 'Admin' } },
 ];

@@ -1,6 +1,7 @@
 package com.group_project.wfms_backend.controller;
 
 import com.group_project.wfms_backend.dto.auth.ExpenseAccountDTO;
+import com.group_project.wfms_backend.dto.auth.ExpenseTypeDTO;
 import com.group_project.wfms_backend.service.ExpenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,13 @@ import java.util.List;
 public class ExpenseController {
     @Autowired
     private ExpenseService expenseService;
+
+    // 0. සියලුම වියදම් වර්ග ලබා ගැනීම (Read All Expense Types)
+    @GetMapping("/types")
+    public ResponseEntity<List<ExpenseTypeDTO>> getAllExpenseTypes() {
+        List<ExpenseTypeDTO> types = expenseService.getAllExpenseTypes();
+        return new ResponseEntity<>(types, HttpStatus.OK);
+    }
 
     // 1. සියලුම වියදම් ලබා ගැනීම (Read All)
     @GetMapping("/all")
