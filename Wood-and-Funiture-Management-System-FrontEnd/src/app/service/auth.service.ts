@@ -44,6 +44,13 @@ export interface MessageResponse {
     message: string;
 }
 
+export interface CurrentUser {
+    userId: number;
+    username: string;
+    email: string;
+    role: string;
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -75,18 +82,20 @@ export class AuthService {
 
         return this.http.post<JwtResponse>(`${this.apiUrl}/login`, loginRequest).pipe(
             tap(response => {
+                const currentUser: CurrentUser = {
+                    userId: response.userId,
+                    username: response.username,
+                    email: response.email,
+                    role: this.normalizeRole(response.role)
+                };
+
                 // Store user data and tokens
                 if (this.isBrowser()) {
                     localStorage.setItem('accessToken', response.token);
                     localStorage.setItem('refreshToken', response.refreshToken);
-                    localStorage.setItem('currentUser', JSON.stringify({
-                        userId: response.userId,
-                        username: response.username,
-                        email: response.email,
-                        role: response.role
-                    }));
+                    localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 }
-                this.currentUserSubject.next(response);
+                this.currentUserSubject.next(currentUser);
             })
         );
     }
@@ -152,6 +161,24 @@ export class AuthService {
      */
     get currentUserValue(): any {
         return this.currentUserSubject.value;
+    }
+
+    getDashboardRoute(role: string | null | undefined): string {
+        const normalizedRole = this.normalizeRole(role);
+
+        switch (normalizedRole) {
+            case 'supplier':
+                return '/supplier-dashboard';
+            case 'manager':
+                return '/manager-dashboard';
+            case 'admin':
+            default:
+                return '/admin-dashboard';
+        }
+    }
+
+    normalizeRole(role: string | null | undefined): string {
+        return (role || '').toString().trim().toLowerCase().replace(/^role_/, '');
     }
 
     /**

@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../../service/auth.service';
-import { Observable } from 'rxjs';
+import { PermissionService } from '../../../service/permission.service';
+import { combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { CftCalculatorService } from '../../../service/cft-calculator.service';
 
 @Component({
@@ -15,12 +17,20 @@ import { CftCalculatorService } from '../../../service/cft-calculator.service';
 export class AdminSideComponent implements OnInit {
 
   currentUser$: Observable<any>;
+  filteredMenuGroups$: Observable<any[]>;
 
   constructor(
     private authService: AuthService,
-    private cftService: CftCalculatorService
+    private cftService: CftCalculatorService,
+    private permissionService: PermissionService
   ) {
     this.currentUser$ = this.authService.currentUser;
+    this.filteredMenuGroups$ = combineLatest([
+      this.authService.currentUser,
+      this.permissionService.myPermissions$
+    ]).pipe(
+      map(([user, permissions]) => this.buildFilteredMenuGroups(user, permissions))
+    );
   }
 
   openCftCalculator() {
@@ -28,13 +38,15 @@ export class AdminSideComponent implements OnInit {
   }
 
   isSupplier(user: any): boolean {
-    return user?.role?.toLowerCase() === 'supplier';
+    return this.authService.normalizeRole(user?.role) === 'supplier';
   }
+
   menuGroups = [
     {
       label: 'DASHBOARD',
       items: [
-        { name: 'Overview', icon: 'bi-grid-1x2-fill', route: '/admin-dashboard' }
+        { name: 'Overview', icon: 'bi-grid-1x2-fill', route: '/admin-dashboard' },
+        { name: 'Manager Overview', icon: 'bi-grid-1x2-fill', route: '/manager-dashboard' }
       ]
     },
     {
@@ -80,6 +92,64 @@ export class AdminSideComponent implements OnInit {
       ]
     }
   ];
+
+  private buildFilteredMenuGroups(user: any, permissions: string[]): any[] {
+    if (!user) return [];
+    if (this.isSupplier(user)) return [];
+
+    const userRole = this.authService.normalizeRole(user.role);
+    const isManager = userRole === 'manager';
+    const isAdmin = userRole === 'admin';
+    const permissionSet = new Set(permissions.map(permission => permission.toLowerCase()));
+
+    return this.menuGroups.map(group => {
+      const filteredItems = group.items.filter(item => {
+        // Special case overview routes
+        if (item.route === '/admin-dashboard') {
+          return !isManager;
+        }
+        if (item.route === '/manager-dashboard') {
+          return isManager;
+        }
+
+        // User Access is Admin only
+        if (item.route === '/user-management') {
+          return !isManager;
+        }
+
+        // Map routes to permission functions
+        const functionMap: { [key: string]: string } = {
+          '/employee-management': 'employee-management',
+          '/attendance-management': 'attendance-management',
+          '/loan-management': 'loan-management',
+          '/payroll-management': 'payroll-management',
+          '/designation-salary': 'designation-salary',
+          '/supplier-management': 'supplier-management',
+          '/supply-request-management': 'supply-request-management',
+          '/log-management': 'log-management',
+          '/log-management/cutting': 'raw-material-cutting',
+          '/customer-management': 'customer-management',
+          '/quotation-management': 'quotation-management',
+          '/order-management': 'order-management',
+          '/receipts': 'receipts',
+          '/expenses': 'expenses',
+          '/product-category': 'product-category',
+          '/inventory': 'log-management'
+        };
+
+        const requiredFunc = functionMap[item.route];
+        if (requiredFunc) {
+          return isAdmin || permissionSet.has(requiredFunc);
+        }
+        return true;
+      });
+
+      return {
+        ...group,
+        items: filteredItems
+      };
+    }).filter(group => group.items.length > 0);
+  }
 
   ngOnInit(): void {}
 }

@@ -1,16 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { UserManagementService, User } from '../../../service/user-management.service';
 import { ToastService } from '../../../service/toast.service';
 import { AuthService } from '../../../service/auth.service';
+import { PermissionService } from '../../../service/permission.service';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../admin-side/admin-side.component';
 
 @Component({
   selector: 'app-user-management-dashboard',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, AdminSideComponent],
+  imports: [CommonModule, HeaderComponent, AdminSideComponent, FormsModule],
   templateUrl: './user-management-dashboard.component.html',
   styleUrl: './user-management-dashboard.component.css'
 })
@@ -25,10 +27,34 @@ export class UserManagementDashboardComponent implements OnInit {
   modalMessage = '';
   pendingAction: (() => void) | null = null;
 
+  // Permission Modal State
+  showPermissionModal = false;
+  selectedManager: User | null = null;
+  managerPermissions: any[] = [];
+
+  private permissionDescriptions: { [key: string]: string } = {
+    'employee-management': 'View, add, modify, and delete employee files and details.',
+    'attendance-management': 'Mark and update daily employee attendance.',
+    'loan-management': 'Grant loans and set rules for salary deductions.',
+    'payroll-management': 'Create monthly payroll runs and view paysheets.',
+    'designation-salary': 'Configure base salary rates for designations.',
+    'supplier-management': 'Add and manage wood suppliers.',
+    'supply-request-management': 'Draft and track timber purchase requests.',
+    'log-management': 'Measure log dimensions, calculate volume, and view GRNs.',
+    'raw-material-cutting': 'Process timber log cutting and manage piece yields.',
+    'customer-management': 'View, register, and update customer profiles.',
+    'quotation-management': 'Draft, review, and issue quotations to customers.',
+    'order-management': 'Track customer furniture manufacture orders and progress.',
+    'receipts': 'Issue receipts and process customer payments.',
+    'expenses': 'Record business, operational, and cutting expenses.',
+    'product-category': 'Manage furniture product categories.'
+  };
+
   constructor(
     private userService: UserManagementService,
     private toastService: ToastService,
     private authService: AuthService,
+    private permissionService: PermissionService,
     private router: Router
   ) { }
 
@@ -138,6 +164,59 @@ export class UserManagementDashboardComponent implements OnInit {
         });
       }
     );
+  }
+
+  onManagePermissions(user: User) {
+    this.selectedManager = user;
+    this.isLoading = true;
+    this.permissionService.getUserPermissions(user.userId).subscribe({
+      next: (perms) => {
+        this.managerPermissions = perms;
+        this.showPermissionModal = true;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.toastService.showError('Failed to fetch manager permissions');
+        this.isLoading = false;
+        console.error(err);
+      }
+    });
+  }
+
+  savePermissions() {
+    if (!this.selectedManager) return;
+    this.isLoading = true;
+    this.permissionService.saveUserPermissions(this.selectedManager.userId, this.managerPermissions).subscribe({
+      next: () => {
+        this.toastService.showSuccess(`Permissions updated successfully for ${this.selectedManager?.username}`);
+        this.showPermissionModal = false;
+        this.isLoading = false;
+        this.selectedManager = null;
+        this.managerPermissions = [];
+      },
+      error: (err) => {
+        this.toastService.showError('Failed to save permissions');
+        this.isLoading = false;
+        console.error(err);
+      }
+    });
+  }
+
+  closePermissionModal() {
+    this.showPermissionModal = false;
+    this.selectedManager = null;
+    this.managerPermissions = [];
+  }
+
+  formatPermissionName(name: string): string {
+    return name
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
+  getPermissionDescription(name: string): string {
+    return this.permissionDescriptions[name] || 'Access to ' + name + ' module.';
   }
 
   // Modal helper methods

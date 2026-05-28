@@ -77,6 +77,11 @@
                             <td>{{ user.lastLogin ? (user.lastLogin | date:'MMM d, y, h:mm a') : 'Never' }}</td>
                             <td class="text-center">
                                 <div class="action-btns">
+                                    <button class="btn-icon text-indigo" title="Manage Permissions"
+                                        *ngIf="user.role === 'MANAGER'"
+                                        (click)="onManagePermissions(user)">
+                                        <i class="bi bi-shield-lock-fill"></i>
+                                    </button>
                                     <button class="btn-icon" 
                                         [title]="user.userId === currentUser?.userId ? 'Cannot deactivate self' : (user.role === 'ADMIN' ? 'Cannot deactivate Admin' : (user.isActive ? 'Deactivate' : 'Activate'))"
                                         [disabled]="user.userId === currentUser?.userId || (user.role === 'ADMIN' && user.isActive)"
@@ -112,6 +117,46 @@
             <div class="modal-footer">
                 <button class="btn-secondary" (click)="closeModal()">Cancel</button>
                 <button class="btn-primary" (click)="confirmAction()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Privilege Management Modal -->
+    <div class="modal-overlay" *ngIf="showPermissionModal">
+        <div class="permission-modal">
+            <div class="modal-header">
+                <div class="modal-header-title">
+                    <i class="bi bi-shield-lock-fill icon-accent"></i>
+                    <div>
+                        <h3>Manage Manager Privileges</h3>
+                        <p>Configure function access for <strong>{{ selectedManager?.username }}</strong></p>
+                    </div>
+                </div>
+                <button class="btn-close-modal" (click)="closePermissionModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            
+            <div class="modal-body-permissions">
+                <div class="permissions-checklist">
+                    <div class="permission-item" *ngFor="let perm of managerPermissions">
+                        <div class="permission-info-block">
+                            <span class="permission-name">{{ formatPermissionName(perm.functionName) }}</span>
+                            <span class="permission-desc">{{ getPermissionDescription(perm.functionName) }}</span>
+                        </div>
+                        <label class="switch-container">
+                            <input type="checkbox" [(ngModel)]="perm.canAccess">
+                            <span class="switch-slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn-secondary" (click)="closePermissionModal()">Cancel</button>
+                <button class="btn-primary btn-save-permissions" (click)="savePermissions()">
+                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> Save Changes
+                </button>
             </div>
         </div>
     </div>

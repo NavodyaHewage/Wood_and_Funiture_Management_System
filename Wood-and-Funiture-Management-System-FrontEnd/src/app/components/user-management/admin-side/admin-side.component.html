@@ -33,7 +33,7 @@
                 </li>
             </ng-container>
             <ng-template #adminMenu>
-                <div class="menu-group" *ngFor="let group of menuGroups">
+                <div class="menu-group" *ngFor="let group of filteredMenuGroups$ | async">
                     <h3 class="group-label">{{ group.label }}</h3>
                     <ul class="nav-list p-0">
                         <li *ngFor="let item of group.items">

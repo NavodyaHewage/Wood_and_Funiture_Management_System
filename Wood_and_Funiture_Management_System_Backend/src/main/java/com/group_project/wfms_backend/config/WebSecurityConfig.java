@@ -3,6 +3,7 @@ package com.group_project.wfms_backend.config;
 import com.group_project.wfms_backend.security.UserDetailsServiceImpl;
 import com.group_project.wfms_backend.security.jwt.AuthEntryPointJwt;
 import com.group_project.wfms_backend.security.jwt.AuthTokenFilter;
+import com.group_project.wfms_backend.security.ManagerPermissionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthEntryPointJwt unauthorizedHandler;
     private final AuthTokenFilter authTokenFilter;
+    private final ManagerPermissionFilter managerPermissionFilter;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -106,6 +108,7 @@ public class WebSecurityConfig {
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(managerPermissionFilter, AuthTokenFilter.class);
 
         return http.build();
     }

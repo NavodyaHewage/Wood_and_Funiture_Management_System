@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
 import { roleGuard } from './guards/role.guard';
+import { permissionGuard } from './guards/permission.guard';
 import { Login } from './components/auth/login/login';
 import { Register } from './components/auth/register/register';
 import { AdminDashComponent } from './components/user-management/admin-dash/admin-dash.component';
+import { ManagerDashComponent } from './components/user-management/manager-dash/manager-dash.component';
 import { ChangePassword } from './components/auth/change-password/change-password';
 import { UserManagementDashboardComponent } from './components/user-management/user-management-dashboard/user-management-dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
@@ -28,37 +30,40 @@ import { AddReceiptComponent } from './components/receipts/add-receipt/add-recei
 import { ReceiptViewComponent } from './components/receipts/receipt-view/receipt-view.component';
 import { ExpensesComponent } from './components/expenses/expenses.component';
 
-// ── SALES & CUSTOMER PAYMENT RECEIPT ROUTES ───────────────
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login, data: { title: 'User Login' } },
     { path: 'register', component: Register, data: { title: 'Register New User' } },
   
     { path: 'admin-dashboard', component: AdminDashComponent, canActivate: [roleGuard], data: { title: 'Admin Dashboard', requiredRole: 'Admin' } },
+    { path: 'manager-dashboard', component: ManagerDashComponent, canActivate: [roleGuard], data: { title: 'Manager Dashboard', requiredRole: 'Manager' } },
     { path: 'user-management', component: UserManagementDashboardComponent, canActivate: [roleGuard], data: { title: 'User Management', requiredRole: 'Admin' } },
-    { path: 'employee-management', component: EmployeeManagementComponent, canActivate: [roleGuard], data: { title: 'Employee Management', requiredRole: 'Admin' } },
-    { path: 'supplier-management', component: SupplierManagementComponent, canActivate: [roleGuard], data: { title: 'Supplier Management', requiredRole: 'Admin' } },
-    { path: 'customer-management', component: CustomerManagementComponent, canActivate: [roleGuard], data: { title: 'Customer Management', requiredRole: 'Admin' } },
+    
+    // Functional routes protected by granular permissionGuard
+    { path: 'employee-management', component: EmployeeManagementComponent, canActivate: [permissionGuard], data: { title: 'Employee Management', requiredFunction: 'employee-management' } },
+    { path: 'supplier-management', component: SupplierManagementComponent, canActivate: [permissionGuard], data: { title: 'Supplier Management', requiredFunction: 'supplier-management' } },
+    { path: 'customer-management', component: CustomerManagementComponent, canActivate: [permissionGuard], data: { title: 'Customer Management', requiredFunction: 'customer-management' } },
+    
     { path: 'change-password', component: ChangePassword, canActivate: [roleGuard], data: { title: 'Change Password' } },
     { path: 'profile', component: ProfileComponent, canActivate: [roleGuard], data: { title: 'User Profile' } },
     { path: 'supplier-dashboard', component: SuppliyerManagementDashboardComponent, canActivate: [roleGuard], data: { title: 'Supplier Dashboard', requiredRole: 'Supplier' } },
     
-    { path: 'order-management', component: OrderManagementDashboardComponent, data: { title: 'Order Management' } },
-    { path: 'quotation-management', component: QuotationManagementComponent, data: { title: 'Quotation Management' } },
-    { path: 'product-category', component: ProductCategoryComponent, data: { title: 'Product Category' } },
-    { path: 'attendance-management', component: AttendanceListComponent, data: { title: 'Attendance Management' } },
-    { path: 'loan-management', component: LoanComponent, data: { title: 'Loan & Advance Management' } },
-    { path: 'payroll-management', component: PayrollManagementComponent, data: { title: 'Payroll Automation' } },
-    { path: 'designation-salary', component: DesignationSalaryConfigComponent, data: { title: 'Designation Salary Settings' } },
+    { path: 'order-management', component: OrderManagementDashboardComponent, canActivate: [permissionGuard], data: { title: 'Order Management', requiredFunction: 'order-management' } },
+    { path: 'quotation-management', component: QuotationManagementComponent, canActivate: [permissionGuard], data: { title: 'Quotation Management', requiredFunction: 'quotation-management' } },
+    { path: 'product-category', component: ProductCategoryComponent, canActivate: [permissionGuard], data: { title: 'Product Category', requiredFunction: 'product-category' } },
+    { path: 'attendance-management', component: AttendanceListComponent, canActivate: [permissionGuard], data: { title: 'Attendance Management', requiredFunction: 'attendance-management' } },
+    { path: 'loan-management', component: LoanComponent, canActivate: [permissionGuard], data: { title: 'Loan & Advance Management', requiredFunction: 'loan-management' } },
+    { path: 'payroll-management', component: PayrollManagementComponent, canActivate: [permissionGuard], data: { title: 'Payroll Automation', requiredFunction: 'payroll-management' } },
+    { path: 'designation-salary', component: DesignationSalaryConfigComponent, canActivate: [permissionGuard], data: { title: 'Designation Salary Settings', requiredFunction: 'designation-salary' } },
 
-    { path: 'log-management', component: SupplyRawMaterialDashboardComponent, canActivate: [roleGuard], data: { title: 'Log Management History', requiredRole: 'Admin' } },
-    { path: 'log-management/add', component: SupplyRawMaterialComponent, canActivate: [roleGuard], data: { title: 'Add Supply Order', requiredRole: 'Admin' } },
-    { path: 'log-management/cutting', component: RawMaterialCuttingComponent, canActivate: [roleGuard], data: { title: 'Raw Material Cutting', requiredRole: 'Admin' } },
-    { path: 'supply-request-management', component: SupplyRawMaterialRequestComponent, canActivate: [roleGuard], data: { title: 'Supply Request Management' } },
-    { path: 'inventory/grn-invoice/:id', component: GrnInvoiceComponent, canActivate: [roleGuard], data: { title: 'GRN Invoice', requiredRole: 'Admin' } },
+    { path: 'log-management', component: SupplyRawMaterialDashboardComponent, canActivate: [permissionGuard], data: { title: 'Log Management History', requiredFunction: 'log-management' } },
+    { path: 'log-management/add', component: SupplyRawMaterialComponent, canActivate: [permissionGuard], data: { title: 'Add Supply Order', requiredFunction: 'log-management' } },
+    { path: 'log-management/cutting', component: RawMaterialCuttingComponent, canActivate: [permissionGuard], data: { title: 'Raw Material Cutting', requiredFunction: 'raw-material-cutting' } },
+    { path: 'supply-request-management', component: SupplyRawMaterialRequestComponent, canActivate: [permissionGuard], data: { title: 'Supply Request Management', requiredFunction: 'supply-request-management' } },
+    { path: 'inventory/grn-invoice/:id', component: GrnInvoiceComponent, canActivate: [permissionGuard], data: { title: 'GRN Invoice', requiredFunction: 'log-management' } },
     
-    { path: 'receipts', component: ReceiptDashboardComponent, data: { title: 'Receipt Dashboard' } },
-    { path: 'receipts/add', component: AddReceiptComponent, data: { title: 'Add Receipt' } },
-    { path: 'receipts/view/:id', component: ReceiptViewComponent, data: { title: 'Printable Receipt' } },
-    { path: 'expenses', component: ExpensesComponent, canActivate: [roleGuard], data: { title: 'Expense Management', requiredRole: 'Admin' } },
+    { path: 'receipts', component: ReceiptDashboardComponent, canActivate: [permissionGuard], data: { title: 'Receipt Dashboard', requiredFunction: 'receipts' } },
+    { path: 'receipts/add', component: AddReceiptComponent, canActivate: [permissionGuard], data: { title: 'Add Receipt', requiredFunction: 'receipts' } },
+    { path: 'receipts/view/:id', component: ReceiptViewComponent, canActivate: [permissionGuard], data: { title: 'Printable Receipt', requiredFunction: 'receipts' } },
+    { path: 'expenses', component: ExpensesComponent, canActivate: [permissionGuard], data: { title: 'Expense Management', requiredFunction: 'expenses' } },
 ];
