@@ -6,11 +6,12 @@ import { PermissionService } from '../../../service/permission.service';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CftCalculatorService } from '../../../service/cft-calculator.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-admin-side',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, TranslatePipe],
   templateUrl: './admin-side.component.html',
   styleUrls: ['./admin-side.component.css']
 })

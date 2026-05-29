@@ -10,6 +10,49 @@ export class LanguageService {
 
   private translations: any = {
     en: {
+      'HEADER': {
+        'WELCOME': 'Welcome,',
+        'SYSTEM_ADMIN': 'System Administrator',
+        'PARTNER': 'Authorized Partner',
+        'SEARCH_PLACEHOLDER': 'Search anything...',
+        'MY_PROFILE': 'My Profile',
+        'CHANGE_PASSWORD': 'Change Password',
+        'LOGOUT': 'Logout',
+        'ACCOUNT': 'Account'
+      },
+      'SIDEBAR': {
+        'BRAND_TITLE_SUPPLIER': 'WFMS Supplier',
+        'BRAND_SUB_SUPPLIER': 'Partner Portal',
+        'BRAND_TITLE_ADMIN': 'WFMS Admin',
+        'BRAND_SUB_ADMIN': 'Management System',
+        'DASHBOARD': 'DASHBOARD',
+        'USER_MANAGEMENT': 'USER MANAGEMENT',
+        'SUPPLY_CHAIN': 'SUPPLY CHAIN',
+        'SALES_CUSTOMERS': 'SALES & CUSTOMERS',
+        'FINANCIALS': 'FINANCIALS',
+        'INVENTORY': 'INVENTORY',
+        'Overview': 'Overview',
+        'Employee Overview': 'Employee Overview',
+        'User Access': 'User Access',
+        'Employees': 'Employees',
+        'Attendance': 'Attendance',
+        'Loans & Advances': 'Loans & Advances',
+        'Payroll Automation': 'Payroll Automation',
+        'Designation Rates': 'Designation Rates',
+        'Suppliers': 'Suppliers',
+        'Supply Requests': 'Supply Requests',
+        'Log Management': 'Log Management',
+        'Raw Material Cutting': 'Raw Material Cutting',
+        'Customers': 'Customers',
+        'Quotations': 'Quotations',
+        'Orders': 'Orders',
+        'Receipts': 'Receipts',
+        'Expenses': 'Expenses',
+        'Product Category': 'Product Category',
+        'Stock Inventory': 'Stock Inventory',
+        'Dashboard': 'Dashboard',
+        'My Supplies': 'My Supplies'
+      },
       'LOGIN': {
         'BRAND_TITLE': 'Sachintha Timber Mall',
         'BRAND_SUBTITLE': 'Wood & Furniture Management System',
@@ -65,14 +108,57 @@ export class LanguageService {
         'SUCCESS_CHANGE': 'Password changed successfully! Please login with your new password.',
         'WARNING_MIN_LENGTH': 'New password must be at least 6 characters',
         'STRENGTH': {
-            'WEAK': 'Weak',
-            'FAIR': 'Fair',
-            'GOOD': 'Good',
-            'STRONG': 'Strong'
+          'WEAK': 'Weak',
+          'FAIR': 'Fair',
+          'GOOD': 'Good',
+          'STRONG': 'Strong'
         }
       }
     },
     si: {
+      'HEADER': {
+        'WELCOME': 'ආයුබෝවන්,',
+        'SYSTEM_ADMIN': 'පද්ධති පරිපාලක',
+        'PARTNER': 'බලයලත් හවුල්කරු',
+        'SEARCH_PLACEHOLDER': 'ඕනෑම දෙයක් සොයන්න...',
+        'MY_PROFILE': 'මගේ ගිණුම',
+        'CHANGE_PASSWORD': 'මුරපදය වෙනස් කරන්න',
+        'LOGOUT': 'නික්ම යන්න',
+        'ACCOUNT': 'ගිණුම'
+      },
+      'SIDEBAR': {
+        'BRAND_TITLE_SUPPLIER': 'WFMS සැපයුම්කරු',
+        'BRAND_SUB_SUPPLIER': 'හවුල්කාර ද්වාරය',
+        'BRAND_TITLE_ADMIN': 'WFMS පරිපාලක',
+        'BRAND_SUB_ADMIN': 'කළමනාකරණ පද්ධතිය',
+        'DASHBOARD': 'උපකරණ පුවරුව',
+        'USER_MANAGEMENT': 'පරිශීලක කළමනාකරණය',
+        'SUPPLY_CHAIN': 'සැපයුම් දාමය',
+        'SALES_CUSTOMERS': 'විකුණුම් සහ පාරිභෝගිකයින්',
+        'FINANCIALS': 'මූල්‍ය කටයුතු',
+        'INVENTORY': 'තොග ගබඩාව',
+        'Overview': 'දළ විශ්ලේෂණය',
+        'Employee Overview': 'සේවක දළ විශ්ලේෂණය',
+        'User Access': 'පරිශීලක ප්‍රවේශය',
+        'Employees': 'සේවකයින්',
+        'Attendance': 'පැමිණීම',
+        'Loans & Advances': 'ණය සහ අත්තිකාරම්',
+        'Payroll Automation': 'වැටුප් ස්වයංක්‍රීයකරණය',
+        'Designation Rates': 'තනතුරු අනුපාත',
+        'Suppliers': 'සැපයුම්කරුවන්',
+        'Supply Requests': 'සැපයුම් ඉල්ලීම්',
+        'Log Management': 'කොටන් කළමනාකරණය',
+        'Raw Material Cutting': 'අමුද්‍රව්‍ය කැපීම',
+        'Customers': 'පාරිභෝගිකයින්',
+        'Quotations': 'මිල ගණන් කැඳවීම්',
+        'Orders': 'ඇණවුම්',
+        'Receipts': 'රිසිට්පත්',
+        'Expenses': 'වියදම්',
+        'Product Category': 'නිෂ්පාදන කාණ්ඩය',
+        'Stock Inventory': 'තොග ඉන්වෙන්ට්රිය',
+        'Dashboard': 'ප්‍රධාන පුවරුව',
+        'My Supplies': 'මගේ සැපයුම්'
+      },
       'LOGIN': {
         'BRAND_TITLE': 'සචින්ත ටිම්බර් මෝල්',
         'BRAND_SUBTITLE': 'ලී සහ ගෘහ භාණ්ඩ කළමනාකරණ පද්ධතිය',
@@ -128,10 +214,10 @@ export class LanguageService {
         'SUCCESS_CHANGE': 'මුරපදය සාර්ථකව වෙනස් කරන ලදී! කරුණාකර ඔබගේ නව මුරපදය සමඟ ඇතුළු වන්න.',
         'WARNING_MIN_LENGTH': 'නව මුරපදය අවම වශයෙන් අක්ෂර 6 ක් විය යුතුය',
         'STRENGTH': {
-            'WEAK': 'දුර්වල',
-            'FAIR': 'සාමාන්‍ය',
-            'GOOD': 'හොඳ',
-            'STRONG': 'ශක්තිමත්'
+          'WEAK': 'දුර්වල',
+          'FAIR': 'සාමාන්‍ය',
+          'GOOD': 'හොඳ',
+          'STRONG': 'ශක්තිමත්'
         }
       }
     }
@@ -166,6 +252,11 @@ export class LanguageService {
       if (translation && translation[k]) {
         translation = translation[k];
       } else {
+        // Fallback: check flat key in SIDEBAR or HEADER first
+        const sidebarTrans = this.translations[lang]?.['SIDEBAR']?.[key];
+        if (sidebarTrans) return sidebarTrans;
+        const headerTrans = this.translations[lang]?.['HEADER']?.[key];
+        if (headerTrans) return headerTrans;
         return key; // Return key if translation not found
       }
     }

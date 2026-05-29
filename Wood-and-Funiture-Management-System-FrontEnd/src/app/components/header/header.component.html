@@ -2,20 +2,26 @@
     <div class="header-content">
         <!-- Current Page Title -->
         <div class="page-info">
-            <h2 class="page-title">{{ pageTitle$ | async }}</h2>
+            <h2 class="page-title">{{ (pageTitle$ | async) || '' | translate }}</h2>
         </div>
 
         <!-- Right Side: Search & User Profile -->
         <div class="header-actions">
             <div class="search-bar d-none d-md-flex">
                 <i class="bi bi-search"></i>
-                <input type="text" placeholder="Search anything...">
+                <input type="text" [placeholder]="'HEADER.SEARCH_PLACEHOLDER' | translate">
+            </div>
+
+            <!-- Language Toggle in Header -->
+            <div class="header-lang-toggle">
+                <button class="header-lang-btn" [class.active]="lang.getLanguage() === 'en'" (click)="lang.setLanguage('en')">EN</button>
+                <button class="header-lang-btn" [class.active]="lang.getLanguage() === 'si'" (click)="lang.setLanguage('si')">සිං</button>
             </div>
 
             <div class="user-profile" (click)="toggleDropdown($event)" tabindex="0" *ngIf="currentUser$ | async as user">
                 <div class="user-info d-none d-lg-block">
-                    <span class="user-name">Welcome, {{ user.username }}</span>
-                    <span class="user-role">{{ isSupplier(user) ? 'Authorized Partner' : (user.role === 'Admin' ? 'System Administrator' : user.role) }}</span>
+                    <span class="user-name">{{ 'HEADER.WELCOME' | translate }} {{ user.username }}</span>
+                    <span class="user-role">{{ isSupplier(user) ? ('HEADER.PARTNER' | translate) : (user.role === 'Admin' ? ('HEADER.SYSTEM_ADMIN' | translate) : user.role) }}</span>
        
                 </div>
                 <div class="avatar-container">
@@ -27,19 +33,19 @@
                 <!-- Profile Dropdown -->
                 <div class="profile-dropdown" [class.show]="isDropdownOpen">
                     <div class="dropdown-header">
-                         <p class="m-0 fw-bold">{{ user.username }} Account</p>
+                         <p class="m-0 fw-bold">{{ user.username }} {{ 'HEADER.ACCOUNT' | translate }}</p>
                         <p class="m-0 text-muted small">{{ user.email }}</p>
                     </div>
                     <div class="dropdown-divider"></div>
                     <a [routerLink]="'/profile'" class="dropdown-item">
-                        <i class="bi bi-person me-2"></i> My Profile
+                        <i class="bi bi-person me-2"></i> {{ 'HEADER.MY_PROFILE' | translate }}
                     </a>
                     <a [routerLink]="'/change-password'" class="dropdown-item">
-                        <i class="bi bi-shield-lock me-2"></i> Change Password
+                        <i class="bi bi-shield-lock me-2"></i> {{ 'HEADER.CHANGE_PASSWORD' | translate }}
                     </a>
                     <div class="dropdown-divider"></div>
                     <button (click)="onLogout()" class="dropdown-item logout-btn">
-                        <i class="bi bi-box-arrow-right me-2"></i> Logout
+                        <i class="bi bi-box-arrow-right me-2"></i> {{ 'HEADER.LOGOUT' | translate }}
                     </button>
                 </div>
             </div>

@@ -181,3 +181,34 @@
     background: rgba(113, 54, 0, 0.08);
     margin: 8px 10px;
 }
+
+/* Language Toggle styles */
+.header-lang-toggle {
+    display: flex;
+    background: rgba(113, 54, 0, 0.05);
+    padding: 4px;
+    border-radius: 20px;
+    border: 1px solid rgba(113, 54, 0, 0.08);
+}
+
+.header-lang-btn {
+    border: none;
+    background: transparent;
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #713600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.header-lang-btn:hover {
+    color: #C05800;
+}
+
+.header-lang-btn.active {
+    background: #C05800;
+    color: white;
+    box-shadow: 0 2px 8px rgba(192, 88, 0, 0.2);
+}
