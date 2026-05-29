@@ -3,7 +3,7 @@ package com.group_project.wfms_backend.model;
 public enum UserRole {
     ADMIN("Admin"),
     SUPPLIER("Supplier"),
-    MANAGER("Manager");
+    EMPLOYEE("Employee");
 
     private final String displayName;
 

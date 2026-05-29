@@ -11,10 +11,10 @@
         <div class="content-body">
             <div class="welcome-section">
                 <h1>Welcome Back, {{ currentUser?.username }}</h1>
-                <p>Sachintha Timber Mall &mdash; Manager Operations Portal</p>
+                <p>Sachintha Timber Mall &mdash; Employee Operations Portal</p>
             </div>
 
-            <!-- If manager has NO permissions assigned -->
+            <!-- If employee has NO permissions assigned -->
             <div class="no-permissions-card" *ngIf="allowedCards.length === 0">
                 <div class="icon-warning-shield">
                     <i class="bi bi-shield-slash-fill"></i>

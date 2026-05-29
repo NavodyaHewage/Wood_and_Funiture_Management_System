@@ -51,7 +51,7 @@
                                 <i class="bi bi-person-badge"></i>
                                 <select name="role" [(ngModel)]="registerData.role" (change)="onRoleChange()" required>
                                     <option value="ADMIN">Administrator</option>
-                                    <option value="MANAGER">Manager</option>
+                                    <option value="EMPLOYEE">Employee</option>
                                     <option value="SUPPLIER">Supplier</option>
                                 </select>
                             </div>
@@ -147,7 +147,7 @@
 
                         <!-- Date Joined -->
                         <div class="col-md-6"
-                            *ngIf="registerData.entityType === 'EMPLOYEE' || registerData.role === 'MANAGER' || registerData.role === 'ADMIN'">
+                            *ngIf="registerData.entityType === 'EMPLOYEE' || registerData.role === 'EMPLOYEE' || registerData.role === 'ADMIN'">
                             <label class="admin-label">Date of Joining</label>
                             <input type="date" name="dateJoined" [(ngModel)]="registerData.dateJoined"
                                 class="admin-control">

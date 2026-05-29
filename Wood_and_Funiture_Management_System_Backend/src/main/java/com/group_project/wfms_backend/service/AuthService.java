@@ -139,7 +139,7 @@ public class AuthService {
         user.setPhoneNumber(
                 signUpRequest.getMobile() != null ? signUpRequest.getMobile() : signUpRequest.getPhoneNumber());
         user.setUserDetails(signUpRequest.getUserDetails());
-        user.setRole(signUpRequest.getRole() != null ? signUpRequest.getRole() : UserRole.MANAGER);
+        user.setRole(signUpRequest.getRole() != null ? signUpRequest.getRole() : UserRole.EMPLOYEE);
         user.setIsActive(true);
         user.setFailedLoginAttempts(0);
         user.setAccountLocked(false);
@@ -147,7 +147,7 @@ public class AuthService {
         userRepository.save(user);
 
         // Role-specific persistence
-        if (user.getRole() == UserRole.MANAGER || user.getRole() == UserRole.ADMIN) {
+        if (user.getRole() == UserRole.EMPLOYEE || user.getRole() == UserRole.ADMIN) {
             Employee employee = new Employee();
             employee.setFullName(signUpRequest.getFullName());
             employee.setNic(signUpRequest.getNic());
@@ -157,7 +157,7 @@ public class AuthService {
             // Use provided designation or default based on role
             String designation = signUpRequest.getDesignation();
             if (designation == null || designation.isEmpty()) {
-                designation = (user.getRole() == UserRole.ADMIN) ? "Administrator" : "Manager";
+                designation = (user.getRole() == UserRole.ADMIN) ? "Administrator" : "Employee";
             }
             employee.setDesignation(designation);
 

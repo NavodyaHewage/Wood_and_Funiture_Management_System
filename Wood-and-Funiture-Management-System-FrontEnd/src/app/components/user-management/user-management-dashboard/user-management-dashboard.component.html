@@ -66,7 +66,7 @@
                                     [disabled]="user.role === 'SUPPLIER' || user.role === 'ADMIN'"
                                     (change)="onUpdateRole(user, $any($event.target).value)">
                                     <option value="ADMIN">Admin</option>
-                                    <option value="MANAGER">Manager</option>
+                                    <option value="EMPLOYEE">Employee</option>
                                 </select>
                             </td>
                             <td>
@@ -78,7 +78,7 @@
                             <td class="text-center">
                                 <div class="action-btns">
                                     <button class="btn-icon text-indigo" title="Manage Permissions"
-                                        *ngIf="user.role === 'MANAGER'"
+                                        *ngIf="user.role === 'EMPLOYEE'"
                                         (click)="onManagePermissions(user)">
                                         <i class="bi bi-shield-lock-fill"></i>
                                     </button>
@@ -128,8 +128,8 @@
                 <div class="modal-header-title">
                     <i class="bi bi-shield-lock-fill icon-accent"></i>
                     <div>
-                        <h3>Manage Manager Privileges</h3>
-                        <p>Configure function access for <strong>{{ selectedManager?.username }}</strong></p>
+                        <h3>Manage Employee Privileges</h3>
+                        <p>Configure function access for <strong>{{ selectedEmployee?.username }}</strong></p>
                     </div>
                 </div>
                 <button class="btn-close-modal" (click)="closePermissionModal()">
@@ -139,7 +139,7 @@
             
             <div class="modal-body-permissions">
                 <div class="permissions-checklist">
-                    <div class="permission-item" *ngFor="let perm of managerPermissions">
+                    <div class="permission-item" *ngFor="let perm of employeePermissions">
                         <div class="permission-info-block">
                             <span class="permission-name">{{ formatPermissionName(perm.functionName) }}</span>
                             <span class="permission-desc">{{ getPermissionDescription(perm.functionName) }}</span>

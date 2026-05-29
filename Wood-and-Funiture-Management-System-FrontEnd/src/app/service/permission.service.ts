@@ -129,7 +129,7 @@ export class PermissionService {
       return functionName === 'supply-request-management';
     }
 
-    // Manager permissions check
+    // Employee permissions check
     const myPerms = this.myPermissionsSubject.value;
     return myPerms.includes(functionName.toLowerCase());
   }

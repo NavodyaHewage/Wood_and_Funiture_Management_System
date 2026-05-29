@@ -62,9 +62,9 @@ public class UserPermissionService {
             Map<String, Object> map = new HashMap<>();
             map.put("functionName", func);
             
-            // Managers default to TRUE if not yet explicitly set, to preserve existing access.
+            // Employees default to TRUE if not yet explicitly set, to preserve existing access.
             // Other roles are also handled gracefully.
-            boolean canAccess = permissionMap.getOrDefault(func.toLowerCase(), user.getRole() == UserRole.ADMIN || user.getRole() == UserRole.MANAGER);
+            boolean canAccess = permissionMap.getOrDefault(func.toLowerCase(), user.getRole() == UserRole.ADMIN || user.getRole() == UserRole.EMPLOYEE);
             map.put("canAccess", canAccess);
             result.add(map);
         }
@@ -91,7 +91,7 @@ public class UserPermissionService {
 
         List<String> allowed = new ArrayList<>();
         for (String func : ALL_FUNCTIONS) {
-            boolean canAccess = permissionMap.getOrDefault(func.toLowerCase(), user.getRole() == UserRole.MANAGER);
+            boolean canAccess = permissionMap.getOrDefault(func.toLowerCase(), user.getRole() == UserRole.EMPLOYEE);
             if (canAccess) {
                 allowed.add(func);
             }

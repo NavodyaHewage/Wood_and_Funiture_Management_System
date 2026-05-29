@@ -13,5 +13,11 @@ public interface SupplierRepository extends JpaRepository<Supplier, Integer> {
     boolean existsByNic(String nic);
 
     Optional<Supplier> findByEmail(String email);
+
+    Optional<Supplier> findBySupNameIgnoreCase(String supName);
+
+    Optional<Supplier> findByMobile(String mobile);
+
+    Optional<Supplier> findByNic(String nic);
 }
 

@@ -1,79 +1,37 @@
 <div class="dashboard-layout">
-    <!-- Admin Sidebar as requested -->
     <app-admin-side></app-admin-side>
 
     <main class="main-content">
-        <!-- Header as requested -->
         <app-header></app-header>
 
         <div class="content-body">
-            <div class="dashboard-controls mb-4">
-                <div class="title-section">
-                    <h1 class="premium-title">Supplier Dashboard</h1>
-                    <p class="text-muted premium-subtitle">Welcome to your supplier portal. Manage your supplies here.</p>
-                </div>
+            <div class="welcome-section">
+                <h1>Welcome Back, {{ currentUser?.username }}</h1>
+                <p>Sachintha Timber Mall &mdash; Supplier Partner Portal</p>
             </div>
 
-            <!-- Premium Dashboard Cards -->
-            <div class="row g-4 mb-5">
-                <div class="col-md-4">
-                    <div class="premium-card info-card card-primary">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="icon-circle">
-                                <i class="bi bi-box-seam"></i>
-                            </div>
-                            <div class="ms-3">
-                                <h6 class="text-muted mb-1">Total Supplies</h6>
-                                <h2 class="mb-0 fw-bold">124</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="premium-card info-card card-success">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="icon-circle">
-                                <i class="bi bi-check-circle"></i>
-                            </div>
-                            <div class="ms-3">
-                                <h6 class="text-muted mb-1">Approved</h6>
-                                <h2 class="mb-0 fw-bold">110</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="premium-card info-card card-warning">
-                        <div class="card-body d-flex align-items-center">
-                            <div class="icon-circle">
-                                <i class="bi bi-clock-history"></i>
-                            </div>
-                            <div class="ms-3">
-                                <h6 class="text-muted mb-1">Pending Validation</h6>
-                                <h2 class="mb-0 fw-bold">14</h2>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="menu-group-section">
+                <h2 class="category-heading">SUPPLIER WORKSPACE</h2>
 
-            <!-- Dashboard Content -->
-            <div class="row g-4">
-                <div class="col-md-8">
-                    <div class="premium-card p-4">
-                        <h4 class="mb-3">Recent Activity</h4>
-                        <p class="text-muted">No recent activity to display.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="premium-card p-4 text-center h-100 d-flex flex-column justify-content-center align-items-center" 
-                         routerLink="/supply-request-management" style="cursor: pointer;">
-                        <div class="icon-circle mb-3" style="width: 60px; height: 60px; background: rgba(192, 88, 0, 0.1); color: #C05800;">
-                            <i class="bi bi-clipboard-check fs-2"></i>
+                <div class="actions-grid">
+                    <div class="action-card-premium" *ngFor="let card of supplierCards" [routerLink]="card.route">
+                        <div class="card-glow-overlay"></div>
+
+                        <div class="card-header-icon">
+                            <div class="card-icon-container">
+                                <i class="bi" [ngClass]="card.icon"></i>
+                            </div>
                         </div>
-                        <h5>Supply Requests</h5>
-                        <p class="text-muted small">View and approve material requests from Admin</p>
-                        <button class="btn btn-outline-primary btn-sm mt-2">View Requests</button>
+
+                        <div class="card-body-content">
+                            <h3>{{ card.name }}</h3>
+                            <p>{{ card.description }}</p>
+                        </div>
+
+                        <div class="card-footer-action">
+                            <span>Access Module</span>
+                            <i class="bi bi-arrow-right-short"></i>
+                        </div>
                     </div>
                 </div>
             </div>

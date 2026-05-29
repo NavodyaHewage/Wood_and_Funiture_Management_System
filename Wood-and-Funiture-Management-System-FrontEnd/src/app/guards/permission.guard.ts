@@ -34,14 +34,14 @@ export const permissionGuard: CanActivateFn = (
     return false;
   }
 
-  // Evaluate Manager dynamic permissions
+  // Evaluate Employee dynamic permissions
   const requiredFunction = route.data['requiredFunction'];
   if (requiredFunction) {
     if (permissionService.hasPermission(requiredFunction)) {
       return true;
     } else {
       console.warn(`Access blocked to ${state.url} - Missing permission: ${requiredFunction}`);
-      router.navigate(['/manager-dashboard']);
+      router.navigate(['/employee-dashboard']);
       return false;
     }
   }

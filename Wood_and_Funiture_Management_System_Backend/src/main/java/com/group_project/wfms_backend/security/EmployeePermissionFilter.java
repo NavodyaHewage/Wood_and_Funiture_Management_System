@@ -24,7 +24,7 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ManagerPermissionFilter extends OncePerRequestFilter {
+public class EmployeePermissionFilter extends OncePerRequestFilter {
 
     private final UserPermissionRepository userPermissionRepository;
     private final UserRepository userRepository;
@@ -64,10 +64,10 @@ public class ManagerPermissionFilter extends OncePerRequestFilter {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
-            boolean isManager = authentication.getAuthorities().stream()
-                    .anyMatch(a -> a.getAuthority().equals("ROLE_MANAGER"));
+            boolean isEmployee = authentication.getAuthorities().stream()
+                    .anyMatch(a -> a.getAuthority().equals("ROLE_EMPLOYEE"));
 
-            if (isManager) {
+            if (isEmployee) {
                 String requestUri = request.getRequestURI();
                 String contextPath = request.getContextPath();
                 
@@ -94,7 +94,7 @@ public class ManagerPermissionFilter extends OncePerRequestFilter {
                         List<UserPermission> dbPermissions = userPermissionRepository.findByUserUserId(user.getUserId());
                         
                         // Check if permission is explicitly set to false. 
-                        // Managers default to TRUE if no database record exists yet.
+                        // Employees default to TRUE if no database record exists yet.
                         boolean hasPermission = dbPermissions.stream()
                                 .filter(p -> p.getFunctionName().equalsIgnoreCase(functionName))
                                 .map(UserPermission::getCanAccess)
@@ -102,7 +102,7 @@ public class ManagerPermissionFilter extends OncePerRequestFilter {
                                 .orElse(true);
 
                         if (!hasPermission) {
-                            log.warn("Access Denied: Manager {} tried to access unauthorized endpoint {} (Function: {})",
+                            log.warn("Access Denied: Employee {} tried to access unauthorized endpoint {} (Function: {})",
                                     username, request.getRequestURI(), matchedFunction);
                             
                             response.setStatus(HttpServletResponse.SC_FORBIDDEN);

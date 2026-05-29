@@ -3,6 +3,7 @@ package com.group_project.wfms_backend.service;
 import com.group_project.wfms_backend.dto.auth.*;
 import com.group_project.wfms_backend.model.*;
 import com.group_project.wfms_backend.repository.*;
+import com.group_project.wfms_backend.security.UserDetailsImpl;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +16,10 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -183,6 +187,70 @@ public class SupplyRawMaterialService {
         return supplyRawMaterialRepository.findAll().stream()
                 .map(this::mapToResponseDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<SupplyRawMaterialResponseDTO> getSupplyRawMaterialsForLoggedSupplier(UserDetailsImpl userDetails, String email) {
+        User user = userRepository.findById(userDetails.getId()).orElse(null);
+        Supplier supplier = findSupplierByEmail(email)
+                .or(() -> findSupplierForUser(userDetails, user, email))
+                .orElse(null);
+        System.out.println("Suppliyer Details : "+ supplier);
+
+        if (supplier == null) {
+            return Collections.emptyList();
+        }
+
+        return supplyRawMaterialRepository.findBySupplierSupId(supplier.getSupId()).stream()
+                .map(this::mapToResponseDTO)
+                .collect(Collectors.toList());
+    }
+
+    private Optional<Supplier> findSupplierByEmail(String email) {
+        if (email == null || email.trim().isEmpty()) {
+            return Optional.empty();
+        }
+
+        return supplierRepository.findByEmail(email.trim());
+    }
+
+    private Optional<Supplier> findSupplierForUser(UserDetailsImpl userDetails, User user, String email) {
+        List<String> candidates = new ArrayList<>();
+        addCandidate(candidates, email);
+        addCandidate(candidates, userDetails.getEmail());
+        addCandidate(candidates, userDetails.getUsername());
+
+        if (user != null) {
+            addCandidate(candidates, user.getEmail());
+            addCandidate(candidates, user.getUsername());
+            addCandidate(candidates, user.getPhoneNumber());
+            addCandidate(candidates, user.getUserDetails());
+
+            if (user.getUserDetails() != null) {
+                for (String token : user.getUserDetails().split("[,;|\\n\\r]+")) {
+                    addCandidate(candidates, token);
+                }
+            }
+        }
+
+        for (String candidate : candidates) {
+            Optional<Supplier> supplier = supplierRepository.findByEmail(candidate)
+                    .or(() -> supplierRepository.findBySupNameIgnoreCase(candidate))
+                    .or(() -> supplierRepository.findByMobile(candidate))
+                    .or(() -> supplierRepository.findByNic(candidate));
+
+            if (supplier.isPresent()) {
+                return supplier;
+            }
+        }
+
+        return Optional.empty();
+    }
+
+    private void addCandidate(List<String> candidates, String value) {
+        if (value != null && !value.trim().isEmpty()) {
+            candidates.add(value.trim());
+        }
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)

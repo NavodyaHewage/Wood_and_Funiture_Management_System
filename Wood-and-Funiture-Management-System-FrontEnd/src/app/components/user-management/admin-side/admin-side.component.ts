@@ -46,7 +46,7 @@ export class AdminSideComponent implements OnInit {
       label: 'DASHBOARD',
       items: [
         { name: 'Overview', icon: 'bi-grid-1x2-fill', route: '/admin-dashboard' },
-        { name: 'Manager Overview', icon: 'bi-grid-1x2-fill', route: '/manager-dashboard' }
+        { name: 'Employee Overview', icon: 'bi-grid-1x2-fill', route: '/employee-dashboard' }
       ]
     },
     {
@@ -98,7 +98,7 @@ export class AdminSideComponent implements OnInit {
     if (this.isSupplier(user)) return [];
 
     const userRole = this.authService.normalizeRole(user.role);
-    const isManager = userRole === 'manager';
+    const isEmployee = userRole === 'employee';
     const isAdmin = userRole === 'admin';
     const permissionSet = new Set(permissions.map(permission => permission.toLowerCase()));
 
@@ -106,15 +106,15 @@ export class AdminSideComponent implements OnInit {
       const filteredItems = group.items.filter(item => {
         // Special case overview routes
         if (item.route === '/admin-dashboard') {
-          return !isManager;
+          return !isEmployee;
         }
-        if (item.route === '/manager-dashboard') {
-          return isManager;
+        if (item.route === '/employee-dashboard') {
+          return isEmployee;
         }
 
         // User Access is Admin only
         if (item.route === '/user-management') {
-          return !isManager;
+          return !isEmployee;
         }
 
         // Map routes to permission functions

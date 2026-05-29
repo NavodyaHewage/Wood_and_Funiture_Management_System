@@ -362,14 +362,14 @@ public class UserService {
         long totalUsers = userRepository.count();
         long activeUsers = userRepository.findByIsActiveTrue().size();
         long adminCount = userRepository.findByRole(UserRole.ADMIN).size();
-        long managerCount = userRepository.findByRole(UserRole.MANAGER).size();
+        long employeeCount = userRepository.findByRole(UserRole.EMPLOYEE).size();
         long supplierCount = userRepository.findByRole(UserRole.SUPPLIER).size();
 
         stats.put("totalUsers", totalUsers);
         stats.put("activeUsers", activeUsers);
         stats.put("inactiveUsers", totalUsers - activeUsers);
         stats.put("adminCount", adminCount);
-        stats.put("managerCount", managerCount);
+        stats.put("employeeCount", employeeCount);
         stats.put("supplierCount", supplierCount);
 
         return stats;

@@ -29,8 +29,8 @@ export class UserManagementDashboardComponent implements OnInit {
 
   // Permission Modal State
   showPermissionModal = false;
-  selectedManager: User | null = null;
-  managerPermissions: any[] = [];
+  selectedEmployee: User | null = null;
+  employeePermissions: any[] = [];
 
   private permissionDescriptions: { [key: string]: string } = {
     'employee-management': 'View, add, modify, and delete employee files and details.',
@@ -167,16 +167,16 @@ export class UserManagementDashboardComponent implements OnInit {
   }
 
   onManagePermissions(user: User) {
-    this.selectedManager = user;
+    this.selectedEmployee = user;
     this.isLoading = true;
     this.permissionService.getUserPermissions(user.userId).subscribe({
       next: (perms) => {
-        this.managerPermissions = perms;
+        this.employeePermissions = perms;
         this.showPermissionModal = true;
         this.isLoading = false;
       },
       error: (err) => {
-        this.toastService.showError('Failed to fetch manager permissions');
+        this.toastService.showError('Failed to fetch employee permissions');
         this.isLoading = false;
         console.error(err);
       }
@@ -184,15 +184,15 @@ export class UserManagementDashboardComponent implements OnInit {
   }
 
   savePermissions() {
-    if (!this.selectedManager) return;
+    if (!this.selectedEmployee) return;
     this.isLoading = true;
-    this.permissionService.saveUserPermissions(this.selectedManager.userId, this.managerPermissions).subscribe({
+    this.permissionService.saveUserPermissions(this.selectedEmployee.userId, this.employeePermissions).subscribe({
       next: () => {
-        this.toastService.showSuccess(`Permissions updated successfully for ${this.selectedManager?.username}`);
+        this.toastService.showSuccess(`Permissions updated successfully for ${this.selectedEmployee?.username}`);
         this.showPermissionModal = false;
         this.isLoading = false;
-        this.selectedManager = null;
-        this.managerPermissions = [];
+        this.selectedEmployee = null;
+        this.employeePermissions = [];
       },
       error: (err) => {
         this.toastService.showError('Failed to save permissions');
@@ -204,8 +204,8 @@ export class UserManagementDashboardComponent implements OnInit {
 
   closePermissionModal() {
     this.showPermissionModal = false;
-    this.selectedManager = null;
-    this.managerPermissions = [];
+    this.selectedEmployee = null;
+    this.employeePermissions = [];
   }
 
   formatPermissionName(name: string): string {

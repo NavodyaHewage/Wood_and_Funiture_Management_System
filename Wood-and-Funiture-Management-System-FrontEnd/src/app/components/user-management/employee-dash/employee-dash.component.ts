@@ -16,13 +16,13 @@ export interface DashboardCard {
 }
 
 @Component({
-  selector: 'app-manager-dash',
+  selector: 'app-employee-dash',
   standalone: true,
   imports: [CommonModule, RouterLink, AdminSideComponent, HeaderComponent],
-  templateUrl: './manager-dash.component.html',
-  styleUrls: ['./manager-dash.component.css']
+  templateUrl: './employee-dash.component.html',
+  styleUrls: ['./employee-dash.component.css']
 })
-export class ManagerDashComponent implements OnInit {
+export class EmployeeDashComponent implements OnInit {
   currentUser: any;
   allowedCards: DashboardCard[] = [];
 

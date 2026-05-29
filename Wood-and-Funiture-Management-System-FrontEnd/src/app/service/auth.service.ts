@@ -169,8 +169,8 @@ export class AuthService {
         switch (normalizedRole) {
             case 'supplier':
                 return '/supplier-dashboard';
-            case 'manager':
-                return '/manager-dashboard';
+            case 'employee':
+                return '/employee-dashboard';
             case 'admin':
             default:
                 return '/admin-dashboard';

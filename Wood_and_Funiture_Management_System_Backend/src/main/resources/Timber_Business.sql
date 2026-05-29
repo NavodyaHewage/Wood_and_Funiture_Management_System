@@ -10,7 +10,7 @@ CREATE TABLE user (
                       lock_time DATETIME(6) DEFAULT NULL,
                       phone_number VARCHAR(15) DEFAULT NULL,
                       password VARCHAR(255) NOT NULL,
-                      role ENUM('ADMIN','SUPPLIER','MANAGER') NOT NULL,
+                      role ENUM('ADMIN','SUPPLIER','EMPLOYEE') NOT NULL,
                       user_details TEXT DEFAULT NULL,
                       created_date TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP,
                       last_login TIMESTAMP NULL DEFAULT NULL,

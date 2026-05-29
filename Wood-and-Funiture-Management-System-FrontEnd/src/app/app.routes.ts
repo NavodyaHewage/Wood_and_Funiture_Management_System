@@ -4,7 +4,7 @@ import { permissionGuard } from './guards/permission.guard';
 import { Login } from './components/auth/login/login';
 import { Register } from './components/auth/register/register';
 import { AdminDashComponent } from './components/user-management/admin-dash/admin-dash.component';
-import { ManagerDashComponent } from './components/user-management/manager-dash/manager-dash.component';
+import { EmployeeDashComponent } from './components/user-management/employee-dash/employee-dash.component';
 import { ChangePassword } from './components/auth/change-password/change-password';
 import { UserManagementDashboardComponent } from './components/user-management/user-management-dashboard/user-management-dashboard.component';
 import { ProfileComponent } from './components/profile/profile.component';
@@ -20,6 +20,7 @@ import { ProductCategoryComponent } from './components/order-managment/product-c
 import { PayrollManagementComponent } from './components/payroll/payroll-management/payroll-management.component';
 import { DesignationSalaryConfigComponent } from './components/payroll/designation-salary-config/designation-salary-config.component';
 import { SuppliyerManagementDashboardComponent } from './components/user-management/suppliyer-management-dashboard/suppliyer-management-dashboard.component';
+import { MySuppliesComponent } from './components/user-management/my-supplies/my-supplies.component';
 import { SupplyRawMaterialComponent } from './components/inventory-management/supply-raw-material/supply-raw-material.component';
 import { SupplyRawMaterialDashboardComponent } from './components/inventory-management/supply-raw-material/supply-raw-material-dashboard.component';
 import { SupplyRawMaterialRequestComponent } from './components/inventory-management/supply-raw-material-request/supply-raw-material-request.component';
@@ -36,7 +37,7 @@ export const routes: Routes = [
     { path: 'register', component: Register, data: { title: 'Register New User' } },
   
     { path: 'admin-dashboard', component: AdminDashComponent, canActivate: [roleGuard], data: { title: 'Admin Dashboard', requiredRole: 'Admin' } },
-    { path: 'manager-dashboard', component: ManagerDashComponent, canActivate: [roleGuard], data: { title: 'Manager Dashboard', requiredRole: 'Manager' } },
+    { path: 'employee-dashboard', component: EmployeeDashComponent, canActivate: [roleGuard], data: { title: 'Employee Dashboard', requiredRole: 'Employee' } },
     { path: 'user-management', component: UserManagementDashboardComponent, canActivate: [roleGuard], data: { title: 'User Management', requiredRole: 'Admin' } },
     
     // Functional routes protected by granular permissionGuard
@@ -47,6 +48,7 @@ export const routes: Routes = [
     { path: 'change-password', component: ChangePassword, canActivate: [roleGuard], data: { title: 'Change Password' } },
     { path: 'profile', component: ProfileComponent, canActivate: [roleGuard], data: { title: 'User Profile' } },
     { path: 'supplier-dashboard', component: SuppliyerManagementDashboardComponent, canActivate: [roleGuard], data: { title: 'Supplier Dashboard', requiredRole: 'Supplier' } },
+    { path: 'my-supplies', component: MySuppliesComponent, canActivate: [roleGuard], data: { title: 'My Supplies', requiredRole: 'Supplier' } },
     
     { path: 'order-management', component: OrderManagementDashboardComponent, canActivate: [permissionGuard], data: { title: 'Order Management', requiredFunction: 'order-management' } },
     { path: 'quotation-management', component: QuotationManagementComponent, canActivate: [permissionGuard], data: { title: 'Quotation Management', requiredFunction: 'quotation-management' } },

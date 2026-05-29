@@ -1,0 +1,164 @@
+<div class="dashboard-layout">
+  <app-admin-side></app-admin-side>
+
+  <main class="main-content">
+    <app-header></app-header>
+
+    <div class="content-body">
+      <div class="page-header">
+        <div>
+          <h1>My Supplies</h1>
+          <p>Supply raw material orders recorded for your supplier account</p>
+        </div>
+
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            placeholder="Search invoice, wood type, or date">
+        </div>
+      </div>
+
+      <div class="supplier-strip">
+        <div>
+          <span class="label">Login</span>
+          <strong>{{ currentUser?.username }}</strong>
+        </div>
+        <div>
+          <span class="label">Role</span>
+          <strong>{{ currentUser?.role }}</strong>
+        </div>
+        <div>
+          <span class="label">Email</span>
+          <strong>{{ currentUser?.email || 'Not specified' }}</strong>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span>Total Orders</span>
+          <strong>{{ totalOrders }}</strong>
+        </div>
+        <div class="stat-card">
+          <span>Total Material</span>
+          <strong>{{ totalCft | number:'1.2-2' }} CFT</strong>
+        </div>
+        <div class="stat-card">
+          <span>Total Net Amount</span>
+          <strong>Rs. {{ totalAmount | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <div class="table-panel">
+        <div *ngIf="loading" class="empty-state">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p>Loading your supply records...</p>
+        </div>
+
+        <div *ngIf="!loading && errorMessage" class="empty-state warning">
+          <i class="bi bi-exclamation-circle"></i>
+          <p>{{ errorMessage }}</p>
+        </div>
+
+        <table *ngIf="!loading && !errorMessage">
+          <thead>
+            <tr>
+              <th>Invoice</th>
+              <th>Date</th>
+              <th>Wood Type</th>
+              <th>Total CFT</th>
+              <th>Net Amount</th>
+              <th>GRN</th>
+              <th class="text-center">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let supply of filteredSupplies">
+              <td><span class="invoice-badge">{{ supply.invoiceNumber }}</span></td>
+              <td>{{ supply.supplyDate | date:'mediumDate' }}</td>
+              <td>{{ supply.rmName }}</td>
+              <td>{{ supply.totalQuantityCft | number:'1.2-2' }}</td>
+              <td class="amount">Rs. {{ supply.netAmount | number:'1.2-2' }}</td>
+              <td>
+                <span class="badge" [ngClass]="supply.grnId ? 'badge-ready' : 'badge-pending'">
+                  {{ supply.grnId ? 'Created' : 'Pending' }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button class="btn-icon" (click)="openDetailsModal(supply)" title="View supply details">
+                  <i class="bi bi-list-ul"></i>
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredSupplies.length === 0">
+              <td colspan="7" class="empty-row">
+                <i class="bi bi-inbox"></i>
+                <span>No supply records found for your account.</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" *ngIf="showDetailsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2>Supply Details</h2>
+          <p>{{ selectedSupply?.invoiceNumber }}</p>
+        </div>
+        <button class="btn-icon" (click)="closeDetailsModal()" title="Close">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="detail-grid">
+        <div>
+          <span>Date</span>
+          <strong>{{ selectedSupply?.supplyDate | date:'fullDate' }}</strong>
+        </div>
+        <div>
+          <span>Wood Type</span>
+          <strong>{{ selectedSupply?.rmName }}</strong>
+        </div>
+        <div>
+          <span>Total CFT</span>
+          <strong>{{ selectedSupply?.totalQuantityCft | number:'1.4-4' }}</strong>
+        </div>
+        <div>
+          <span>Net Amount</span>
+          <strong>Rs. {{ selectedSupply?.netAmount | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <div class="items-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Log #</th>
+              <th>Length</th>
+              <th>Girth</th>
+              <th>CFT</th>
+              <th>Price</th>
+              <th>Line Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detail of selectedSupply?.supplyDetails">
+              <td>{{ detail.logNumber }}</td>
+              <td>{{ detail.lengthFt }}</td>
+              <td>{{ detail.girthFt }}</td>
+              <td>{{ detail.totalQuantityCft | number:'1.4-4' }}</td>
+              <td>Rs. {{ detail.price | number:'1.2-2' }}</td>
+              <td class="amount">Rs. {{ detail.lineTotal | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
