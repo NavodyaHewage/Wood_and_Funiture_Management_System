@@ -135,7 +135,7 @@ export class AdminSideComponent implements OnInit {
           '/receipts': 'receipts',
           '/expenses': 'expenses',
           '/product-category': 'product-category',
-          '/inventory': 'log-management'
+          '/inventory': 'stock-inventory'
         };
 
         const requiredFunc = functionMap[item.route];

@@ -123,7 +123,7 @@ export class LanguageService {
         'SEARCH_PLACEHOLDER': 'ඕනෑම දෙයක් සොයන්න...',
         'MY_PROFILE': 'මගේ ගිණුම',
         'CHANGE_PASSWORD': 'මුරපදය වෙනස් කරන්න',
-        'LOGOUT': 'නික්ම යන්න',
+        'LOGOUT': 'පිටවීම',
         'ACCOUNT': 'ගිණුම'
       },
       'SIDEBAR': {
@@ -160,7 +160,7 @@ export class LanguageService {
         'My Supplies': 'මගේ සැපයුම්'
       },
       'LOGIN': {
-        'BRAND_TITLE': 'සචින්ත ටිම්බර් මෝල්',
+        'BRAND_TITLE': 'සචින්ත ලී මෝල ',
         'BRAND_SUBTITLE': 'ලී සහ ගෘහ භාණ්ඩ කළමනාකරණ පද්ධතිය',
         'FEATURE_INVENTORY': 'විස්තීර්ණ තොග කළමනාකරණය',
         'FEATURE_TRACKING': 'තත්‍ය කාලීන ඇණවුම් ලුහුබැඳීම',

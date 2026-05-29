@@ -57,6 +57,22 @@
                 <div class="col-md-8">
                     <div class="card border-0 shadow-sm list-card">
                         <div class="card-body p-0">
+                            <div class="list-toolbar">
+                                <div>
+                                    <h5 class="list-title">Category List</h5>
+                                    <p class="list-subtitle">Search and manage product categories</p>
+                                </div>
+                                <div class="search-box-clean">
+                                    <i class="bi bi-search"></i>
+                                    <input
+                                        type="text"
+                                        class="search-input-field"
+                                        [(ngModel)]="searchTerm"
+                                        (input)="onSearch()"
+                                        placeholder="Search categories..."
+                                    >
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="bg-light">
@@ -68,7 +84,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let cat of categories">
+                                        <tr *ngIf="isLoading">
+                                            <td colspan="4" class="text-center py-5 text-muted">
+                                                Loading categories...
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let cat of paginatedCategories">
                                             <td class="ps-4 py-3">
                                                 <div class="fw-bold text-dark">{{ cat.materialCategory }}</div>
                                                 <small class="text-muted text-truncate d-block" style="max-width: 200px;">{{ cat.description }}</small>
@@ -86,14 +107,36 @@
                                                 </button>
                                             </td>
                                         </tr>
-                                        <tr *ngIf="categories.length === 0">
+                                        <tr *ngIf="!isLoading && totalCategories === 0">
                                             <td colspan="4" class="text-center py-5 text-muted">
                                                 <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                                No categories found. Add your first one!
+                                                {{ searchTerm ? 'No matching categories found.' : 'No categories found. Add your first one!' }}
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
+                                <div class="pagination-footer" *ngIf="!isLoading && totalCategories > pageSize">
+                                    <div class="pagination-info">
+                                        Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalCategories) }} of {{ totalCategories }}
+                                    </div>
+                                    <div class="pagination-btns">
+                                        <button
+                                            class="btn-secondary btn-pagination"
+                                            [disabled]="currentPage === 1"
+                                            (click)="prevPage()"
+                                        >
+                                            <i class="bi bi-chevron-left"></i> Previous
+                                        </button>
+                                        <span class="page-number">Page {{ currentPage }} of {{ totalPages }}</span>
+                                        <button
+                                            class="btn-secondary btn-pagination"
+                                            [disabled]="currentPage === totalPages"
+                                            (click)="nextPage()"
+                                        >
+                                            Next <i class="bi bi-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

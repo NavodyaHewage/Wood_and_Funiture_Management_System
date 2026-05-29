@@ -55,6 +55,7 @@ public class EmployeePermissionFilter extends OncePerRequestFilter {
         PATH_TO_FUNCTION_MAP.put("/orders", "order-management");
         PATH_TO_FUNCTION_MAP.put("/quotations", "quotation-management");
         PATH_TO_FUNCTION_MAP.put("/product-categories", "product-category");
+        PATH_TO_FUNCTION_MAP.put("/product-stock", "stock-inventory");
     }
 
     @Override

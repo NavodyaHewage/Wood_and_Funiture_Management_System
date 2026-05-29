@@ -88,7 +88,8 @@ export class PermissionService {
         'order-management',
         'receipts',
         'expenses',
-        'product-category'
+        'product-category',
+        'stock-inventory'
       ];
       this.myPermissionsSubject.next(allFuncs);
       if (this.isBrowser()) {

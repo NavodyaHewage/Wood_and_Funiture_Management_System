@@ -1,0 +1,106 @@
+<div class="dashboard-layout">
+    <!-- Navigation Sidebar -->
+    <app-admin-side></app-admin-side>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+        <!-- Dynamic Header -->
+        <app-header></app-header>
+
+        <!-- Content Body -->
+        <div class="content-body">
+            <div class="stock-container animate__animated animate__fadeIn">
+                <!-- Page Header & Overview Card -->
+                <div class="stock-header-card mb-4">
+                    <div class="header-glow"></div>
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div>
+                            <h3 class="card-title-premium text-white m-0 d-flex align-items-center gap-2">
+                                <i class="bi bi-box-seam-fill"></i>
+                                {{ 'SIDEBAR.Stock Inventory' | translate }}
+                            </h3>
+                            <p class="text-white-50 small m-0 mt-1">Real-time overview of current material categories and available stock volumes</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Controls & Search Card -->
+                <div class="stock-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="search-box-container">
+                            <i class="bi bi-search search-box-icon"></i>
+                            <input type="text" class="form-control search-input" 
+                                   [placeholder]="'HEADER.SEARCH_PLACEHOLDER' | translate" 
+                                   [(ngModel)]="searchTerm" 
+                                   (input)="onSearch()">
+                        </div>
+                        <button class="btn btn-premium-secondary d-flex align-items-center gap-2" (click)="loadProductStock()" [disabled]="loading">
+                            <i class="bi" [class.bi-arrow-clockwise]="!loading" [class.spinner-border]="loading" [class.spinner-border-sm]="loading"></i>
+                            Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Data Grid / Table Card -->
+                <div class="stock-card table-card">
+                    <div class="table-responsive">
+                        <table class="table premium-table m-0">
+                            <thead>
+                                <tr>
+                                    <th>Stock ID</th>
+                                    <th>Material Category</th>
+                                    <th>Description</th>
+                                    <th>Unit of Measurement</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Available Qty</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngIf="loading">
+                                    <td colspan="6" class="text-center py-5">
+                                        <div class="spinner-border text-primary" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr *ngIf="!loading && filteredStocks.length === 0">
+                                    <td colspan="6" class="text-center py-5 text-muted">
+                                        <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                                        No stock records found matching your search.
+                                    </td>
+                                </tr>
+                                <tr *ngFor="let stock of filteredStocks" class="table-row-premium">
+                                    <td>
+                                        <span class="badge badge-id">#{{ stock.stockId }}</span>
+                                    </td>
+                                    <td>
+                                        <div class="fw-bold text-premium-dark">{{ stock.materialCategory }}</div>
+                                    </td>
+                                    <td>
+                                        <span class="text-muted text-wrap-desc">{{ stock.description || '-' }}</span>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-uom">{{ formatMeasurement(stock.unitOfMeasurement) }}</span>
+                                    </td>
+                                    <td class="text-end fw-bold price-text">
+                                        LKR {{ (stock.unitPrice || 0) | number:'1.2-2' }}
+                                    </td>
+                                    <td class="text-end">
+                                        <div class="qty-badge-container">
+                                            <span class="badge font-numeric" 
+                                                  [class.qty-high]="stock.availableQuantity > 50" 
+                                                  [class.qty-low]="stock.availableQuantity <= 10"
+                                                  [class.qty-medium]="stock.availableQuantity > 10 && stock.availableQuantity <= 50">
+                                                {{ (stock.availableQuantity || 0) | number:'1.1-1' }}
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

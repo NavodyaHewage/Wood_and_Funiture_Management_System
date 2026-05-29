@@ -104,3 +104,138 @@
   transform: scale(1.15);
   background: #fff3bf;
 }
+
+.list-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  background: #38240D;
+}
+
+.list-title {
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.list-subtitle {
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0 0;
+}
+
+.search-box-clean {
+  position: relative;
+  width: 260px;
+  flex-shrink: 0;
+}
+
+.search-box-clean i {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-input-field {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.search-input-field::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.search-input-field:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: white;
+}
+
+.pagination-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background: #fdfce8;
+  border-top: 1px solid rgba(113, 54, 0, 0.1);
+}
+
+.pagination-info {
+  font-size: 0.875rem;
+  color: #713600;
+  font-weight: 500;
+}
+
+.pagination-btns {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.page-number {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #38240D;
+}
+
+.btn-secondary.btn-pagination {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  background: #e2e8f0;
+  color: #475569;
+  border: none;
+  font-weight: 600;
+  line-height: 1.5;
+  min-height: 2.2rem;
+}
+
+.btn-secondary.btn-pagination:hover:not(:disabled) {
+  background: #cbd5e1;
+}
+
+.btn-secondary.btn-pagination:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .list-toolbar {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-box-clean {
+    width: 100%;
+  }
+
+  .pagination-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .pagination-btns {
+    width: 100%;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .page-number {
+    white-space: nowrap;
+  }
+}

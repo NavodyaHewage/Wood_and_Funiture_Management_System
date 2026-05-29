@@ -16,6 +16,8 @@ import { AdminSideComponent } from '../../user-management/admin-side/admin-side.
 })
 export class ProductCategoryComponent implements OnInit {
   categories: ProductCategory[] = [];
+  filteredCategories: ProductCategory[] = [];
+  isLoading = false;
   newCategory: ProductCategory = {
     description: '',
     materialCategory: '',
@@ -25,6 +27,10 @@ export class ProductCategoryComponent implements OnInit {
   unitOptions = Object.values(UnitOfMeasurement);
   isEditing = false;
   editId: number | null = null;
+  searchTerm = '';
+  currentPage = 1;
+  pageSize = 5;
+  Math = Math;
 
   constructor(
     private categoryService: ProductCategoryService,
@@ -36,9 +42,26 @@ export class ProductCategoryComponent implements OnInit {
   }
 
   loadCategories(): void {
+    this.isLoading = true;
     this.categoryService.getAll().subscribe({
-      next: (data) => this.categories = data,
-      error: (err) => this.toastService.show('Error loading categories', 'error')
+      next: (data) => {
+        this.categories = data;
+        this.applySearch();
+        this.currentPage = 1;
+        this.isLoading = false;
+      },
+      error: (err) => {
+        this.categories = [];
+        this.filteredCategories = [];
+        this.isLoading = false;
+
+        const message = err.status === 401 || err.status === 403
+          ? 'You do not have permission to load product categories'
+          : err.error?.message || 'Error loading categories';
+
+        console.error('Error loading product categories', err);
+        this.toastService.show(message, 'error');
+      }
     });
   }
 
@@ -91,5 +114,56 @@ export class ProductCategoryComponent implements OnInit {
       unitOfMeasurement: UnitOfMeasurement.SQUARE_FEET,
       unitPrice: 0
     };
+  }
+
+  get paginatedCategories(): ProductCategory[] {
+    const startIndex = (this.currentPage - 1) * this.pageSize;
+    return this.filteredCategories.slice(startIndex, startIndex + this.pageSize);
+  }
+
+  get totalCategories(): number {
+    return this.filteredCategories.length;
+  }
+
+  get totalPages(): number {
+    return Math.ceil(this.totalCategories / this.pageSize);
+  }
+
+  applySearch(): void {
+    const term = this.searchTerm.trim().toLowerCase();
+
+    if (!term) {
+      this.filteredCategories = [...this.categories];
+      return;
+    }
+
+    this.filteredCategories = this.categories.filter((category) => {
+      const materialCategory = (category.materialCategory || '').toLowerCase();
+      const description = (category.description || '').toLowerCase();
+      const unitOfMeasurement = (category.unitOfMeasurement || '').toLowerCase();
+      const unitPrice = String(category.unitPrice ?? '');
+
+      return materialCategory.includes(term)
+        || description.includes(term)
+        || unitOfMeasurement.includes(term)
+        || unitPrice.includes(term);
+    });
+  }
+
+  onSearch(): void {
+    this.currentPage = 1;
+    this.applySearch();
+  }
+
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+    }
+  }
+
+  prevPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+    }
   }
 }

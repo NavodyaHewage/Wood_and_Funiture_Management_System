@@ -37,7 +37,8 @@ public class UserPermissionService {
             "order-management",
             "receipts",
             "expenses",
-            "product-category"
+            "product-category",
+            "stock-inventory"
     );
 
     /**

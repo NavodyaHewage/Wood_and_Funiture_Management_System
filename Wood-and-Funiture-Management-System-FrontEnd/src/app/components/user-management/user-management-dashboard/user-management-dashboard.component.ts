@@ -47,7 +47,8 @@ export class UserManagementDashboardComponent implements OnInit {
     'order-management': 'Track customer furniture manufacture orders and progress.',
     'receipts': 'Issue receipts and process customer payments.',
     'expenses': 'Record business, operational, and cutting expenses.',
-    'product-category': 'Manage furniture product categories.'
+    'product-category': 'Manage furniture product categories.',
+    'stock-inventory': 'View product stock inventory levels, material descriptions, and available quantities.'
   };
 
   constructor(
