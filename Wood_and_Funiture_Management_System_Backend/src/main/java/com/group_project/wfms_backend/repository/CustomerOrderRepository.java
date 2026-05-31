@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import org.springframework.data.repository.query.Param;
+
 import java.time.LocalDate;
 import java.util.List;
 
@@ -25,4 +27,10 @@ public interface CustomerOrderRepository extends JpaRepository<CustomerOrder, Lo
 
     @Query(value = "CALL Generate_Order_Number()", nativeQuery = true)
     String generateOrderNumber();
+
+    @Query("SELECT o FROM CustomerOrder o JOIN FETCH o.customer WHERE (o.status = com.group_project.wfms_backend.model.OrderStatus.PENDING " +
+           "OR o.status = com.group_project.wfms_backend.model.OrderStatus.PROCESSING) " +
+           "AND (LOWER(o.orderNumber) LIKE LOWER(CONCAT('%', :q, '%')) " +
+           "OR LOWER(o.customer.cusName) LIKE LOWER(CONCAT('%', :q, '%')))")
+    List<CustomerOrder> searchPendingOrProcessingOrders(@Param("q") String q);
 }

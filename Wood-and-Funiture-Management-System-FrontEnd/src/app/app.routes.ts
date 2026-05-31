@@ -23,7 +23,12 @@ import { SupplyRawMaterialDashboardComponent } from './components/inventory-mana
 import { SupplyRawMaterialRequestComponent } from './components/inventory-management/supply-raw-material-request/supply-raw-material-request.component';
 import { GrnInvoiceComponent } from './components/inventory-management/grn-invoice/grn-invoice.component';
 import { RawMaterialCuttingComponent } from './components/inventory-management/raw-material-cutting/raw-material-cutting.component';
+import { ReceiptDashboardComponent } from './components/receipts/receipt-dashboard/receipt-dashboard.component';
+import { AddReceiptComponent } from './components/receipts/add-receipt/add-receipt.component';
+import { ReceiptViewComponent } from './components/receipts/receipt-view/receipt-view.component';
+import { ExpensesComponent } from './components/expenses/expenses.component';
 
+// ── SALES & CUSTOMER PAYMENT RECEIPT ROUTES ───────────────
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
     { path: 'login', component: Login, data: { title: 'User Login' } },
@@ -51,4 +56,9 @@ export const routes: Routes = [
     { path: 'log-management/cutting', component: RawMaterialCuttingComponent, canActivate: [roleGuard], data: { title: 'Raw Material Cutting', requiredRole: 'Admin' } },
     { path: 'supply-request-management', component: SupplyRawMaterialRequestComponent, canActivate: [roleGuard], data: { title: 'Supply Request Management' } },
     { path: 'inventory/grn-invoice/:id', component: GrnInvoiceComponent, canActivate: [roleGuard], data: { title: 'GRN Invoice', requiredRole: 'Admin' } },
+    
+    { path: 'receipts', component: ReceiptDashboardComponent, data: { title: 'Receipt Dashboard' } },
+    { path: 'receipts/add', component: AddReceiptComponent, data: { title: 'Add Receipt' } },
+    { path: 'receipts/view/:id', component: ReceiptViewComponent, data: { title: 'Printable Receipt' } },
+    { path: 'expenses', component: ExpensesComponent, canActivate: [roleGuard], data: { title: 'Expense Management', requiredRole: 'Admin' } },
 ];

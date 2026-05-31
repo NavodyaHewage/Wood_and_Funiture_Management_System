@@ -62,7 +62,14 @@ export class AdminSideComponent implements OnInit {
       items: [
         { name: 'Customers', icon: 'bi-person-heart', route: '/customer-management' },
         { name: 'Quotations', icon: 'bi-file-earmark-text-fill', route: '/quotation-management' },
-        { name: 'Orders', icon: 'bi-cart-fill', route: '/order-management' }
+        { name: 'Orders', icon: 'bi-cart-fill', route: '/order-management' },
+        { name: 'Receipts', icon: 'bi-receipt-cutoff', route: '/receipts' }
+      ]
+    },
+    {
+      label: 'FINANCIALS',
+      items: [
+        { name: 'Expenses', icon: 'bi-credit-card-fill', route: '/expenses' }
       ]
     },
     {

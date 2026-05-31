@@ -1,6 +1,7 @@
 package com.group_project.wfms_backend.service;
 
 import com.group_project.wfms_backend.dto.auth.ExpenseAccountDTO;
+import com.group_project.wfms_backend.dto.auth.ExpenseTypeDTO;
 import com.group_project.wfms_backend.model.Expenseaccount;
 import com.group_project.wfms_backend.repository.ExpenseAccountRepository;
 import com.group_project.wfms_backend.repository.ExpenseTypeRepository;
@@ -27,6 +28,20 @@ public class ExpenseService {
 
     @Autowired
     private GRNRepository grnRepo;
+
+    // සියලුම වියදම් වර්ග ලබා ගැනීම (Get All Expense Types)
+    public List<ExpenseTypeDTO> getAllExpenseTypes() {
+        return typeRepo.findAll()
+                .stream()
+                .map(entity -> {
+                    ExpenseTypeDTO dto = new ExpenseTypeDTO();
+                    dto.setExpenseTypeId(entity.getExpenseTypeId());
+                    dto.setTypeName(entity.getTypeName());
+                    dto.setDescription(entity.getDescription());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+    }
 
     // සියලුම වියදම් ලබා ගැනීම
     public List<ExpenseAccountDTO> getAllExpenses() {
@@ -62,8 +77,13 @@ public class ExpenseService {
         dto.setPaidTo(entity.getPaidTo());
         dto.setRemarks(entity.getRemarks());
 
-        dto.setExpenseTypeId(entity.getExpenseType().getExpenseTypeId());
-        dto.setUserId(entity.getUser().getUserId());
+        if (entity.getExpenseType() != null) {
+            dto.setExpenseTypeId(entity.getExpenseType().getExpenseTypeId());
+        }
+        
+        if (entity.getUser() != null) {
+            dto.setUserId(entity.getUser().getUserId());
+        }
 
         // GRN එකක් තිබේ නම් පමණක් ID එක සෙට් කරන්න
         if (entity.getGrn() != null) {
@@ -92,7 +112,8 @@ public class ExpenseService {
         entity.setExpenseType(typeRepo.findById(dto.getExpenseTypeId())
                 .orElseThrow(() -> new RuntimeException("Expense Type ID invalid")));
 
-        entity.setUser(userRepo.findById(dto.getUserId())
+        Integer userId = dto.getUserId() != null ? dto.getUserId() : 1;
+        entity.setUser(userRepo.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User ID invalid")));
 
         // GRN එක Optional නිසා එය තිබේ නම් පමණක් සොයා බලන්න

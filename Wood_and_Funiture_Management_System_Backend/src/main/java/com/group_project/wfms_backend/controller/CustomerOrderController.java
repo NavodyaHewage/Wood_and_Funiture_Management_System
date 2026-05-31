@@ -33,6 +33,16 @@ public class CustomerOrderController {
         return ResponseEntity.ok(customerOrderService.getOrderById(id));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<CustomerOrderResponseDTO>> searchOrders(@RequestParam("q") String q) {
+        return ResponseEntity.ok(customerOrderService.searchOrders(q));
+    }
+
+    @GetMapping("/{orderId}/outstanding-lines")
+    public ResponseEntity<com.group_project.wfms_backend.dto.auth.OutstandingLinesResponseDTO> getOutstandingLines(@PathVariable Long orderId) {
+        return ResponseEntity.ok(customerOrderService.getOutstandingLines(orderId));
+    }
+
     @GetMapping("/customer/{customerId}")
     public ResponseEntity<List<CustomerOrderResponseDTO>> getOrdersByCustomer(@PathVariable Integer customerId) {
         return ResponseEntity.ok(customerOrderService.getOrdersByCustomer(customerId));

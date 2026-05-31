@@ -1,0 +1,293 @@
+<!-- Expense Details Modal -->
+<div class="modal-backdrop" *ngIf="showViewModal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.35); z-index: 1000;"></div>
+<div class="modal-premium" *ngIf="showViewModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 1rem; box-shadow: 0 8px 32px rgba(0,0,0,0.18); z-index: 1001; min-width: 350px; max-width: 95vw; min-height: 200px; padding: 2rem 2.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+    <h2 style="margin: 0; font-size: 1.35rem; color: #713600;">Expense Details</h2>
+    <button (click)="closeViewModal()" style="background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer;">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+  <div *ngIf="selectedExpense">
+    <div style="margin-bottom: 1rem;">
+      <strong>Description:</strong> <span>{{ selectedExpense.description }}</span>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <strong>Date:</strong> <span>{{ selectedExpense.date | date:'mediumDate' }}</span>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <strong>Amount:</strong> <span>LKR {{ selectedExpense.amount | number:'1.2-2' }}</span>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <strong>Category:</strong> <span>{{ getCategoryName(selectedExpense.expenseTypeId) }}</span>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <strong>Recipient:</strong> <span>{{ selectedExpense.paidTo }}</span>
+    </div>
+    <div style="margin-bottom: 1rem;" *ngIf="selectedExpense.grnId">
+      <strong>GRN:</strong> <span>{{ getGrnNumber(selectedExpense.grnId) }}</span>
+    </div>
+    <div style="margin-bottom: 1rem;" *ngIf="selectedExpense.remarks">
+      <strong>Remarks:</strong> <span>{{ selectedExpense.remarks }}</span>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <strong>Expense ID:</strong> <span>#{{ selectedExpense.expenseId }}</span>
+    </div>
+    <div style="margin-bottom: 1rem;">
+      <strong>User ID:</strong> <span>#{{ selectedExpense.userId }}</span>
+    </div>
+  </div>
+</div>
+<div class="dashboard-layout">
+  <!-- Dynamic Admin Sidebar -->
+  <app-admin-side></app-admin-side>
+
+  <!-- Main Portal Content -->
+  <main class="main-content">
+    <!-- Header -->
+    <app-header></app-header>
+
+    <div class="content-body">
+      <div class="expense-container animate-fade-in">
+        
+        <!-- Welcome Header -->
+        <div class="header-section">
+          <div class="title-group">
+            <h1>Expense Account Management</h1>
+            <p>Track, manage, and audit corporate expenditures and supplier invoices</p>
+          </div>
+          <button class="btn-refresh-minimal" (click)="loadExpenses()">
+            <i class="bi bi-arrow-clockwise"></i> Refresh Data
+          </button>
+        </div>
+
+        <!-- Dashboard Financial Metrics -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon-wrapper blue">
+              <i class="bi bi-currency-dollar"></i>
+            </div>
+            <div class="stat-info">
+              <div class="stat-label">Total Expenditure</div>
+              <div class="stat-value">LKR {{ metrics.totalExpenses | number:'1.2-2' }}</div>
+            </div>
+          </div>
+          
+          <div class="stat-card">
+            <div class="stat-icon-wrapper amber">
+              <i class="bi bi-tags-fill"></i>
+            </div>
+            <div class="stat-info">
+              <div class="stat-label">Active Cost Categories</div>
+              <div class="stat-value">{{ metrics.activeTypesCount }}</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrapper green">
+              <i class="bi bi-calendar3"></i>
+            </div>
+            <div class="stat-info">
+              <div class="stat-label">Month-to-Date Cost</div>
+              <div class="stat-value">LKR {{ metrics.monthToDateExpenses | number:'1.2-2' }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dual-layout">
+          <!-- Left: Expenditure Form -->
+            <div class="premium-card">
+              <div class="card-header-clean">
+                <h3>{{ isEditMode ? 'Modify Expense Entry #' + editingExpenseId : 'Record New Expenditure' }}</h3>
+                <p class="subtitle">{{ isEditMode ? 'Update transaction details' : 'Enter a new business cost item' }}</p>
+              </div>
+              <div class="card-body-clean">
+                <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
+                  <div class="row g-3">
+                    
+                    <div class="col-12">
+                      <label class="clean-label">Cost Category <span class="required">*</span></label>
+                      <select class="clean-select" formControlName="expenseTypeId">
+                        <option value="" disabled selected>-- Choose Category --</option>
+                        <option *ngFor="let t of expenseTypes" [value]="t.expenseTypeId">
+                          {{ t.typeName }}
+                        </option>
+                      </select>
+                      <div class="error-msg" *ngIf="expenseForm.get('expenseTypeId')?.touched && expenseForm.get('expenseTypeId')?.invalid">
+                        Please choose a valid expense category.
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label class="clean-label">Amount (LKR) <span class="required">*</span></label>
+                      <input type="number" class="clean-input" formControlName="amount" placeholder="0.00" min="0.01" step="0.01">
+                      <div class="error-msg" *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.invalid">
+                        Valid positive amount is required.
+                      </div>
+                    </div>
+
+                    <div class="col-md-6">
+                      <label class="clean-label">Date <span class="required">*</span></label>
+                      <input type="date" class="clean-input" formControlName="date">
+                      <div class="error-msg" *ngIf="expenseForm.get('date')?.touched && expenseForm.get('date')?.invalid">
+                        Transaction date is required.
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label class="clean-label">Paid To / Recipient <span class="required">*</span></label>
+                      <input type="text" class="clean-input" formControlName="paidTo" placeholder="Supplier, Employee, or Vendor name">
+                      <div class="error-msg" *ngIf="expenseForm.get('paidTo')?.touched && expenseForm.get('paidTo')?.invalid">
+                        Recipient name is required.
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label class="clean-label">Description <span class="required">*</span></label>
+                      <textarea class="clean-textarea" formControlName="description" rows="2" placeholder="What was this expenditure for?"></textarea>
+                      <div class="error-msg" *ngIf="expenseForm.get('description')?.touched && expenseForm.get('description')?.invalid">
+                        A short description is required (min 3 chars).
+                      </div>
+                    </div>
+
+                    <div class="col-12">
+                      <label class="clean-label">Associated GRN (Optional)</label>
+                      <select class="clean-select" formControlName="grnId">
+                        <option [ngValue]="null">-- Not Associated with GRN --</option>
+                        <option *ngFor="let g of grns" [value]="g.grnId">
+                          {{ g.grnNumber }} (LKR {{ g.totalAmount | number }})
+                        </option>
+                      </select>
+                    </div>
+
+                    <div class="col-12">
+                      <label class="clean-label">Audit Remarks (Optional)</label>
+                      <input type="text" class="clean-input" formControlName="remarks" placeholder="Optional audit or tracking notes">
+                    </div>
+
+                    <div class="col-12 mt-4 button-group-clean">
+                      <button type="submit" class="btn-primary flex-grow-1" [disabled]="loading">
+                        <i class="bi bi-check-circle-fill"></i>
+                        {{ loading ? 'Saving...' : (isEditMode ? 'Update Transaction' : 'Record Transaction') }}
+                      </button>
+                      <button type="button" class="btn-secondary" *ngIf="isEditMode" (click)="cancelEdit()">
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
+          <!-- Right: Audit Logs / Expenditure History -->
+          <div class="list-section">
+            <div class="premium-card">
+              <div class="card-header-clean with-search">
+                <div class="header-text-box">
+                  <h3>Expenditure Audit Logs</h3>
+                  <p class="subtitle">Search and audit recorded transactions</p>
+                </div>
+                <div class="search-box-clean">
+                  <i class="bi bi-search"></i>
+                  <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Filter expenses..." class="search-input-field">
+                </div>
+                <div style="margin-left: 1rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <label style="font-size: 0.85rem; font-weight: 700; color: #6d6458; text-transform: uppercase;">Sort:</label>
+                  <select [(ngModel)]="sortOrder" (change)="onSortChange()" style="padding: 0.3rem 0.7rem; border-radius: 0.5rem; border: 1.5px solid #e0e0e0; color: #38240D; font-size: 0.85rem; outline: none;">
+                    <option value="date_desc">Latest First</option>
+                    <option value="date_asc">Oldest First</option>
+                  </select>
+                </div>
+              </div>
+              
+              <div class="table-container-clean">
+                <table class="table-premium">
+                  <thead>
+                    <tr>
+                      <th>Transaction</th>
+                      <th>Recipient</th>
+                      <th>Category</th>
+                      <th>Amount</th>
+                      <th class="text-end">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let e of filteredExpenses" [ngClass]="{'editing-row': e.expenseId === editingExpenseId}">
+                      <td>
+                        <div class="transaction-detail">
+                          <span class="desc-text">{{ e.description }}</span>
+                          <span class="meta-sub">
+                            <i class="bi bi-calendar-event"></i> {{ e.date | date:'mediumDate' }}
+                            <span class="grn-badge" *ngIf="e.grnId">
+                              <i class="bi bi-receipt"></i> GRN: {{ getGrnNumber(e.grnId) }}
+                            </span>
+                          </span>
+                        </div>
+                      </td>
+                      <td>
+                        <div class="recipient-info">
+                          <span class="recipient-name">{{ e.paidTo }}</span>
+                          <small class="meta-sub" *ngIf="e.remarks">Notes: {{ e.remarks }}</small>
+                        </div>
+                      </td>
+                      <td>
+                        <span class="category-badge">{{ getCategoryName(e.expenseTypeId) }}</span>
+                      </td>
+                      <td>
+                        <div class="amount-value">
+                          LKR {{ e.amount | number:'1.2-2' }}
+                        </div>
+                      </td>
+                      <td>
+                        <div class="action-buttons text-end">
+                          <button class="btn-action view" title="View entry" (click)="onView(e)">
+                            <i class="bi bi-eye-fill"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr *ngIf="filteredExpenses.length === 0 && !loading">
+                      <td colspan="5" class="text-center py-5 text-muted">
+                        <i class="bi bi-inbox fs-2 d-block mb-2"></i>
+                        No expense records found.
+                      </td>
+                    </tr>
+                    <tr *ngIf="loading && expenses.length === 0">
+                      <td colspan="5" class="text-center py-5 text-muted">
+                        <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                        <span class="ms-2">Loading data...</span>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <!-- Pagination Footer -->
+                <div class="pagination-footer" *ngIf="!loading && totalFilteredExpenses > pageSize">
+                  <div class="pagination-info">
+                    Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalFilteredExpenses) }} of {{ totalFilteredExpenses }}
+                  </div>
+                  <div class="pagination-btns">
+                    <button 
+                      class="btn-secondary btn-pagination" 
+                      [disabled]="currentPage === 1" 
+                      (click)="prevPage()"
+                    >
+                      <i class="bi bi-chevron-left"></i> Previous
+                    </button>
+                    <span class="page-number">Page {{ currentPage }} of {{ totalPages }}</span>
+                    <button 
+                      class="btn-secondary btn-pagination" 
+                      [disabled]="currentPage === totalPages" 
+                      (click)="nextPage()"
+                    >
+                      Next <i class="bi bi-chevron-right"></i>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>

@@ -26,8 +26,18 @@ public class ReceiptController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    // ── GET ALL ──────────────────────────────────────────────
+    // ── GET ALL (PAGINATED & SEARCHABLE) ─────────────────────
     @GetMapping
+    public ResponseEntity<java.util.Map<String, Object>> getReceipts(
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "sort", defaultValue = "date_desc") String sort,
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "limit", defaultValue = "10") int limit) {
+        return ResponseEntity.ok(receiptService.getReceipts(search, sort, page, limit));
+    }
+
+    // ── GET ALL UNPAGINATED ──────────────────────────────────
+    @GetMapping("/all")
     public ResponseEntity<List<ReceiptResponseDTO>> getAllReceipts() {
         return ResponseEntity.ok(receiptService.getAllReceipts());
     }

@@ -1,0 +1,163 @@
+<div class="dashboard-layout">
+  <app-admin-side></app-admin-side>
+
+  <main class="main-content">
+    <app-header></app-header>
+
+    <div class="content-body">
+      <div class="quotation-container animate-fade-in">
+        
+        <!-- Header & Action Row -->
+        <div class="header-section">
+          <div class="title-group">
+            <h1 style="color: #713600; font-weight: 700; margin: 0 0 4px 0;">Receipt & Payment History</h1>
+            <p style="color: #6d6458; margin: 0;">Manage and view customer invoice payment allocations</p>
+          </div>
+          
+          <div class="header-actions">
+            <!-- Search Control -->
+            <div class="search-box-premium">
+              <i class="bi bi-search"></i>
+              <input 
+                type="text" 
+                name="searchTerm" 
+                [(ngModel)]="searchTerm" 
+                (input)="onSearch()" 
+                placeholder="Search receipt, customer, or order..."
+              >
+            </div>
+            
+            <!-- Standard Amber-Gold Primary Button -->
+            <button class="btn-primary" (click)="navigateToAdd()">
+              <i class="bi bi-plus-circle"></i> Add Receipt
+            </button>
+          </div>
+        </div>
+
+        <!-- Metrics Stats Cards Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">
+              <i class="bi bi-cash-coin" style="color: #C05800; margin-right: 0.5rem;"></i> Total Revenue Received
+            </div>
+            <div class="stat-value text-gold">LKR {{ metrics.totalRevenue | number:'1.2-2' }}</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">
+              <i class="bi bi-receipt" style="color: #C05800; margin-right: 0.5rem;"></i> Total Receipts Generated
+            </div>
+            <div class="stat-value">{{ metrics.totalCount }}</div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">
+              <i class="bi bi-wallet2" style="color: #C05800; margin-right: 0.5rem;"></i> Cash Payments
+            </div>
+            <div class="stat-value" style="font-size: 1.25rem;">LKR {{ metrics.cashAmount | number:'1.2-2' }}</div>
+          </div>
+        </div>
+
+        <!-- Filter Sort Selection Bar -->
+        <div class="form-card" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 0.75rem; border: 1px solid rgba(113, 54, 0, 0.1);">
+          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem;">
+            <label style="font-size: 0.85rem; font-weight: 700; color: #6d6458; text-transform: uppercase;">Sort Order:</label>
+            <select 
+              name="sortOrder" 
+              [(ngModel)]="sortOrder" 
+              (change)="onSortChange()" 
+              style="padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1.5px solid rgba(192, 88, 0, 0.15); color: #38240D; font-size: 0.85rem; outline: none;"
+            >
+              <option value="date_desc">Latest First (Default)</option>
+              <option value="date_asc">Oldest First</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Receipts Data Grid Table -->
+        <div class="table-container">
+          <div *ngIf="isLoading" class="flex-center" style="padding: 3rem; flex-direction: column;">
+            <div class="spinner-premium" style="width: 30px; height: 30px; border: 3px solid rgba(192, 88, 0, 0.1); border-top-color: #c05800; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
+            <p style="margin-top: 0.75rem; color: #8c8273;">Retrieving payment data...</p>
+          </div>
+
+          <div *ngIf="!isLoading && receipts.length === 0" class="flex-center" style="padding: 4rem; flex-direction: column; text-align: center;">
+            <i class="bi bi-receipt" style="font-size: 3rem; color: rgba(113, 54, 0, 0.15); margin-bottom: 0.5rem;"></i>
+            <h3 style="color: #713600; font-size: 1.15rem; margin-bottom: 0.25rem;">No Receipts Recorded</h3>
+            <p style="color: #8c8273; font-size: 0.9rem; max-width: 350px;">We couldn't find any receipts matches. Click "Add Receipt" to log a new payment.</p>
+          </div>
+
+          <table *ngIf="!isLoading && receipts.length > 0">
+            <thead>
+              <tr>
+                <th>Receipt Number</th>
+                <th>Date</th>
+                <th>Customer Name</th>
+                <th>Order Number</th>
+                <th>Payment Mode</th>
+                <th style="text-align: right;">Total Amount</th>
+                <th style="text-align: center; width: 100px;">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let r of receipts">
+                <td>
+                  <span class="invoice-badge">{{ r.receiptNumber }}</span>
+                </td>
+                <td style="font-weight: 500;">{{ r.date | date:'mediumDate' }}</td>
+                <td>
+                  <strong style="color: #2b261f;">{{ r.customerName }}</strong>
+                  <span style="font-size: 0.75rem; color: #8c8273; display: block;">ID: #{{ r.customerId }}</span>
+                </td>
+                <td>
+                  <span *ngIf="r.orderNumber" style="font-weight: 600; color: #713600;">{{ r.orderNumber }}</span>
+                  <span *ngIf="!r.orderNumber" style="color: #8c8273; font-style: italic;">N/A</span>
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="getPaymentMethodBadge(r.paymentMethod)">
+                    {{ getPaymentMethodLabel(r.paymentMethod) }}
+                  </span>
+                </td>
+                <td style="text-align: right;" class="line-total">
+                  LKR {{ r.totalAmount | number:'1.2-2' }}
+                </td>
+                <td style="text-align: center;">
+                  <button class="btn-icon" (click)="viewReceipt(r)" title="View Receipt">
+                    <i class="bi bi-eye-fill" style="font-size: 1.15rem; color: #C05800;"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Pagination Footer -->
+          <div class="pagination-footer" *ngIf="!isLoading && totalReceipts > 0">
+            <span class="pagination-info">
+              Showing page <strong>{{ currentPage }}</strong> of <strong>{{ totalPages }}</strong> ({{ totalReceipts }} Total Records)
+            </span>
+            <div class="pagination-btns">
+              <button 
+                class="btn-secondary" 
+                [disabled]="currentPage === 1" 
+                (click)="prevPage()"
+                style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
+              >
+                <i class="bi bi-chevron-left"></i> Previous
+              </button>
+              <span class="page-number">Page {{ currentPage }}</span>
+              <button 
+                class="btn-secondary" 
+                [disabled]="currentPage === totalPages" 
+                (click)="nextPage()"
+                style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
+              >
+                Next <i class="bi bi-chevron-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
