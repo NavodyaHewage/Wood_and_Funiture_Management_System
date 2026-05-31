@@ -22,7 +22,15 @@
               <div class="card-body">
                 <div class="mb-3">
                   <label class="wood-label">Designation Name</label>
-                  <input type="text" class="form-control wood-input" [(ngModel)]="currentDS.designationName" placeholder="e.g. Carpenter, Manager">
+                  <select *ngIf="uniqueDesignations.length > 0; else textInput" class="form-select wood-select" [(ngModel)]="currentDS.designationName" [disabled]="isEditing">
+                    <option value="" disabled>-- Choose Designation --</option>
+                    <option *ngFor="let design of uniqueDesignations" [value]="design">
+                      {{ design }}
+                    </option>
+                  </select>
+                  <ng-template #textInput>
+                    <input type="text" class="form-control wood-input" [(ngModel)]="currentDS.designationName" placeholder="e.g. Carpenter, Manager" [disabled]="isEditing">
+                  </ng-template>
                 </div>
 
                 <div class="mb-3">

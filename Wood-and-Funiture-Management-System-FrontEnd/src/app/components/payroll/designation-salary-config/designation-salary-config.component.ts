@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DesignationSalaryService, DesignationSalary, SalaryRateType } from '../../../service/designation-salary.service';
+import { EmployeeService } from '../../../service/employee.service';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { HeaderComponent } from '../../header/header.component';
 import { ToastService } from '../../../service/toast.service';
@@ -15,6 +16,7 @@ import { ToastService } from '../../../service/toast.service';
 })
 export class DesignationSalaryConfigComponent implements OnInit {
   designations: DesignationSalary[] = [];
+  uniqueDesignations: string[] = [];
   
   // Form model
   currentDS: DesignationSalary = {
@@ -29,11 +31,13 @@ export class DesignationSalaryConfigComponent implements OnInit {
 
   constructor(
     private dsService: DesignationSalaryService,
+    private employeeService: EmployeeService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.loadDesignations();
+    this.loadEmployeesAndDesignations();
   }
 
   loadDesignations(): void {
@@ -68,6 +72,20 @@ export class DesignationSalaryConfigComponent implements OnInit {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
+  loadEmployeesAndDesignations(): void {
+    this.employeeService.getAllEmployees().subscribe({
+      next: (data) => {
+        const designSet = new Set<string>();
+        data.forEach((emp: any) => {
+          if (emp.designation && emp.designation.trim() !== '') {
+            designSet.add(emp.designation.trim());
+          }
+        });
+        this.uniqueDesignations = Array.from(designSet).sort();
+      },
+      error: (err) => console.error('Error loading employees', err)
+    });
+  }
 
   resetForm(): void {
     this.currentDS = {

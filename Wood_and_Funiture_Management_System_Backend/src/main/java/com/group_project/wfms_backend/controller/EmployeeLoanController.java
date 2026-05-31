@@ -36,6 +36,7 @@ public class EmployeeLoanController {
 
     @GetMapping("/max-limit/{employeeId}")
     public ResponseEntity<java.math.BigDecimal> getMaxLimit(@PathVariable Integer employeeId) {
-        return ResponseEntity.ok(loanService.getMaxLoanLimit(employeeId));
+        return
+                ResponseEntity.ok(loanService.getMaxLoanLimit(employeeId));
     }
 }

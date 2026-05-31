@@ -67,13 +67,21 @@
                       <input type="number" class="clean-input" formControlName="loanAmount" placeholder="0.00">
                     </div>
 
+                    <div class="col-12" *ngIf="loanForm.get('type')?.value === 'Loan'">
+                      <label class="clean-label">Installment Frequency</label>
+                      <select class="clean-select" formControlName="installmentType">
+                        <option value="MONTHLY">Monthly Installments</option>
+                        <option value="DAILY">Daily Installments</option>
+                      </select>
+                    </div>
+
                     <div class="col-md-6" *ngIf="loanForm.get('type')?.value === 'Loan'">
-                      <label class="clean-label">Installments (Months)</label>
+                      <label class="clean-label">Installments {{ selectedEmployeeSalaryType === 'DAILY' ? '(Days)' : '(Months)' }}</label>
                       <input type="number" class="clean-input" formControlName="installments">
                     </div>
 
                     <div class="col-md-6" *ngIf="loanForm.get('type')?.value === 'Loan'">
-                      <label class="clean-label">Monthly Deduction</label>
+                      <label class="clean-label">{{ selectedEmployeeSalaryType === 'DAILY' ? 'Daily Deduction' : 'Monthly Deduction' }}</label>
                       <div class="highlight-box-clean">
                         LKR {{loanForm.get('deductionAmount')?.value | number}}
                       </div>

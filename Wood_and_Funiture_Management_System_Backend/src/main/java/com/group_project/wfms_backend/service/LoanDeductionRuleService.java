@@ -21,6 +21,9 @@ public class LoanDeductionRuleService {
     @Autowired
     private Employeeloanrepository loanRepository;
 
+    @Autowired
+    private com.group_project.wfms_backend.repository.DesignationSalaryRepository designationSalaryRepository;
+
     // READ ALL
     public List<LoanDeductionRuleDTO> getAllRules() {
         return ruleRepository.findAll()
@@ -47,10 +50,32 @@ public class LoanDeductionRuleService {
             throw new RuntimeException("End period must be after start period.");
         }
 
+        // Resolve the installment type from incoming rule remarks tag first, fallback to designation salary type
+        com.group_project.wfms_backend.model.SalaryRateType salaryType = null;
+        if (dto.getRemarks() != null) {
+            if (dto.getRemarks().startsWith("[DAILY]")) {
+                salaryType = com.group_project.wfms_backend.model.SalaryRateType.DAILY;
+            } else if (dto.getRemarks().startsWith("[MONTHLY]")) {
+                salaryType = com.group_project.wfms_backend.model.SalaryRateType.MONTHLY;
+            }
+        }
+
+        if (salaryType == null) {
+            String designation = parentLoan.getEmployee().getDesignation();
+            salaryType = com.group_project.wfms_backend.model.SalaryRateType.MONTHLY;
+            if (designation != null && !designation.isEmpty()) {
+                salaryType = designationSalaryRepository.findByDesignationNameAndIsActiveTrue(designation)
+                        .map(com.group_project.wfms_backend.model.DesignationSalary::getSalaryType)
+                        .orElse(com.group_project.wfms_backend.model.SalaryRateType.MONTHLY);
+            }
+        }
+
+        String periodType = (salaryType == com.group_project.wfms_backend.model.SalaryRateType.DAILY) ? "Daily" : "Monthly";
+
         // VALIDATION: Deduction vs Outstanding Balance
         java.math.BigDecimal balance = parentLoan.getLoanAmount().subtract(parentLoan.getTotalDeducted() != null ? parentLoan.getTotalDeducted() : java.math.BigDecimal.ZERO);
         if (dto.getDeductionAmount().compareTo(balance) > 0) {
-            throw new RuntimeException("Monthly deduction (Rs. " + dto.getDeductionAmount() + ") cannot exceed outstanding balance (Rs. " + balance + ").");
+            throw new RuntimeException(periodType + " deduction (Rs. " + dto.getDeductionAmount() + ") cannot exceed outstanding balance (Rs. " + balance + ").");
         }
 
         Loan_Deduction_Rule rule = new Loan_Deduction_Rule();

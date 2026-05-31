@@ -101,7 +101,7 @@ public class EmployeePaysheetService {
         if (Boolean.TRUE.equals(request.getIsLoanDeductionEnabled())) {
             List<Loan_Deduction_Rule> activeRules = loanDeductionRuleRepository.findActiveRulesByEmployeeId(employee.getId());
             totalLoanDeduction = activeRules.stream()
-                    .map(Loan_Deduction_Rule::getDeductionAmount)
+                    .map(rule -> calculateRuleDeduction(rule, employee, request))
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
 
             if (request.getLoanDeductionOverride() != null && request.getLoanDeductionOverride().compareTo(totalLoanDeduction) > 0) {
@@ -209,9 +209,80 @@ public class EmployeePaysheetService {
         expenseAccountRepository.save(expense);
 
         // 4. Update Loan Outstanding Balances and Deactivate Rules via Reusable Service
-        List<Loan_Deduction_Rule> activeRules = loanDeductionRuleRepository.findActiveRulesByEmployeeId(employee.getId());
-        for (Loan_Deduction_Rule rule : activeRules) {
-            loanService.recordRepayment(rule.getEmployeeloan().getLoanId(), rule.getDeductionAmount());
+        if (Boolean.TRUE.equals(request.getIsLoanDeductionEnabled())) {
+            List<Loan_Deduction_Rule> activeRules = loanDeductionRuleRepository.findActiveRulesByEmployeeId(employee.getId());
+            BigDecimal totalDeducted = response.getLoanDeduction();
+            BigDecimal remainingDeduction = totalDeducted;
+
+            for (Loan_Deduction_Rule rule : activeRules) {
+                if (remainingDeduction.compareTo(BigDecimal.ZERO) <= 0) {
+                    break;
+                }
+                BigDecimal ruleCalculated = calculateRuleDeduction(rule, employee, request);
+                BigDecimal balance = rule.getEmployeeloan().getLoanAmount()
+                        .subtract(rule.getEmployeeloan().getTotalDeducted() != null ? rule.getEmployeeloan().getTotalDeducted() : BigDecimal.ZERO);
+                
+                BigDecimal toDeduct = ruleCalculated;
+                if (request.getLoanDeductionOverride() != null) {
+                    toDeduct = remainingDeduction.min(balance);
+                } else {
+                    toDeduct = ruleCalculated.min(remainingDeduction);
+                }
+
+                if (toDeduct.compareTo(BigDecimal.ZERO) > 0) {
+                    loanService.recordRepayment(rule.getEmployeeloan().getLoanId(), toDeduct);
+                    remainingDeduction = remainingDeduction.subtract(toDeduct);
+                }
+            }
+        }
+    }
+
+    private BigDecimal calculateRuleDeduction(Loan_Deduction_Rule rule, Employee employee, PayrollRequestDTO request) {
+        // Parse custom installment type from rule remarks first (e.g. "[DAILY]" or "[MONTHLY]")
+        SalaryRateType resolvedType = null;
+        if (rule.getRemarks() != null) {
+            if (rule.getRemarks().startsWith("[DAILY]")) {
+                resolvedType = SalaryRateType.DAILY;
+            } else if (rule.getRemarks().startsWith("[MONTHLY]")) {
+                resolvedType = SalaryRateType.MONTHLY;
+            }
+        }
+
+        // Fallback to employee's designation salary rate type
+        if (resolvedType == null) {
+            DesignationSalary ds = designationSalaryRepository.findByDesignationNameAndIsActiveTrue(employee.getDesignation())
+                    .orElse(null);
+            if (ds != null) {
+                resolvedType = ds.getSalaryType();
+            }
+        }
+
+        BigDecimal outstandingBalance = rule.getEmployeeloan().getLoanAmount()
+                .subtract(rule.getEmployeeloan().getTotalDeducted() != null ? rule.getEmployeeloan().getTotalDeducted() : BigDecimal.ZERO);
+
+        if (outstandingBalance.compareTo(BigDecimal.ZERO) <= 0) {
+            return BigDecimal.ZERO;
+        }
+
+        BigDecimal ruleAmount = rule.getDeductionAmount();
+
+        if (resolvedType == SalaryRateType.DAILY) {
+            // Daily wage recovery rule logic (One day = One installment)
+            if ("DAILY".equalsIgnoreCase(request.getPaymentType())) {
+                return ruleAmount.min(outstandingBalance);
+            } else {
+                long presentDays = attendanceRepository.countByEmployeeIdAndMonthAndYearAndStatus(employee.getId(), request.getMonth(), request.getYear(), AttendanceStatus.PRESENT);
+                long halfDays = attendanceRepository.countByEmployeeIdAndMonthAndYearAndStatus(employee.getId(), request.getMonth(), request.getYear(), AttendanceStatus.HALF_DAY);
+                BigDecimal totalWorkingDays = BigDecimal.valueOf(presentDays).add(BigDecimal.valueOf(halfDays).multiply(BigDecimal.valueOf(0.5)));
+                return ruleAmount.multiply(totalWorkingDays).min(outstandingBalance);
+            }
+        } else {
+            // Monthly wage recovery rule logic (One month = One installment)
+            if ("DAILY".equalsIgnoreCase(request.getPaymentType())) {
+                return BigDecimal.ZERO;
+            } else {
+                return ruleAmount.min(outstandingBalance);
+            }
         }
     }
 

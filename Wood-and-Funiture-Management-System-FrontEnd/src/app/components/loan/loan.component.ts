@@ -6,6 +6,7 @@ import { LoanService } from '../../service/loan.service';
 import { EmployeeService, Employee } from '../../service/employee.service';
 import { EmployeeLoanDTO, LoanDeductionRuleDTO, LoanStatus } from '../../model/loan.model';
 import { ToastService } from '../../service/toast.service';
+import { DesignationSalaryService, DesignationSalary } from '../../service/designation-salary.service';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { AdminSideComponent } from '../user-management/admin-side/admin-side.component';
 import { HeaderComponent } from '../header/header.component';
@@ -30,6 +31,8 @@ export class LoanComponent implements OnInit, OnDestroy {
   selectedEmployeeBalance: number = 0;
   selectedEmployeeMaxLoan: number = 0;
   hasActiveLoanWarning: boolean = false;
+  selectedEmployeeSalaryType: string = '';
+  designationSalaries: DesignationSalary[] = [];
 
   // Dashboard Metrics
   metrics = {
@@ -42,6 +45,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
     private loanService: LoanService,
     private employeeService: EmployeeService,
+    private designationSalaryService: DesignationSalaryService,
     private toastr: ToastService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) { }
@@ -60,6 +64,7 @@ export class LoanComponent implements OnInit, OnDestroy {
     this.loanForm = this.fb.group({
       employeeId: ['', Validators.required],
       type: ['Loan', Validators.required],
+      installmentType: ['MONTHLY', Validators.required],
       loanAmount: [null, [Validators.required, Validators.min(100)]],
       installments: [12, [Validators.required, Validators.min(1), Validators.max(60)]],
       autoDeduction: [true],
@@ -73,6 +78,9 @@ export class LoanComponent implements OnInit, OnDestroy {
     this.loanForm.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(val => {
+        if (val.installmentType) {
+          this.selectedEmployeeSalaryType = val.installmentType;
+        }
         if (val.type === 'Advance' && val.loanAmount) {
           // For advance, set installments to 1 and deductionAmount equal to loan amount
           this.loanForm.patchValue({ installments: 1, deductionAmount: val.loanAmount }, { emitEvent: false });
@@ -110,12 +118,25 @@ export class LoanComponent implements OnInit, OnDestroy {
       .subscribe(maxLimit => {
         this.selectedEmployeeMaxLoan = maxLimit;
       });
+
+    // 3. Set selected employee salary type and form default
+    const employee = this.employees.find(e => e.id === empId);
+    if (employee) {
+      const ds = this.designationSalaries.find(d => d.designationName === employee.designation && d.isActive);
+      const salType = ds ? ds.salaryType : 'MONTHLY';
+      this.selectedEmployeeSalaryType = salType;
+      this.loanForm.patchValue({ installmentType: salType }, { emitEvent: false });
+    } else {
+      this.selectedEmployeeSalaryType = 'MONTHLY';
+      this.loanForm.patchValue({ installmentType: 'MONTHLY' }, { emitEvent: false });
+    }
   }
 
   private resetEmployeeState(): void {
     this.selectedEmployeeBalance = 0;
     this.hasActiveLoanWarning = false;
     this.selectedEmployeeMaxLoan = 0;
+    this.selectedEmployeeSalaryType = '';
   }
 
   private loadInitialData(): void {
@@ -124,11 +145,13 @@ export class LoanComponent implements OnInit, OnDestroy {
     // Use forkJoin to load data in parallel
     forkJoin({
       employees: this.employeeService.getAllEmployees(),
-      loans: this.loanService.getAllLoans()
+      loans: this.loanService.getAllLoans(),
+      designations: this.designationSalaryService.getAll()
     }).pipe(takeUntil(this.destroy$)).subscribe({
       next: (res) => {
         this.employees = res.employees.filter(e => e.isActive);
         this.loans = res.loans;
+        this.designationSalaries = res.designations || [];
         this.updateDashboardMetrics();
         this.loading = false;
       },
@@ -238,13 +261,14 @@ export class LoanComponent implements OnInit, OnDestroy {
 
   private createDeductionRule(loanId: number, amount: number, date: string): void {
     const issueDate = new Date(date);
+    const instType = this.loanForm.get('installmentType')?.value || 'MONTHLY';
     const ruleDto: LoanDeductionRuleDTO = {
       loanId: loanId,
       deductionAmount: amount,
       startMonth: issueDate.getMonth() + 1,
       startYear: issueDate.getFullYear(),
       isActive: true,
-      remarks: `Automated recovery rule for Loan #${loanId}`
+      remarks: `[${instType}] Automated recovery rule for Loan #${loanId}`
     };
 
     this.loanService.createRule(ruleDto).subscribe({
@@ -259,7 +283,8 @@ export class LoanComponent implements OnInit, OnDestroy {
   private resetWorkflow(): void {
     this.loanForm.reset({
       issuedDate: new Date().toISOString().split('T')[0],
-      installments: 12
+      installments: 12,
+      installmentType: 'MONTHLY'
     });
     this.loadLoans();
   }
