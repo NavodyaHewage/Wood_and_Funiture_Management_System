@@ -21,7 +21,7 @@ export class Register {
     username: '',
     password: '',
     confirmPassword: '',
-    role: 'ADMIN',
+    role: 'EMPLOYEE',
     email: '',
     mobile: '',
     address: '',

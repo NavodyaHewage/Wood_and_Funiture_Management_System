@@ -28,6 +28,8 @@ public class GrnResponseDTO {
     // Supply Order Details
     private Integer supplyOrderId;
     private String supplyOrderInvoiceNumber;
+    private BigDecimal transportCost;
+    private BigDecimal cuttingFee;
     
     private LocalDateTime createdAt;
     private List<GrnDetailResponseDTO> grnDetails;

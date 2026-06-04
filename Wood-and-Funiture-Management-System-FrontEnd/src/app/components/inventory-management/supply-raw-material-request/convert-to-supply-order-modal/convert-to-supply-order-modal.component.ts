@@ -57,7 +57,9 @@ export class ConvertToOrderModalComponent implements OnInit, OnChanges {
   }
 
   loadEmployees() {
-    this.employeeService.getAllEmployees().subscribe(res => this.employees = res);
+    this.employeeService.getAllEmployees().subscribe(res => {
+      this.employees = res.filter((e: any) => e.designation && e.designation.trim() !== '');
+    });
   }
 
   loadRawMaterials() {

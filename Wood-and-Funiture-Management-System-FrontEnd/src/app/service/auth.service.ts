@@ -189,10 +189,10 @@ export class AuthService {
     }
 
     /**
-     * Change password using username and old password (public access)
+     * Change password using username and old password, with email and phone verification (public access)
      */
-    changePassword(username: string, oldPassword: string, newPassword: string): Observable<MessageResponse> {
-        return this.http.patch<MessageResponse>(`${environment.apiUrl}/users/change-password`, { username, oldPassword, newPassword });
+    changePassword(username: string, oldPassword: string, newPassword: string, email: string, phoneNumber: string): Observable<MessageResponse> {
+        return this.http.patch<MessageResponse>(`${environment.apiUrl}/users/change-password`, { username, oldPassword, newPassword, email, phoneNumber });
     }
 
     /**

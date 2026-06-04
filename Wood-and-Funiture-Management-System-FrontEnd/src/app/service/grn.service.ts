@@ -27,6 +27,8 @@ export interface GrnResponseDTO {
   supplierEmail: string;
   supplyOrderId: number;
   supplyOrderInvoiceNumber: string;
+  transportCost?: number;
+  cuttingFee?: number;
   date: string;
   totalAmount: number;
   remarks: string;

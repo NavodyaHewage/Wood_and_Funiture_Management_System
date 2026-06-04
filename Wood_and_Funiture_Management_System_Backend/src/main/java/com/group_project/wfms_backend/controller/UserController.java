@@ -178,13 +178,15 @@ public class UserController {
             String username = request.get("username");
             String oldPassword = request.get("oldPassword");
             String newPassword = request.get("newPassword");
+            String email = request.get("email");
+            String phoneNumber = request.get("phoneNumber");
 
-            if (username == null || oldPassword == null || newPassword == null) {
+            if (username == null || oldPassword == null || newPassword == null || email == null || phoneNumber == null) {
                 return ResponseEntity.badRequest()
-                        .body(new MessageResponse("Username, old password and new password are required"));
+                        .body(new MessageResponse("Username, old password, new password, email, and phone number are required"));
             }
 
-            MessageResponse response = userService.changePassword(username, oldPassword, newPassword);
+            MessageResponse response = userService.changePassword(username, oldPassword, newPassword, email, phoneNumber);
             return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {

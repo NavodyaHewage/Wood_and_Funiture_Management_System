@@ -76,7 +76,9 @@ export class SupplyRawMaterialComponent implements OnInit {
         }
       }
     });
-    this.employeeService.getAllEmployees().subscribe((res: any[]) => this.employees = res);
+    this.employeeService.getAllEmployees().subscribe((res: any[]) => {
+      this.employees = res.filter((e: any) => e.designation && e.designation.trim() !== '');
+    });
   }
 
   get supplyDetails(): FormArray {

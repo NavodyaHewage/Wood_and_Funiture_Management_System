@@ -102,32 +102,28 @@ public class SupplyRawMaterialService {
         boolean isTreeSeller = "Tree Seller".equalsIgnoreCase(supplier.getSupCat());
         BigDecimal netAmount = grossTotal;
 
-        if (isTreeSeller) {
-            BigDecimal transport = request.getTransport() != null ? request.getTransport() : BigDecimal.ZERO;
-            BigDecimal cuttingFee = request.getCuttingFee() != null ? request.getCuttingFee() : BigDecimal.ZERO;
+        BigDecimal transport = request.getTransport() != null ? request.getTransport() : BigDecimal.ZERO;
+        BigDecimal cuttingFee = request.getCuttingFee() != null ? request.getCuttingFee() : BigDecimal.ZERO;
+        
+        supply.setTransport(transport);
+        supply.setCuttingFee(cuttingFee);
+        netAmount = grossTotal.subtract(transport).subtract(cuttingFee);
+        
+        if (cuttingFee.compareTo(BigDecimal.ZERO) > 0 && request.getCuttingFeeEmployeeId() != null) {
+            Employee employee = employeeRepository.findById(request.getCuttingFeeEmployeeId())
+                    .orElseThrow(() -> new EntityNotFoundException("Employee for cutting fee not found with id: " + request.getCuttingFeeEmployeeId()));
             
-            supply.setTransport(transport);
-            supply.setCuttingFee(cuttingFee);
-            netAmount = grossTotal.subtract(transport).subtract(cuttingFee);
+            RawMaterialCuttingFee cf = new RawMaterialCuttingFee();
+            cf.setSupplyRawMaterial(supply);
+            cf.setEmployee(employee);
+            cf.setFee(cuttingFee);
+            cf.setDate(request.getSupplyDate());
+            cf.setRemarks("Auto-generated from Supply: " + request.getInvoiceNumber());
             
-            if (cuttingFee.compareTo(BigDecimal.ZERO) > 0 && request.getCuttingFeeEmployeeId() != null) {
-                Employee employee = employeeRepository.findById(request.getCuttingFeeEmployeeId())
-                        .orElseThrow(() -> new EntityNotFoundException("Employee for cutting fee not found with id: " + request.getCuttingFeeEmployeeId()));
-                
-                RawMaterialCuttingFee cf = new RawMaterialCuttingFee();
-                cf.setSupplyRawMaterial(supply);
-                cf.setEmployee(employee);
-                cf.setFee(cuttingFee);
-                cf.setDate(request.getSupplyDate());
-                cf.setRemarks("Auto-generated from Supply: " + request.getInvoiceNumber());
-                
-                if (supply.getCuttingFees() == null) {
-                    supply.setCuttingFees(new java.util.ArrayList<>());
-                }
-                supply.getCuttingFees().add(cf);
+            if (supply.getCuttingFees() == null) {
+                supply.setCuttingFees(new java.util.ArrayList<>());
             }
-        } else {
-            supply.setTransport(BigDecimal.ZERO);
+            supply.getCuttingFees().add(cf);
         }
 
         SupplyRawMaterial savedSupply = supplyRawMaterialRepository.save(supply);
