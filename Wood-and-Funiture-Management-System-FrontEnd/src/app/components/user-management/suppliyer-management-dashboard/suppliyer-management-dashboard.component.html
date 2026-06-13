@@ -6,12 +6,12 @@
 
         <div class="content-body">
             <div class="welcome-section">
-                <h1>Welcome Back, {{ currentUser?.username }}</h1>
-                <p>Sachintha Timber Mall &mdash; Supplier Partner Portal</p>
+                <h1>{{ 'SUPPLIER_DASHBOARD.WELCOME' | translate }} {{ currentUser?.username }}</h1>
+                <p>{{ 'SUPPLIER_DASHBOARD.SUBTITLE' | translate }}</p>
             </div>
 
             <div class="menu-group-section">
-                <h2 class="category-heading">SUPPLIER WORKSPACE</h2>
+                <h2 class="category-heading">{{ 'SUPPLIER_DASHBOARD.WORKSPACE' | translate }}</h2>
 
                 <div class="actions-grid">
                     <div class="action-card-premium" *ngFor="let card of supplierCards" [routerLink]="card.route">
@@ -24,12 +24,12 @@
                         </div>
 
                         <div class="card-body-content">
-                            <h3>{{ card.name }}</h3>
-                            <p>{{ card.description }}</p>
+                            <h3>{{ card.name | translate }}</h3>
+                            <p>{{ card.description | translate }}</p>
                         </div>
 
                         <div class="card-footer-action">
-                            <span>Access Module</span>
+                            <span>{{ 'SUPPLIER_DASHBOARD.ACCESS_MODULE' | translate }}</span>
                             <i class="bi bi-arrow-right-short"></i>
                         </div>
                     </div>

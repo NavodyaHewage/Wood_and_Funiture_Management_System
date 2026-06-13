@@ -10,8 +10,8 @@
         <!-- Dashboard Body -->
         <div class="content-body">
             <div class="welcome-section">
-                <h1>Welcome Back, {{ currentUser?.username }}</h1>
-                <p>Sachintha Timber Mall &mdash; Employee Operations Portal</p>
+                <h1>{{ 'EMPLOYEE_DASHBOARD.WELCOME' | translate }} {{ currentUser?.username }}</h1>
+                <p>{{ 'EMPLOYEE_DASHBOARD.SUBTITLE' | translate }}</p>
             </div>
 
             <!-- If employee has NO permissions assigned -->
@@ -19,15 +19,15 @@
                 <div class="icon-warning-shield">
                     <i class="bi bi-shield-slash-fill"></i>
                 </div>
-                <h3>No Permissions Assigned</h3>
-                <p>Your user account currently has no active permissions for system modules.</p>
-                <small class="text-muted">Please contact the Administrator to request access to the necessary functions.</small>
+                <h3>{{ 'EMPLOYEE_DASHBOARD.NO_PERMISSIONS_TITLE' | translate }}</h3>
+                <p>{{ 'EMPLOYEE_DASHBOARD.NO_PERMISSIONS_DESC1' | translate }}</p>
+                <small class="text-muted">{{ 'EMPLOYEE_DASHBOARD.NO_PERMISSIONS_DESC2' | translate }}</small>
             </div>
 
             <!-- Permitted Cards Categorized Beautifully -->
             <div class="grouped-sections" *ngIf="allowedCards.length > 0">
                 <div class="menu-group-section" *ngFor="let category of getGroupKeys(getGroupedCards())">
-                    <h2 class="category-heading">{{ category }}</h2>
+                    <h2 class="category-heading">{{ category | translate }}</h2>
                     
                     <div class="actions-grid">
                         <div class="action-card-premium" *ngFor="let card of getGroupedCards()[category]" [routerLink]="card.route">
@@ -40,12 +40,12 @@
                             </div>
                             
                             <div class="card-body-content">
-                                <h3>{{ card.name }}</h3>
-                                <p>{{ card.description }}</p>
+                                <h3>{{ card.name | translate }}</h3>
+                                <p>{{ card.description | translate }}</p>
                             </div>
                             
                             <div class="card-footer-action">
-                                <span>Access Module</span>
+                                <span>{{ 'EMPLOYEE_DASHBOARD.ACCESS_MODULE' | translate }}</span>
                                 <i class="bi bi-arrow-right-short"></i>
                             </div>
                         </div>

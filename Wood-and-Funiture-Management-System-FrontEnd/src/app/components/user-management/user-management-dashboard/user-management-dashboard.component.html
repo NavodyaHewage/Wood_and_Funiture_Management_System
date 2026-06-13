@@ -7,26 +7,26 @@
         <div class="content-body">
             <div class="header-section">
                 <div class="title-group">
-                    <h1>User Management</h1>
-                    <p>Manage system users, roles, and access status</p>
+                    <h1>{{ 'USER_MANAGEMENT_DASHBOARD.TITLE' | translate }}</h1>
+                    <p>{{ 'USER_MANAGEMENT_DASHBOARD.SUBTITLE' | translate }}</p>
                 </div>
                 <button class="btn-primary" (click)="onAddUser()">
                     <i class="bi bi-person-plus-fill"></i>
-                    Add New User
+                    {{ 'USER_MANAGEMENT_DASHBOARD.ADD_NEW_USER' | translate }}
                 </button>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-label">System Users</div>
+                    <div class="stat-label">{{ 'USER_MANAGEMENT_DASHBOARD.SYSTEM_USERS' | translate }}</div>
                     <div class="stat-value">{{ users.length }}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Active Access</div>
+                    <div class="stat-label">{{ 'USER_MANAGEMENT_DASHBOARD.ACTIVE_ACCESS' | translate }}</div>
                     <div class="stat-value" style="color: #065f46;">{{ getStatusCount(true) }}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Restricted/Deactivated</div>
+                    <div class="stat-label">{{ 'USER_MANAGEMENT_DASHBOARD.RESTRICTED' | translate }}</div>
                     <div class="stat-value" style="color: #991b1b;">{{ getStatusCount(false) }}</div>
                 </div>
             </div>
@@ -35,13 +35,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>#ID</th>
-                            <th>User Info</th>
-                            <th>NIC</th>
-                            <th>Role</th>
-                            <th>Status</th>
-                            <th>Last Login</th>
-                            <th class="text-center">Actions</th>
+                            <th>{{ 'USER_MANAGEMENT_DASHBOARD.TH_ID' | translate }}</th>
+                            <th>{{ 'USER_MANAGEMENT_DASHBOARD.TH_USER_INFO' | translate }}</th>
+                            <th>{{ 'USER_MANAGEMENT_DASHBOARD.TH_NIC' | translate }}</th>
+                            <th>{{ 'USER_MANAGEMENT_DASHBOARD.TH_ROLE' | translate }}</th>
+                            <th>{{ 'USER_MANAGEMENT_DASHBOARD.TH_STATUS' | translate }}</th>
+                            <th>{{ 'USER_MANAGEMENT_DASHBOARD.TH_LAST_LOGIN' | translate }}</th>
+                            <th class="text-center">{{ 'USER_MANAGEMENT_DASHBOARD.TH_ACTIONS' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,16 +65,16 @@
                                 <select class="role-select" [value]="user.role"
                                     [disabled]="user.role === 'SUPPLIER' || user.role === 'ADMIN'"
                                     (change)="onUpdateRole(user, $any($event.target).value)">
-                                    <option value="ADMIN">Admin</option>
-                                    <option value="EMPLOYEE">Employee</option>
+                                    <option value="ADMIN">{{ 'USER_MANAGEMENT_DASHBOARD.ROLE_ADMIN' | translate }}</option>
+                                    <option value="EMPLOYEE">{{ 'USER_MANAGEMENT_DASHBOARD.ROLE_EMPLOYEE' | translate }}</option>
                                 </select>
                             </td>
                             <td>
                                 <span class="badge" [ngClass]="user.isActive ? 'badge-approved' : 'badge-rejected'">
-                                    {{ user.isActive ? 'Active' : 'Inactive' }}
+                                    {{ user.isActive ? ('USER_MANAGEMENT_DASHBOARD.ACTIVE' | translate) : ('USER_MANAGEMENT_DASHBOARD.INACTIVE' | translate) }}
                                 </span>
                             </td>
-                            <td>{{ user.lastLogin ? (user.lastLogin | date:'MMM d, y, h:mm a') : 'Never' }}</td>
+                            <td>{{ user.lastLogin ? (user.lastLogin | date:'MMM d, y, h:mm a') : ('USER_MANAGEMENT_DASHBOARD.NEVER' | translate) }}</td>
                             <td class="text-center">
                                 <div class="action-btns">
                                     <button class="btn-icon text-indigo" title="Manage Permissions"
@@ -115,8 +115,8 @@
                 <p>{{ modalMessage }}</p>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" (click)="closeModal()">Cancel</button>
-                <button class="btn-primary" (click)="confirmAction()">Confirm</button>
+                <button class="btn-secondary" (click)="closeModal()">{{ 'USER_MANAGEMENT_DASHBOARD.CANCEL' | translate }}</button>
+                <button class="btn-primary" (click)="confirmAction()">{{ 'USER_MANAGEMENT_DASHBOARD.CONFIRM' | translate }}</button>
             </div>
         </div>
     </div>
@@ -128,8 +128,8 @@
                 <div class="modal-header-title">
                     <i class="bi bi-shield-lock-fill icon-accent"></i>
                     <div>
-                        <h3>Manage Employee Privileges</h3>
-                        <p>Configure function access for <strong>{{ selectedEmployee?.username }}</strong></p>
+                        <h3>{{ 'USER_MANAGEMENT_DASHBOARD.MANAGE_PRIVILEGES' | translate }}</h3>
+                        <p>{{ 'USER_MANAGEMENT_DASHBOARD.CONFIGURE_ACCESS' | translate }} <strong>{{ selectedEmployee?.username }}</strong></p>
                     </div>
                 </div>
                 <button class="btn-close-modal" (click)="closePermissionModal()">
@@ -153,9 +153,9 @@
             </div>
             
             <div class="modal-footer">
-                <button class="btn-secondary" (click)="closePermissionModal()">Cancel</button>
+                <button class="btn-secondary" (click)="closePermissionModal()">{{ 'USER_MANAGEMENT_DASHBOARD.CANCEL' | translate }}</button>
                 <button class="btn-primary btn-save-permissions" (click)="savePermissions()">
-                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> Save Changes
+                    <i class="bi bi-cloud-arrow-up-fill me-1"></i> {{ 'USER_MANAGEMENT_DASHBOARD.SAVE_CHANGES' | translate }}
                 </button>
             </div>
         </div>

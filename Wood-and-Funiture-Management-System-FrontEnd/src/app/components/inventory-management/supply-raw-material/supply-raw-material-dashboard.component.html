@@ -9,16 +9,16 @@
         <!-- Header -->
         <div class="header-section">
           <div class="title-group">
-            <h1>Log Management</h1>
-            <p>View and manage all recorded raw material supply orders</p>
+            <h1>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TITLE' | translate }}</h1>
+            <p>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.SUBTITLE' | translate }}</p>
           </div>
           <div class="header-actions">
             <div class="search-box-premium">
               <i class="bi bi-search"></i>
-              <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Search by Supplier or Invoice...">
+              <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" [placeholder]="'SUPPLY_RAW_MATERIAL_DASHBOARD.SEARCH_PLACEHOLDER' | translate">
             </div>
             <button class="btn-primary" (click)="navigateToAdd()">
-              <i class="bi bi-plus-lg"></i> New Supply Order
+              <i class="bi bi-plus-lg"></i> {{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.NEW_ORDER' | translate }}
             </button>
           </div>
         </div>
@@ -26,15 +26,15 @@
         <!-- Stats Section -->
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-label">Total Supply Orders</div>
+            <div class="stat-label">{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TOTAL_ORDERS' | translate }}</div>
             <div class="stat-value">{{ supplies.length }}</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Total Material (CFT)</div>
+            <div class="stat-label">{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TOTAL_MATERIAL' | translate }}</div>
             <div class="stat-value" style="color: #389e0d;">{{ totalCft | number:'1.2-2' }}</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Gross Expenditure</div>
+            <div class="stat-label">{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.GROSS_EXPENDITURE' | translate }}</div>
             <div class="stat-value" style="color: #C05800;">Rs. {{ totalGross | number:'1.0-0' }}</div>
           </div>
         </div>
@@ -43,21 +43,21 @@
         <div class="table-container">
           <div *ngIf="loading" class="text-center py-5">
             <div class="spinner-border text-primary" role="status"></div>
-            <p class="mt-2">Loading supply records...</p>
+            <p class="mt-2">{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.LOADING' | translate }}</p>
           </div>
 
           <table *ngIf="!loading">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Invoice #</th>
-                <th>Supplier</th>
-                <th>Date</th>
-                <th>Wood Type</th>
-                <th>Total CFT</th>
-                <th>Net Amount</th>
-                <th>GRN Status</th>
-                <th class="text-center">Actions</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_ID' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_INVOICE' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_SUPPLIER' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_DATE' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_WOOD_TYPE' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_TOTAL_CFT' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_NET_AMOUNT' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_GRN_STATUS' | translate }}</th>
+                <th class="text-center">{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_ACTIONS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -71,7 +71,7 @@
                 <td class="line-total">Rs. {{ supply.netAmount | number:'1.2-2' }}</td>
                 <td>
                   <span class="badge" [ngClass]="supply.grnId ? 'badge-approved' : 'badge-pending'">
-                    {{ supply.grnId ? 'GRN CREATED' : 'PENDING' }}
+                    {{ supply.grnId ? ('SUPPLY_RAW_MATERIAL_DASHBOARD.GRN_CREATED' | translate) : ('SUPPLY_RAW_MATERIAL_DASHBOARD.PENDING' | translate) }}
                   </span>
                 </td>
                 <td class="text-center">
@@ -88,7 +88,7 @@
               <tr *ngIf="supplies.length === 0 && !loading">
                 <td colspan="9" class="text-center py-5">
                   <i class="bi bi-inbox fs-1 text-muted"></i>
-                  <p class="text-muted mt-2">No supply orders recorded yet.</p>
+                  <p class="text-muted mt-2">{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.NO_RECORDS' | translate }}</p>
                 </td>
               </tr>
             </tbody>
@@ -97,15 +97,15 @@
           <!-- Pagination Controls -->
           <div class="pagination-footer" *ngIf="filteredSupplies.length > pageSize">
             <div class="pagination-info">
-              Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, filteredSupplies.length) }} of {{ filteredSupplies.length }}
+              {{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.SHOWING' | translate }} {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, filteredSupplies.length) }} {{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.OF' | translate }} {{ filteredSupplies.length }}
             </div>
             <div class="pagination-btns">
               <button class="btn-secondary" (click)="prevPage()" [disabled]="currentPage === 1">
-                <i class="bi bi-chevron-left"></i> Previous
+                <i class="bi bi-chevron-left"></i> {{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.PREVIOUS' | translate }}
               </button>
-              <span class="page-number">Page {{ currentPage }} of {{ totalPages }}</span>
+              <span class="page-number">{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.PAGE' | translate }} {{ currentPage }} {{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.OF' | translate }} {{ totalPages }}</span>
               <button class="btn-secondary" (click)="nextPage()" [disabled]="currentPage === totalPages">
-                Next <i class="bi bi-chevron-right"></i>
+                {{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.NEXT' | translate }} <i class="bi bi-chevron-right"></i>
               </button>
             </div>
           </div>
@@ -119,43 +119,43 @@
     <div class="modal-content">
       <div class="header-section mb-4">
         <div class="title-group">
-          <h2>Supply Details</h2>
-          <p>Invoice: <span class="fw-bold">{{ selectedSupply?.invoiceNumber }}</span></p>
+          <h2>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.DETAILS_TITLE' | translate }}</h2>
+          <p>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.INVOICE' | translate }} <span class="fw-bold">{{ selectedSupply?.invoiceNumber }}</span></p>
         </div>
         <button class="btn-icon" (click)="closeDetailsModal()"><i class="bi bi-x-lg"></i></button>
       </div>
 
       <div class="form-grid">
         <div class="form-group">
-          <label>Supplier</label>
+          <label>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_SUPPLIER' | translate }}</label>
           <div class="form-control" style="background: #fdfce8;">{{ selectedSupply?.supplierName }}</div>
         </div>
         <div class="form-group">
-          <label>Date</label>
+          <label>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_DATE' | translate }}</label>
           <div class="form-control" style="background: #fdfce8;">{{ selectedSupply?.supplyDate | date:'fullDate' }}</div>
         </div>
         <div class="form-group">
-          <label>Wood Type (Main)</label>
+          <label>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.WOOD_TYPE_MAIN' | translate }}</label>
           <div class="form-control" style="background: #fdfce8;">{{ selectedSupply?.rmName }}</div>
         </div>
         <div class="form-group">
-          <label>Net Amount</label>
+          <label>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TH_NET_AMOUNT' | translate }}</label>
           <div class="form-control" style="background: #fdfce8; color: #C05800; font-weight: 700;">Rs. {{ selectedSupply?.netAmount | number:'1.2-2' }}</div>
         </div>
       </div>
 
       <div class="items-section">
-        <h3>Log Details Breakdown</h3>
+        <h3>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.LOG_BREAKDOWN' | translate }}</h3>
         <div class="items-table-wrapper mt-3">
           <table>
             <thead>
               <tr>
-                <th>Log #</th>
-                <th>L (ft)</th>
-                <th>G (in)</th>
-                <th>Qty (CFT)</th>
-                <th>Price (per CFT)</th>
-                <th>Line Total</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.LOG_NO' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.L_FT' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.G_IN' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.QTY_CFT' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.PRICE_CFT' | translate }}</th>
+                <th>{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.LINE_TOTAL' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -174,15 +174,15 @@
 
       <div class="grand-total-section">
         <div class="grand-total-box">
-          <div class="grand-total-label">Total Material Volume</div>
+          <div class="grand-total-label">{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.TOTAL_MATERIAL_VOL' | translate }}</div>
           <div class="grand-total-value" style="font-size: 1.5rem;">{{ selectedSupply?.totalQuantityCft | number:'1.4-4' }} <small>CFT</small></div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button class="btn-secondary px-4" (click)="closeDetailsModal()">Close</button>
+        <button class="btn-secondary px-4" (click)="closeDetailsModal()">{{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.CLOSE' | translate }}</button>
         <button class="btn-primary px-5" (click)="viewInvoice(selectedSupply?.grnId)" [disabled]="!selectedSupply?.grnId">
-          <i class="bi bi-file-earmark-pdf"></i> View GRN Invoice
+          <i class="bi bi-file-earmark-pdf"></i> {{ 'SUPPLY_RAW_MATERIAL_DASHBOARD.VIEW_GRN' | translate }}
         </button>
       </div>
     </div>

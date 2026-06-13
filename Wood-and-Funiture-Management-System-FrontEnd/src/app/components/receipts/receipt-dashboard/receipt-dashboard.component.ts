@@ -7,11 +7,12 @@ import { ReceiptResponseDTO } from '../../../model/receipt.model';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { ToastService } from '../../../service/toast.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-receipt-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent, TranslatePipe],
   templateUrl: './receipt-dashboard.component.html',
   styleUrls: ['./receipt-dashboard.component.css']
 })

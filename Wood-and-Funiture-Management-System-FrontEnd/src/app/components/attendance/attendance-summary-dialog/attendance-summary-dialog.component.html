@@ -1,6 +1,6 @@
 <div class="summary-container">
   <div class="summary-header">
-    <h2><i class="bi bi-bar-chart-fill me-2"></i> Attendance Analytics</h2>
+    <h2><i class="bi bi-bar-chart-fill me-2"></i> {{ 'ATTENDANCE_MANAGEMENT.ANALYTICS' | translate }}</h2>
     <button class="btn-close btn-close-white" (click)="onClose()"></button>
   </div>
 
@@ -8,13 +8,13 @@
     <!-- Date Selection -->
     <div class="row g-3 mb-4">
       <div class="col-md-6">
-        <label class="admin-label">Analysis Month</label>
+        <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.ANALYSIS_MONTH' | translate }}</label>
         <select class="form-select admin-select" [ngModel]="selectedMonth" (ngModelChange)="onMonthChange($event)">
           <option *ngFor="let m of months; let i = index" [value]="i+1">{{ m }}</option>
         </select>
       </div>
       <div class="col-md-6">
-        <label class="admin-label">Analysis Year</label>
+        <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.ANALYSIS_YEAR' | translate }}</label>
         <select class="form-select admin-select" [ngModel]="selectedYear" (ngModelChange)="onYearChange($event)">
           <option *ngFor="let y of years" [value]="y">{{ y }}</option>
         </select>
@@ -32,25 +32,25 @@
         <div class="col-6 col-md-3">
           <div class="stat-card present">
             <span class="stat-value">{{ summary.presentDays }}</span>
-            <span class="stat-label">Present</span>
+            <span class="stat-label">{{ 'ATTENDANCE_MANAGEMENT.PRESENT' | translate }}</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stat-card absent">
             <span class="stat-value">{{ summary.absentDays }}</span>
-            <span class="stat-label">Absent</span>
+            <span class="stat-label">{{ 'ATTENDANCE_MANAGEMENT.ABSENT' | translate }}</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stat-card half-day">
             <span class="stat-value">{{ summary.halfDays }}</span>
-            <span class="stat-label">Half Day</span>
+            <span class="stat-label">{{ 'ATTENDANCE_MANAGEMENT.HALF_DAY' | translate }}</span>
           </div>
         </div>
         <div class="col-6 col-md-3">
           <div class="stat-card leave">
             <span class="stat-value">{{ summary.leaveDays }}</span>
-            <span class="stat-label">Leave</span>
+            <span class="stat-label">{{ 'ATTENDANCE_MANAGEMENT.LEAVE' | translate }}</span>
           </div>
         </div>
       </div>
@@ -60,26 +60,26 @@
         <div class="col-4">
           <div class="stat-card holiday">
             <span class="stat-value text-info">{{ summary.holidayDays || 0 }}</span>
-            <span class="stat-label">Holidays</span>
+            <span class="stat-label">{{ 'ATTENDANCE_MANAGEMENT.HOLIDAYS' | translate }}</span>
           </div>
         </div>
         <div class="col-4">
           <div class="stat-card weekend">
             <span class="stat-value text-secondary">{{ summary.weekendDays || 0 }}</span>
-            <span class="stat-label">Weekends</span>
+            <span class="stat-label">{{ 'ATTENDANCE_MANAGEMENT.WEEKENDS' | translate }}</span>
           </div>
         </div>
         <div class="col-4">
           <div class="stat-card overtime">
             <span class="stat-value text-warning">{{ (summary.totalOvertimeHours || 0) | number: '1.1-2' }}</span>
-            <span class="stat-label">Total OT Hrs</span>
+            <span class="stat-label">{{ 'ATTENDANCE_MANAGEMENT.TOTAL_OT_HRS' | translate }}</span>
           </div>
         </div>
       </div>
 
       <div class="total-bar mt-4">
         <div class="d-flex justify-content-between align-items-center">
-          <span>Total Working Days</span>
+          <span>{{ 'ATTENDANCE_MANAGEMENT.TOTAL_WORKING_DAYS' | translate }}</span>
           <span class="fw-bold fs-5">{{ summary.totalWorkingDays }}</span>
         </div>
         <div class="progress mt-2" style="height: 8px;">
@@ -90,11 +90,11 @@
 
     <div *ngIf="!summary" class="loading-state">
       <div class="spinner-border text-primary-orange" role="status"></div>
-      <p class="mt-2">Generating Report...</p>
+      <p class="mt-2">{{ 'ATTENDANCE_MANAGEMENT.GENERATING_REPORT' | translate }}</p>
     </div>
   </div>
 
   <div class="p-3 text-end">
-    <button class="btn-admin-secondary" (click)="onClose()">Close Report</button>
+    <button class="btn-admin-secondary" (click)="onClose()">{{ 'ATTENDANCE_MANAGEMENT.CLOSE_REPORT' | translate }}</button>
   </div>
 </div>

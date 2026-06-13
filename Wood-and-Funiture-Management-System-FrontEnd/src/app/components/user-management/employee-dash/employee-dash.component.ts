@@ -5,6 +5,7 @@ import { AuthService } from '../../../service/auth.service';
 import { PermissionService } from '../../../service/permission.service';
 import { AdminSideComponent } from '../admin-side/admin-side.component';
 import { HeaderComponent } from '../../header/header.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 export interface DashboardCard {
   id: string;
@@ -18,7 +19,7 @@ export interface DashboardCard {
 @Component({
   selector: 'app-employee-dash',
   standalone: true,
-  imports: [CommonModule, RouterLink, AdminSideComponent, HeaderComponent],
+  imports: [CommonModule, RouterLink, AdminSideComponent, HeaderComponent, TranslatePipe],
   templateUrl: './employee-dash.component.html',
   styleUrls: ['./employee-dash.component.css']
 })
@@ -27,24 +28,24 @@ export class EmployeeDashComponent implements OnInit {
   allowedCards: DashboardCard[] = [];
 
   private allCards: DashboardCard[] = [
-    { id: 'employee-management', name: 'Employees', route: '/employee-management', icon: 'bi-person-badge', description: 'Manage employee details, profiles, and designations.', category: 'USER MANAGEMENT' },
-    { id: 'attendance-management', name: 'Attendance', route: '/attendance-management', icon: 'bi-calendar-check', description: 'Log and track employee daily attendance.', category: 'USER MANAGEMENT' },
-    { id: 'loan-management', name: 'Loans & Advances', route: '/loan-management', icon: 'bi-bank', description: 'Approve and monitor employee loans and advances.', category: 'USER MANAGEMENT' },
-    { id: 'payroll-management', name: 'Payroll Automation', route: '/payroll-management', icon: 'bi-wallet2', description: 'Process payroll, salary, and generate paysheets.', category: 'USER MANAGEMENT' },
-    { id: 'designation-salary', name: 'Designation Rates', route: '/designation-salary', icon: 'bi-currency-exchange', description: 'Set salary rates for different designations.', category: 'USER MANAGEMENT' },
+    { id: 'employee-management', name: 'DASHBOARD_CARDS.EMPLOYEES', route: '/employee-management', icon: 'bi-person-badge', description: 'DASHBOARD_CARDS.EMPLOYEES_DESC', category: 'DASHBOARD_CARDS.CAT_USER_MGMT' },
+    { id: 'attendance-management', name: 'DASHBOARD_CARDS.ATTENDANCE', route: '/attendance-management', icon: 'bi-calendar-check', description: 'DASHBOARD_CARDS.ATTENDANCE_DESC', category: 'DASHBOARD_CARDS.CAT_USER_MGMT' },
+    { id: 'loan-management', name: 'DASHBOARD_CARDS.LOANS', route: '/loan-management', icon: 'bi-bank', description: 'DASHBOARD_CARDS.LOANS_DESC', category: 'DASHBOARD_CARDS.CAT_USER_MGMT' },
+    { id: 'payroll-management', name: 'DASHBOARD_CARDS.PAYROLL', route: '/payroll-management', icon: 'bi-wallet2', description: 'DASHBOARD_CARDS.PAYROLL_DESC', category: 'DASHBOARD_CARDS.CAT_USER_MGMT' },
+    { id: 'designation-salary', name: 'DASHBOARD_CARDS.DESIGNATION', route: '/designation-salary', icon: 'bi-currency-exchange', description: 'DASHBOARD_CARDS.DESIGNATION_DESC', category: 'DASHBOARD_CARDS.CAT_USER_MGMT' },
     
-    { id: 'supplier-management', name: 'Suppliers', route: '/supplier-management', icon: 'bi-truck', description: 'Register and manage raw wood suppliers.', category: 'SUPPLY CHAIN' },
-    { id: 'supply-request-management', name: 'Supply Requests', route: '/supply-request-management', icon: 'bi-clipboard-check', description: 'Create and track timber supply requests.', category: 'SUPPLY CHAIN' },
-    { id: 'log-management', name: 'Log Management', route: '/log-management', icon: 'bi-tree', description: 'Track wood log supply, timber volume, and stock.', category: 'SUPPLY CHAIN' },
-    { id: 'raw-material-cutting', name: 'Material Cutting', route: '/log-management/cutting', icon: 'bi-scissors', description: 'Process wood cutting and output stock.', category: 'SUPPLY CHAIN' },
+    { id: 'supplier-management', name: 'DASHBOARD_CARDS.SUPPLIERS', route: '/supplier-management', icon: 'bi-truck', description: 'DASHBOARD_CARDS.SUPPLIERS_DESC', category: 'DASHBOARD_CARDS.CAT_SUPPLY_CHAIN' },
+    { id: 'supply-request-management', name: 'DASHBOARD_CARDS.SUPPLY_REQUESTS', route: '/supply-request-management', icon: 'bi-clipboard-check', description: 'DASHBOARD_CARDS.SUPPLY_REQUESTS_DESC_EMP', category: 'DASHBOARD_CARDS.CAT_SUPPLY_CHAIN' },
+    { id: 'log-management', name: 'DASHBOARD_CARDS.LOG_MGMT', route: '/log-management', icon: 'bi-tree', description: 'DASHBOARD_CARDS.LOG_MGMT_DESC', category: 'DASHBOARD_CARDS.CAT_SUPPLY_CHAIN' },
+    { id: 'raw-material-cutting', name: 'DASHBOARD_CARDS.MATERIAL_CUTTING', route: '/log-management/cutting', icon: 'bi-scissors', description: 'DASHBOARD_CARDS.MATERIAL_CUTTING_DESC', category: 'DASHBOARD_CARDS.CAT_SUPPLY_CHAIN' },
     
-    { id: 'customer-management', name: 'Customers', route: '/customer-management', icon: 'bi-person-heart', description: 'Manage customer records and details.', category: 'SALES & CUSTOMERS' },
-    { id: 'quotation-management', name: 'Quotations', route: '/quotation-management', icon: 'bi-file-earmark-text', description: 'Create and send quotes to customers.', category: 'SALES & CUSTOMERS' },
-    { id: 'order-management', name: 'Orders', route: '/order-management', icon: 'bi-cart', description: 'Manage furniture production orders.', category: 'SALES & CUSTOMERS' },
-    { id: 'receipts', name: 'Receipts', route: '/receipts', icon: 'bi-receipt-cutoff', description: 'Manage customer receipts and incoming payments.', category: 'SALES & CUSTOMERS' },
+    { id: 'customer-management', name: 'DASHBOARD_CARDS.CUSTOMERS', route: '/customer-management', icon: 'bi-person-heart', description: 'DASHBOARD_CARDS.CUSTOMERS_DESC', category: 'DASHBOARD_CARDS.CAT_SALES_CUSTOMERS' },
+    { id: 'quotation-management', name: 'DASHBOARD_CARDS.QUOTATIONS', route: '/quotation-management', icon: 'bi-file-earmark-text', description: 'DASHBOARD_CARDS.QUOTATIONS_DESC', category: 'DASHBOARD_CARDS.CAT_SALES_CUSTOMERS' },
+    { id: 'order-management', name: 'DASHBOARD_CARDS.ORDERS', route: '/order-management', icon: 'bi-cart', description: 'DASHBOARD_CARDS.ORDERS_DESC', category: 'DASHBOARD_CARDS.CAT_SALES_CUSTOMERS' },
+    { id: 'receipts', name: 'DASHBOARD_CARDS.RECEIPTS', route: '/receipts', icon: 'bi-receipt-cutoff', description: 'DASHBOARD_CARDS.RECEIPTS_DESC', category: 'DASHBOARD_CARDS.CAT_SALES_CUSTOMERS' },
     
-    { id: 'expenses', name: 'Expenses', route: '/expenses', icon: 'bi-credit-card', description: 'Track production, operational, and general expenses.', category: 'FINANCIALS' },
-    { id: 'product-category', name: 'Product Category', route: '/product-category', icon: 'bi-tags', description: 'Manage furniture categories and wood types.', category: 'INVENTORY' }
+    { id: 'expenses', name: 'DASHBOARD_CARDS.EXPENSES', route: '/expenses', icon: 'bi-credit-card', description: 'DASHBOARD_CARDS.EXPENSES_DESC', category: 'DASHBOARD_CARDS.CAT_FINANCIALS' },
+    { id: 'product-category', name: 'DASHBOARD_CARDS.PRODUCT_CATEGORY', route: '/product-category', icon: 'bi-tags', description: 'DASHBOARD_CARDS.PRODUCT_CATEGORY_DESC', category: 'DASHBOARD_CARDS.CAT_INVENTORY' }
   ];
 
   constructor(

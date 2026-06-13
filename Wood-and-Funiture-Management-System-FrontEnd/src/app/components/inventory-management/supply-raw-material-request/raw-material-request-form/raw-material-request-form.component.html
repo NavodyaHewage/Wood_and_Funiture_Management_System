@@ -1,16 +1,16 @@
 <div class="modal-overlay" *ngIf="show" (click)="close()">
   <div class="modal-box large" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h5>Create New Supply Request</h5>
+      <h5>{{ 'SUPPLY_REQUEST_MANAGEMENT.CREATE_TITLE' | translate }}</h5>
       <button class="modal-close" (click)="close()"><i class="bi bi-x-lg"></i></button>
     </div>
 
     <div class="modal-body">
       <div class="form-grid">
         <div class="form-group">
-          <label>Supplier</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.SUPPLIER' | translate }}</label>
           <select [(ngModel)]="newRequest.supplierId">
-            <option [ngValue]="null">Select Supplier</option>
+            <option [ngValue]="null">{{ 'SUPPLY_REQUEST_MANAGEMENT.SELECT_SUPPLIER' | translate }}</option>
             <option *ngFor="let s of suppliers" [ngValue]="s.supId">{{s.supName}}</option>
           </select>
         </div>
@@ -18,24 +18,24 @@
           <div class="form-check">
             <input class="form-check-input" type="checkbox" id="transportBySupplier" [(ngModel)]="newRequest.transportBySupplier">
             <label class="form-check-label ms-2" for="transportBySupplier">
-              Transport by Supplier
+              {{ 'SUPPLY_REQUEST_MANAGEMENT.TRANSPORT_SUPPLIER' | translate }}
             </label>
           </div>
         </div>
         <div class="form-group col-span-2" *ngIf="newRequest.transportBySupplier">
-          <label>Transport Notes</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.TRANSPORT_NOTES' | translate }}</label>
           <input type="text" [(ngModel)]="newRequest.transportNotes" placeholder="Delivery instructions, vehicle info, etc." />
         </div>
         <div class="form-group col-span-2">
-          <label>Remarks</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.REMARKS' | translate }}</label>
           <input type="text" [(ngModel)]="newRequest.remarks" placeholder="General notes for this request" />
         </div>
       </div>
 
       <div class="section-title">
-        <span>Requested Materials</span>
+        <span>{{ 'SUPPLY_REQUEST_MANAGEMENT.REQUESTED_MATERIALS' | translate }}</span>
         <button class="btn-add-row" (click)="addDetail()">
-          <i class="bi bi-plus"></i> Add Material
+          <i class="bi bi-plus"></i> {{ 'SUPPLY_REQUEST_MANAGEMENT.ADD_MATERIAL' | translate }}
         </button>
       </div>
 
@@ -43,9 +43,9 @@
         <table class="details-table">
           <thead>
             <tr>
-              <th>Material</th>
-              <th>Requested CFT</th>
-              <th>Remarks</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.MATERIAL' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.REQUESTED_CFT' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.REMARKS' | translate }}</th>
               <th></th>
             </tr>
           </thead>
@@ -53,7 +53,7 @@
             <tr *ngFor="let d of newRequest.details; let i = index">
               <td>
                 <select [(ngModel)]="d.rmId">
-                  <option [ngValue]="null">Select Material</option>
+                  <option [ngValue]="null">{{ 'SUPPLY_REQUEST_MANAGEMENT.MATERIAL' | translate }}</option>
                   <option *ngFor="let rm of rawMaterials" [ngValue]="rm.rmId">{{rm.rmName}}</option>
                 </select>
               </td>
@@ -75,8 +75,8 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn-cancel" (click)="close()">Cancel</button>
-      <button class="btn-submit" (click)="saveRequest()">Send Request</button>
+      <button class="btn-cancel" (click)="close()">{{ 'SUPPLY_REQUEST_MANAGEMENT.CANCEL' | translate }}</button>
+      <button class="btn-submit" (click)="saveRequest()">{{ 'SUPPLY_REQUEST_MANAGEMENT.SEND_REQUEST' | translate }}</button>
     </div>
   </div>
 </div>

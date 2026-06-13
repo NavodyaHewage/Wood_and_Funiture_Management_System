@@ -19,7 +19,7 @@
                                 <i class="bi bi-box-seam-fill"></i>
                                 {{ 'SIDEBAR.Stock Inventory' | translate }}
                             </h3>
-                            <p class="text-white-50 small m-0 mt-1">Real-time overview of current material categories and available stock volumes</p>
+                            <p class="text-white-50 small m-0 mt-1">{{ 'PRODUCT_STOCK.SUBTITLE' | translate }}</p>
                         </div>
                     </div>
                 </div>
@@ -36,7 +36,7 @@
                         </div>
                         <button class="btn btn-premium-secondary d-flex align-items-center gap-2" (click)="loadProductStock()" [disabled]="loading">
                             <i class="bi" [class.bi-arrow-clockwise]="!loading" [class.spinner-border]="loading" [class.spinner-border-sm]="loading"></i>
-                            Refresh
+                            {{ 'PRODUCT_STOCK.REFRESH' | translate }}
                         </button>
                     </div>
                 </div>
@@ -47,26 +47,26 @@
                         <table class="table premium-table m-0">
                             <thead>
                                 <tr>
-                                    <th>Stock ID</th>
-                                    <th>Material Category</th>
-                                    <th>Description</th>
-                                    <th>Unit of Measurement</th>
-                                    <th class="text-end">Unit Price</th>
-                                    <th class="text-end">Available Qty</th>
+                                    <th>{{ 'PRODUCT_STOCK.TH_STOCK_ID' | translate }}</th>
+                                    <th>{{ 'PRODUCT_STOCK.TH_MATERIAL_CATEGORY' | translate }}</th>
+                                    <th>{{ 'PRODUCT_STOCK.TH_DESCRIPTION' | translate }}</th>
+                                    <th>{{ 'PRODUCT_STOCK.TH_UNIT' | translate }}</th>
+                                    <th class="text-end">{{ 'PRODUCT_STOCK.TH_PRICE' | translate }}</th>
+                                    <th class="text-end">{{ 'PRODUCT_STOCK.TH_AVAILABLE_QTY' | translate }}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr *ngIf="loading">
                                     <td colspan="6" class="text-center py-5">
                                         <div class="spinner-border text-primary" role="status">
-                                            <span class="visually-hidden">Loading...</span>
+                                            <span class="visually-hidden">{{ 'PRODUCT_STOCK.LOADING' | translate }}</span>
                                         </div>
                                     </td>
                                 </tr>
                                 <tr *ngIf="!loading && filteredStocks.length === 0">
                                     <td colspan="6" class="text-center py-5 text-muted">
                                         <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-                                        No stock records found matching your search.
+                                        {{ 'PRODUCT_STOCK.NO_RECORDS' | translate }}
                                     </td>
                                 </tr>
                                 <tr *ngFor="let stock of filteredStocks" class="table-row-premium">

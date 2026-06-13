@@ -6,11 +6,12 @@ import { ProductCategoryService } from '../../../service/product-category.servic
 import { ToastService } from '../../../service/toast.service';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-product-category',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent, TranslatePipe],
   templateUrl: './product-category.component.html',
   styleUrls: ['./product-category.component.css']
 })

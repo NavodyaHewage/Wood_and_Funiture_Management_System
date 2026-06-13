@@ -11,12 +11,12 @@
                         <i class="bi bi-person-fill-add"></i>
                     </div>
                     <div>
-                        <h1 class="admin-title">Create System User</h1>
-                        <p class="admin-subtitle">Assign roles and credentials for new staff members</p>
+                        <h1 class="admin-title">{{ 'REGISTER_USER.CREATE_TITLE' | translate }}</h1>
+                        <p class="admin-subtitle">{{ 'REGISTER_USER.CREATE_SUBTITLE' | translate }}</p>
                     </div>
                 </div>
                 <button class="btn btn-wood-outline" routerLink="/user-management">
-                    <i class="bi bi-arrow-left"></i> Back to Directory
+                    <i class="bi bi-arrow-left"></i> {{ 'REGISTER_USER.BACK_TO_DIRECTORY' | translate }}
                 </button>
             </div>
 
@@ -24,7 +24,7 @@
                 <form (ngSubmit)="onRegister()" #registerForm="ngForm" class="admin-form">
                     <!-- User Type Selection -->
                     <div class="form-section-title">
-                        <i class="bi bi-people-fill"></i> Registration Type
+                        <i class="bi bi-people-fill"></i> {{ 'REGISTER_USER.REGISTRATION_TYPE' | translate }}
                     </div>
                     <div class="row g-4 mb-4">
                         <div class="col-md-6 d-flex gap-4">
@@ -32,13 +32,13 @@
                                 <input class="form-check-input" type="radio" name="userType" id="systemUser"
                                     [value]="true" [(ngModel)]="registerData.isSystemUser"
                                     (change)="onUserTypeChange()">
-                                <label class="form-check-label" for="systemUser">System User</label>
+                                <label class="form-check-label" for="systemUser">{{ 'REGISTER_USER.SYSTEM_USER' | translate }}</label>
                             </div>
                             <div class="form-check">
                                 <input class="form-check-input" type="radio" name="userType" id="nonSystemUser"
                                     [value]="false" [(ngModel)]="registerData.isSystemUser"
                                     (change)="onUserTypeChange()">
-                                <label class="form-check-label" for="nonSystemUser">Non-System User</label>
+                                <label class="form-check-label" for="nonSystemUser">{{ 'REGISTER_USER.NON_SYSTEM_USER' | translate }}</label>
                             </div>
                         </div>
                     </div>
@@ -46,24 +46,24 @@
                     <!-- Role / Entity Selection -->
                     <div class="row g-4 mb-5">
                         <div class="col-md-6" *ngIf="registerData.isSystemUser">
-                            <label class="admin-label">User Role</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.USER_ROLE' | translate }}</label>
                             <div class="admin-input-group">
                                 <i class="bi bi-person-badge"></i>
                                 <select name="role" [(ngModel)]="registerData.role" (change)="onRoleChange()" required>
-                                    <option value="EMPLOYEE">Employee</option>
-                                    <option value="SUPPLIER">Supplier</option>
+                                    <option value="EMPLOYEE">{{ 'REGISTER_USER.ROLE_EMPLOYEE' | translate }}</option>
+                                    <option value="SUPPLIER">{{ 'REGISTER_USER.ROLE_SUPPLIER' | translate }}</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-6" *ngIf="!registerData.isSystemUser">
-                            <label class="admin-label">Entity Type</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.ENTITY_TYPE' | translate }}</label>
                             <div class="admin-input-group">
                                 <i class="bi bi-diagram-3-fill"></i>
                                 <select name="entityType" [(ngModel)]="registerData.entityType"
                                     (change)="onEntityTypeChange()" required>
-                                    <option value="EMPLOYEE">Employee</option>
-                                    <option value="SUPPLIER">Supplier</option>
-                                    <option value="CUSTOMER">Customer</option>
+                                    <option value="EMPLOYEE">{{ 'REGISTER_USER.ROLE_EMPLOYEE' | translate }}</option>
+                                    <option value="SUPPLIER">{{ 'REGISTER_USER.ROLE_SUPPLIER' | translate }}</option>
+                                    <option value="CUSTOMER">{{ 'REGISTER_USER.ROLE_CUSTOMER' | translate }}</option>
                                 </select>
                             </div>
                         </div>
@@ -72,11 +72,11 @@
                     <!-- Authentication Details (System Users Only) -->
                     <div *ngIf="registerData.isSystemUser">
                         <div class="form-section-title">
-                            <i class="bi bi-shield-lock-fill"></i> Authentication Details
+                            <i class="bi bi-shield-lock-fill"></i> {{ 'REGISTER_USER.AUTH_DETAILS' | translate }}
                         </div>
                         <div class="row g-4 mb-5">
                             <div class="col-md-4">
-                                <label class="admin-label">Username</label>
+                                <label class="admin-label">{{ 'REGISTER_USER.USERNAME' | translate }}</label>
                                 <div class="admin-input-group">
                                     <i class="bi bi-at"></i>
                                     <input type="text" name="username" [(ngModel)]="registerData.username"
@@ -84,7 +84,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <label class="admin-label">Password</label>
+                                <label class="admin-label">{{ 'REGISTER_USER.PASSWORD' | translate }}</label>
                                 <div class="admin-input-group">
                                     <i class="bi bi-lock-fill"></i>
                                     <input type="password" name="password" [(ngModel)]="registerData.password"
@@ -92,7 +92,7 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <label class="admin-label">Confirm Password</label>
+                                <label class="admin-label">{{ 'REGISTER_USER.CONFIRM_PASSWORD' | translate }}</label>
                                 <div class="admin-input-group">
                                     <i class="bi bi-shield-check"></i>
                                     <input type="password" name="confirmPassword"
@@ -105,33 +105,33 @@
 
                     <!-- Common & Dynamic Fields -->
                     <div class="form-section-title">
-                        <i class="bi bi-person-vcard-fill"></i> Details
+                        <i class="bi bi-person-vcard-fill"></i> {{ 'REGISTER_USER.DETAILS' | translate }}
                     </div>
                     <div class="row g-4 mb-5">
                         <div class="col-md-6">
-                            <label class="admin-label">Full Name / Entity Name</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.FULL_NAME' | translate }}</label>
                             <input type="text" name="fullName" [(ngModel)]="registerData.fullName" required
                                 placeholder="Enter full name" class="admin-control">
                         </div>
                         <div class="col-md-6">
-                            <label class="admin-label">Mobile Number</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.MOBILE' | translate }}</label>
                             <input type="text" name="mobile" [(ngModel)]="registerData.mobile" required
                                 placeholder="e.g. 0771234567" class="admin-control">
                         </div>
                         <div class="col-md-6">
-                            <label class="admin-label">Email Address</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.EMAIL' | translate }}</label>
                             <input type="email" name="email" [(ngModel)]="registerData.email"
                                 placeholder="example@domain.com" class="admin-control">
                         </div>
                         <div class="col-md-6">
-                            <label class="admin-label">Address</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.ADDRESS' | translate }}</label>
                             <input type="text" name="address" [(ngModel)]="registerData.address"
                                 placeholder="Enter residential or business address" class="admin-control">
                         </div>
 
                         <!-- NIC -->
                         <div class="col-md-6">
-                            <label class="admin-label">NIC Number</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.NIC' | translate }}</label>
                             <input type="text" name="nic" [(ngModel)]="registerData.nic" placeholder="Enter NIC number"
                                 class="admin-control">
                         </div>
@@ -139,7 +139,7 @@
                         <!-- Designation (Employee) -->
                         <div class="col-md-6"
                             *ngIf="registerData.entityType === 'EMPLOYEE' && !registerData.isSystemUser">
-                            <label class="admin-label">Designation</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.DESIGNATION' | translate }}</label>
                             <input type="text" name="designation" [(ngModel)]="registerData.designation"
                                 placeholder="e.g. Carpenter" class="admin-control">
                         </div>
@@ -147,7 +147,7 @@
                         <!-- Date Joined -->
                         <div class="col-md-6"
                             *ngIf="registerData.entityType === 'EMPLOYEE' || registerData.role === 'EMPLOYEE' || registerData.role === 'ADMIN'">
-                            <label class="admin-label">Date of Joining</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.DATE_JOINED' | translate }}</label>
                             <input type="date" name="dateJoined" [(ngModel)]="registerData.dateJoined"
                                 class="admin-control">
                         </div>
@@ -155,20 +155,19 @@
                         <!-- Supplier Category (Supplier) -->
                         <div class="col-md-6"
                             *ngIf="registerData.entityType === 'SUPPLIER' || registerData.role === 'SUPPLIER'">
-                            <label class="admin-label">Supplier Category</label>
+                            <label class="admin-label">{{ 'REGISTER_USER.SUPPLIER_CATEGORY' | translate }}</label>
                             <select name="supCat" [(ngModel)]="registerData.supCat" class="admin-control"
                                 [disabled]="registerData.isSystemUser && registerData.role === 'SUPPLIER'">
                                 <option value="Regular"
-                                    *ngIf="registerData.isSystemUser && registerData.role === 'SUPPLIER'">Regular
-                                    (System Access Required)</option>
+                                    *ngIf="registerData.isSystemUser && registerData.role === 'SUPPLIER'">{{ 'REGISTER_USER.SUP_CAT_REGULAR' | translate }}</option>
                                 <option value="Local"
-                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">Local
+                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">{{ 'REGISTER_USER.SUP_CAT_LOCAL' | translate }}
                                 </option>
                                 <option value="International"
                                     *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">
-                                    International</option>
+                                    {{ 'REGISTER_USER.SUP_CAT_INTERNATIONAL' | translate }}</option>
                                 <option value="Specialized"
-                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">Specialized
+                                    *ngIf="!(registerData.isSystemUser && registerData.role === 'SUPPLIER')">{{ 'REGISTER_USER.SUP_CAT_SPECIALIZED' | translate }}
                                 </option>
                             </select>
                         </div>
@@ -179,10 +178,10 @@
                             [disabled]="!registerForm.form.valid || isLoading">
                             <i class="bi bi-check-circle-fill me-2" *ngIf="!isLoading"></i>
                             <span *ngIf="isLoading" class="spinner-border spinner-border-sm me-2"></span>
-                            {{ isLoading ? 'Processing...' : 'Complete Registration' }}
+                            {{ isLoading ? ('REGISTER_USER.BTN_PROCESSING' | translate) : ('REGISTER_USER.BTN_COMPLETE' | translate) }}
                         </button>
                         <button type="button" class="btn btn-admin-secondary" routerLink="/user-management">
-                            Cancel
+                            {{ 'REGISTER_USER.BTN_CANCEL' | translate }}
                         </button>
                     </div>
                 </form>

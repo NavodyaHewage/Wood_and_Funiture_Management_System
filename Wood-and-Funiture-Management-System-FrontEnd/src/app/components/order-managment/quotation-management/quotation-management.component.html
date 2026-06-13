@@ -11,26 +11,26 @@
         <!-- Header -->
         <div class="header-section">
           <div class="title-group">
-            <h1>Quotation Management</h1>
-            <p>Create and manage customer quotations</p>
+            <h1>{{ 'QUOTATION_MANAGEMENT.TITLE' | translate }}</h1>
+            <p>{{ 'QUOTATION_MANAGEMENT.SUBTITLE' | translate }}</p>
           </div>
           <button class="btn-primary" (click)="openCreateModal()">
-            <i class="bi bi-plus-lg"></i> New Quotation
+            <i class="bi bi-plus-lg"></i> {{ 'QUOTATION_MANAGEMENT.NEW_QUOTE' | translate }}
           </button>
         </div>
 
         <!-- Stats -->
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-label">Total Quotations</div>
+            <div class="stat-label">{{ 'QUOTATION_MANAGEMENT.TOTAL_QUOTES' | translate }}</div>
             <div class="stat-value">{{ quotations.length }}</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Pending Approval</div>
+            <div class="stat-label">{{ 'QUOTATION_MANAGEMENT.PENDING_APPROVAL' | translate }}</div>
             <div class="stat-value text-amber-600">{{ getStatusCount('PENDING') }}</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Converted to Orders</div>
+            <div class="stat-label">{{ 'QUOTATION_MANAGEMENT.CONVERTED_ORDERS' | translate }}</div>
             <div class="stat-value text-indigo-600">{{ getStatusCount('CONVERTED') }}</div>
           </div>
         </div>
@@ -40,14 +40,14 @@
           <table>
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Quotation No</th>
-                <th>Customer</th>
-                <th>Date</th>
-                <th>Total Amount</th>
-                <th>Status</th>
-                <th>Expiry Status</th>
-                <th>Actions</th>
+                <th>{{ 'QUOTATION_MANAGEMENT.ID' | translate }}</th>
+                <th>{{ 'QUOTATION_MANAGEMENT.QUOTE_NO' | translate }}</th>
+                <th>{{ 'QUOTATION_MANAGEMENT.CUSTOMER' | translate }}</th>
+                <th>{{ 'QUOTATION_MANAGEMENT.DATE' | translate }}</th>
+                <th>{{ 'QUOTATION_MANAGEMENT.TOTAL_AMOUNT' | translate }}</th>
+                <th>{{ 'QUOTATION_MANAGEMENT.STATUS' | translate }}</th>
+                <th>{{ 'QUOTATION_MANAGEMENT.EXPIRY_STATUS' | translate }}</th>
+                <th>{{ 'QUOTATION_MANAGEMENT.ACTIONS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -55,8 +55,8 @@
                   [class.expired-row]="getExpiryStatus(q) === 'EXPIRED'"
                   [class.expiring-soon-row]="getExpiryStatus(q) === 'EXPIRING_SOON'">
                 <td>#Q-{{ q.quotationId }}</td>
-                <td><span class="fw-bold">{{ q.quotationNumber || 'N/A' }}</span></td>
-                <td>{{ q.customerName || 'Customer #' + q.customerId }}</td>
+                <td><span class="fw-bold">{{ q.quotationNumber || ('QUOTATION_MANAGEMENT.NA' | translate) }}</span></td>
+                <td>{{ q.customerName || ('QUOTATION_MANAGEMENT.CUSTOMER' | translate) + ' #' + q.customerId }}</td>
                 <td>{{ q.quotationDate | date:'mediumDate' }}</td>
                 <td>{{ q.totalAmount | currency:'LKR ':'symbol':'1.2-2' }}</td>
                 <td>
@@ -72,25 +72,25 @@
                 <td class="action-btns">
                   <button class="btn-icon text-green-600" (click)="approveAndConvert(q)" 
                     [disabled]="q.status?.toUpperCase() === 'CONVERTED' || getExpiryStatus(q) === 'EXPIRED'"
-                    [title]="q.status?.toUpperCase() === 'CONVERTED' ? 'Already Converted' : (getExpiryStatus(q) === 'EXPIRED' ? 'Quotation Expired' : 'Approve & Convert')"
+                    [title]="q.status?.toUpperCase() === 'CONVERTED' ? ('QUOTATION_MANAGEMENT.ALREADY_CONVERTED' | translate) : (getExpiryStatus(q) === 'EXPIRED' ? ('QUOTATION_MANAGEMENT.QUOTE_EXPIRED' | translate) : ('QUOTATION_MANAGEMENT.APPROVE_CONVERT' | translate))"
                     *ngIf="['PENDING', 'APPROVED', 'CONVERTED'].includes(q.status?.toUpperCase())">
                     <i class="bi" [ngClass]="q.status?.toUpperCase() === 'CONVERTED' ? 'bi-check-circle-fill' : 'bi-check-circle'"></i>
                   </button>
-                  <button class="btn-icon" (click)="viewQuotation(q)" title="View">
+                  <button class="btn-icon" (click)="viewQuotation(q)" [title]="'QUOTATION_MANAGEMENT.VIEW' | translate">
                     <i class="bi bi-eye"></i>
                   </button>
-                  <button class="btn-icon" (click)="openEditModal(q)" [disabled]="!isEditable(q)" title="Edit">
+                  <button class="btn-icon" (click)="openEditModal(q)" [disabled]="!isEditable(q)" [title]="'QUOTATION_MANAGEMENT.EDIT' | translate">
                     <i class="bi bi-pencil"></i>
                   </button>
                   <button class="btn-icon text-red-600" (click)="confirmDelete(q.quotationId)"
-                    [disabled]="q.status?.toUpperCase() === 'CONVERTED'" title="Delete">
+                    [disabled]="q.status?.toUpperCase() === 'CONVERTED'" [title]="'QUOTATION_MANAGEMENT.DELETE' | translate">
                     <i class="bi bi-trash"></i>
                   </button>
                 </td>
               </tr>
               <tr *ngIf="quotations.length === 0 && !isLoading">
                 <td colspan="7" class="text-center py-5">
-                  <p class="text-muted">No quotations found.</p>
+                  <p class="text-muted">{{ 'QUOTATION_MANAGEMENT.NO_QUOTES' | translate }}</p>
                 </td>
               </tr>
             </tbody>
@@ -99,15 +99,15 @@
           <!-- Pagination Controls -->
           <div class="pagination-footer" *ngIf="quotations.length > pageSize">
             <div class="pagination-info">
-              Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, quotations.length) }} of {{ quotations.length }}
+              {{ 'QUOTATION_MANAGEMENT.SHOWING' | translate }} {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, quotations.length) }} {{ 'QUOTATION_MANAGEMENT.OF' | translate }} {{ quotations.length }}
             </div>
             <div class="pagination-btns">
               <button class="btn-secondary" (click)="prevPage()" [disabled]="currentPage === 1">
-                <i class="bi bi-chevron-left"></i> Previous
+                <i class="bi bi-chevron-left"></i> {{ 'QUOTATION_MANAGEMENT.PREVIOUS' | translate }}
               </button>
-              <span class="page-number">Page {{ currentPage }} of {{ totalPages }}</span>
+              <span class="page-number">{{ 'QUOTATION_MANAGEMENT.PAGE' | translate }} {{ currentPage }} {{ 'QUOTATION_MANAGEMENT.OF' | translate }} {{ totalPages }}</span>
               <button class="btn-secondary" (click)="nextPage()" [disabled]="currentPage === totalPages">
-                Next <i class="bi bi-chevron-right"></i>
+                {{ 'QUOTATION_MANAGEMENT.NEXT' | translate }} <i class="bi bi-chevron-right"></i>
               </button>
             </div>
           </div>
@@ -120,7 +120,7 @@
   <div class="modal-overlay" *ngIf="showModal">
     <div class="modal-content">
       <div class="header-section">
-        <h2>{{ isEditMode ? 'Edit' : 'Create' }} Quotation</h2>
+        <h2>{{ isEditMode ? ('QUOTATION_MANAGEMENT.EDIT_QUOTE' | translate) : ('QUOTATION_MANAGEMENT.CREATE_QUOTE' | translate) }}</h2>
         <button class="btn-icon" (click)="closeModal()"><i class="bi bi-x-lg"></i></button>
       </div>
 
@@ -128,53 +128,47 @@
         <div class="form-grid">
           <!-- Customer -->
           <div class="form-group">
-            <label>Customer</label>
+            <label>{{ 'QUOTATION_MANAGEMENT.CUSTOMER' | translate }}</label>
             <select formControlName="customerId" class="form-control"
               [ngClass]="{'is-invalid': f['customerId'].touched && f['customerId'].errors}">
-              <option value="">Select Customer</option>
+              <option value="">{{ 'QUOTATION_MANAGEMENT.SELECT_CUSTOMER' | translate }}</option>
               <option *ngFor="let c of customers" [value]="c.id">{{ c.name }}</option>
             </select>
-            <div *ngIf="f['customerId'].touched && f['customerId'].errors" class="error-msg">
-              Customer is required
-            </div>
           </div>
 
           <!-- Date -->
           <div class="form-group">
-            <label>Quotation Date</label>
+            <label>{{ 'QUOTATION_MANAGEMENT.QUOTE_DATE' | translate }}</label>
             <input type="date" formControlName="quotationDate" class="form-control" readonly
               [ngClass]="{'is-invalid': f['quotationDate'].touched && f['quotationDate'].errors}">
-            <div *ngIf="f['quotationDate'].touched && f['quotationDate'].errors" class="error-msg">
-              Date is required
-            </div>
           </div>
 
           <!-- Quotation Number (Read Only) -->
           <div class="form-group" *ngIf="isEditMode">
-            <label>Quotation Number</label>
-            <input type="text" [value]="quotationForm.get('quotationNumber')?.value || 'Generating...'" class="form-control" readonly>
+            <label>{{ 'QUOTATION_MANAGEMENT.QUOTE_NO' | translate }}</label>
+            <input type="text" [value]="quotationForm.get('quotationNumber')?.value || ('QUOTATION_MANAGEMENT.GENERATING' | translate)" class="form-control" readonly>
           </div>
 
           <!-- Valid Until -->
           <div class="form-group">
-            <label>Valid Until</label>
+            <label>{{ 'QUOTATION_MANAGEMENT.VALID_UNTIL' | translate }}</label>
             <input type="date" formControlName="validUntil" class="form-control" [min]="todayStr">
           </div>
 
           <!-- Status (Only in edit mode) -->
           <div class="form-group" *ngIf="isEditMode">
-            <label>Status</label>
+            <label>{{ 'QUOTATION_MANAGEMENT.STATUS' | translate }}</label>
             <select formControlName="status" class="form-control">
-              <option value="PENDING">Pending</option>
-              <option value="APPROVED">Approved</option>
-              <option value="REJECTED">Rejected</option>
-              <option value="CONVERTED" disabled>Converted</option>
+              <option value="PENDING">{{ 'QUOTATION_MANAGEMENT.PENDING' | translate }}</option>
+              <option value="APPROVED">{{ 'QUOTATION_MANAGEMENT.APPROVED' | translate }}</option>
+              <option value="REJECTED">{{ 'QUOTATION_MANAGEMENT.REJECTED' | translate }}</option>
+              <option value="CONVERTED" disabled>{{ 'QUOTATION_MANAGEMENT.CONVERTED' | translate }}</option>
             </select>
           </div>
 
           <!-- Remarks -->
           <div class="form-group full-width">
-            <label>Remarks</label>
+            <label>{{ 'QUOTATION_MANAGEMENT.REMARKS' | translate }}</label>
             <textarea formControlName="remarks" class="form-control" rows="2" maxlength="500"></textarea>
           </div>
         </div>
@@ -182,9 +176,9 @@
         <!-- Items Table -->
         <div class="items-section">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h3>Quotation Items</h3>
+            <h3>{{ 'QUOTATION_MANAGEMENT.QUOTE_ITEMS' | translate }}</h3>
             <button type="button" class="btn-secondary" (click)="addItem()">
-              <i class="bi bi-plus-circle"></i> Add Item
+              <i class="bi bi-plus-circle"></i> {{ 'QUOTATION_MANAGEMENT.ADD_ITEM' | translate }}
             </button>
           </div>
           
@@ -192,11 +186,11 @@
             <table class="items-table">
               <thead>
                 <tr>
-                  <th style="width: 25%;">Category</th>
-                  <th style="width: 30%;">Product Name</th>
-                  <th style="width: 15%;">Qty</th>
-                  <th style="width: 15%;">Price</th>
-                  <th style="width: 10%;">Total</th>
+                  <th style="width: 25%;">{{ 'QUOTATION_MANAGEMENT.CATEGORY' | translate }}</th>
+                  <th style="width: 30%;">{{ 'QUOTATION_MANAGEMENT.PRODUCT_NAME' | translate }}</th>
+                  <th style="width: 15%;">{{ 'QUOTATION_MANAGEMENT.QTY' | translate }}</th>
+                  <th style="width: 15%;">{{ 'QUOTATION_MANAGEMENT.PRICE' | translate }}</th>
+                  <th style="width: 10%;">{{ 'QUOTATION_MANAGEMENT.TOTAL' | translate }}</th>
                   <th style="width: 5%;"></th>
                 </tr>
               </thead>
@@ -208,7 +202,7 @@
                              (input)="filterCategories(i)" 
                              (focus)="toggleDropdown(i, true)"
                              (blur)="toggleDropdown(i, false)"
-                             placeholder="Search category...">
+                             [placeholder]="'QUOTATION_MANAGEMENT.SEARCH_CAT' | translate">
                       <div class="dropdown-list" *ngIf="details.at(i).get('showDropdown')?.value && filteredCategories.length > 0">
                         <div class="dropdown-item" *ngFor="let cat of filteredCategories" 
                              (mousedown)="onCategorySelect(i, cat)">
@@ -217,7 +211,7 @@
                       </div>
                     </div>
                   </td>
-                  <td><input type="text" formControlName="name" class="form-control" placeholder="Item name"></td>
+                  <td><input type="text" formControlName="name" class="form-control" [placeholder]="'QUOTATION_MANAGEMENT.ITEM_NAME' | translate"></td>
                   <td><input type="number" formControlName="quantity" class="form-control" min="0.01" (input)="calculateTotals()"></td>
                   <td><input type="number" formControlName="price" class="form-control" min="0" (input)="calculateTotals()"></td>
                   <td class="line-total text-end">
@@ -237,16 +231,16 @@
         <!-- Totals -->
         <div class="grand-total-section">
           <div class="grand-total-box">
-            <div class="grand-total-label">Grand Total</div>
+            <div class="grand-total-label">{{ 'QUOTATION_MANAGEMENT.GRAND_TOTAL' | translate }}</div>
             <div class="grand-total-value">{{ grandTotal | currency:'LKR ':'symbol':'1.2-2' }}</div>
           </div>
         </div>
 
         <!-- Footer -->
         <div class="modal-footer">
-          <button type="button" class="btn-secondary px-4" (click)="closeModal()">Cancel</button>
+          <button type="button" class="btn-secondary px-4" (click)="closeModal()">{{ 'QUOTATION_MANAGEMENT.CANCEL' | translate }}</button>
           <button type="submit" class="btn-primary px-5" [disabled]="quotationForm.invalid || isLoading">
-            {{ isLoading ? 'Processing...' : (isEditMode ? 'Update' : 'Create') }} Quotation
+            {{ isLoading ? ('QUOTATION_MANAGEMENT.PROCESSING' | translate) : (isEditMode ? ('QUOTATION_MANAGEMENT.UPDATE_QUOTE' | translate) : ('QUOTATION_MANAGEMENT.CREATE_QUOTE_BTN' | translate)) }}
           </button>
         </div>
       </form>
@@ -257,7 +251,7 @@
   <div class="modal-overlay" *ngIf="showApproveModal">
     <div class="modal-content confirmation-modal">
       <div class="header-section">
-        <h2>Approve & Convert to Order</h2>
+        <h2>{{ 'QUOTATION_MANAGEMENT.APPROVE_CONVERT_TITLE' | translate }}</h2>
         <button class="btn-icon" (click)="closeApproveModal()"><i class="bi bi-x-lg"></i></button>
       </div>
       
@@ -265,25 +259,25 @@
         <div class="confirmation-icon mb-3">
           <i class="bi bi-question-circle text-amber-500" style="font-size: 4rem;"></i>
         </div>
-        <p class="fs-5">Are you sure you want to approve <strong>{{ selectedQuotation?.quotationNumber || '#Q-' + selectedQuotation?.quotationId }}</strong>?</p>
-        <p class="text-muted">This will convert the quotation into a customer order and redirect you to the Order Management dashboard.</p>
+        <p class="fs-5">{{ 'QUOTATION_MANAGEMENT.APPROVE_MSG_1' | translate }} <strong>{{ selectedQuotation?.quotationNumber || '#Q-' + selectedQuotation?.quotationId }}</strong>?</p>
+        <p class="text-muted">{{ 'QUOTATION_MANAGEMENT.APPROVE_MSG_2' | translate }}</p>
         
         <div class="summary-box mt-4 p-3 bg-light rounded text-start">
           <div class="d-flex justify-content-between mb-2">
-            <span class="text-secondary">Customer:</span>
-            <span class="fw-bold">{{ selectedQuotation?.customerName || 'Customer #' + selectedQuotation?.customerId }}</span>
+            <span class="text-secondary">{{ 'QUOTATION_MANAGEMENT.CUSTOMER' | translate }}:</span>
+            <span class="fw-bold">{{ selectedQuotation?.customerName || ('QUOTATION_MANAGEMENT.CUSTOMER' | translate) + ' #' + selectedQuotation?.customerId }}</span>
           </div>
           <div class="d-flex justify-content-between">
-            <span class="text-secondary">Total Amount:</span>
+            <span class="text-secondary">{{ 'QUOTATION_MANAGEMENT.TOTAL_AMOUNT' | translate }}:</span>
             <span class="fw-bold text-success">{{ selectedQuotation?.totalAmount | currency:'LKR ':'symbol':'1.2-2' }}</span>
           </div>
         </div>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn-secondary px-4" (click)="closeApproveModal()">Cancel</button>
+        <button type="button" class="btn-secondary px-4" (click)="closeApproveModal()">{{ 'QUOTATION_MANAGEMENT.CANCEL' | translate }}</button>
         <button type="button" class="btn-primary px-5" (click)="confirmApproveAndConvert()" [disabled]="isLoading">
-          {{ isLoading ? 'Processing...' : 'Yes, Approve & Convert' }}
+          {{ isLoading ? ('QUOTATION_MANAGEMENT.PROCESSING' | translate) : ('QUOTATION_MANAGEMENT.YES_APPROVE' | translate) }}
         </button>
       </div>
     </div>
@@ -293,7 +287,7 @@
   <div class="modal-overlay" *ngIf="showDeleteModal">
     <div class="modal-content confirmation-modal">
       <div class="header-section">
-        <h2>Confirm Deletion</h2>
+        <h2>{{ 'QUOTATION_MANAGEMENT.CONFIRM_DELETE_TITLE' | translate }}</h2>
         <button class="btn-icon" (click)="closeDeleteModal()"><i class="bi bi-x-lg"></i></button>
       </div>
       
@@ -301,15 +295,15 @@
         <div class="confirmation-icon mb-3">
           <i class="bi bi-exclamation-triangle text-red-500" style="font-size: 4rem;"></i>
         </div>
-        <p class="fs-5">Are you sure you want to delete this quotation?</p>
-        <p class="text-danger fw-bold">This action cannot be undone.</p>
-        <p class="text-muted mt-2">Quotation ID: #Q-{{ deleteId }}</p>
+        <p class="fs-5">{{ 'QUOTATION_MANAGEMENT.DELETE_MSG_1' | translate }}</p>
+        <p class="text-danger fw-bold">{{ 'QUOTATION_MANAGEMENT.DELETE_MSG_2' | translate }}</p>
+        <p class="text-muted mt-2">{{ 'QUOTATION_MANAGEMENT.QUOTE_ID' | translate }} #Q-{{ deleteId }}</p>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn-secondary px-4" (click)="closeDeleteModal()">Cancel</button>
+        <button type="button" class="btn-secondary px-4" (click)="closeDeleteModal()">{{ 'QUOTATION_MANAGEMENT.CANCEL' | translate }}</button>
         <button type="button" class="btn-primary bg-red-600 border-red-600 px-5" (click)="confirmDeletion()">
-          Yes, Delete
+          {{ 'QUOTATION_MANAGEMENT.YES_DELETE' | translate }}
         </button>
       </div>
     </div>

@@ -7,8 +7,8 @@
         
         <div class="header-section">
           <div class="title-group">
-            <h1>Designation Salary Management</h1>
-            <p>Set base salary rates for different roles in the company</p>
+            <h1>{{ 'DESIGNATION_SALARY.TITLE' | translate }}</h1>
+            <p>{{ 'DESIGNATION_SALARY.SUBTITLE' | translate }}</p>
           </div>
         </div>
 
@@ -17,37 +17,37 @@
           <div class="col-lg-4">
             <div class="card wood-card mb-4">
               <div class="card-header bg-primary-dark text-white">
-                <h5 class="mb-0">{{ isEditing ? 'Edit Mapping' : 'Add New Designation' }}</h5>
+                <h5 class="mb-0">{{ isEditing ? ('DESIGNATION_SALARY.EDIT_MAPPING' | translate) : ('DESIGNATION_SALARY.ADD_NEW' | translate) }}</h5>
               </div>
               <div class="card-body">
                 <div class="mb-3">
-                  <label class="wood-label">Designation Name</label>
+                  <label class="wood-label">{{ 'DESIGNATION_SALARY.DESIG_NAME' | translate }}</label>
                   <input type="text" class="form-control wood-input" [(ngModel)]="currentDS.designationName" placeholder="e.g. Carpenter, Employee">
                 </div>
 
                 <div class="mb-3">
-                  <label class="wood-label">Basic Salary / Rate (Rs.)</label>
+                  <label class="wood-label">{{ 'DESIGNATION_SALARY.BASIC_RATE' | translate }}</label>
                   <input type="number" class="form-control wood-input" [(ngModel)]="currentDS.basicSalary" placeholder="0.00">
                 </div>
 
                 <div class="mb-3">
-                  <label class="wood-label">Rate Type</label>
+                  <label class="wood-label">{{ 'DESIGNATION_SALARY.RATE_TYPE' | translate }}</label>
                   <select class="form-select wood-select" [(ngModel)]="currentDS.salaryType">
-                    <option value="DAILY">Daily Rate</option>
-                    <option value="MONTHLY">Monthly (Fixed)</option>
+                    <option value="DAILY">{{ 'DESIGNATION_SALARY.DAILY_RATE' | translate }}</option>
+                    <option value="MONTHLY">{{ 'DESIGNATION_SALARY.MONTHLY_FIXED' | translate }}</option>
                   </select>
                 </div>
 
                 <div class="form-check form-switch mb-4">
                   <input class="form-check-input" type="checkbox" id="activeToggle" [(ngModel)]="currentDS.isActive">
-                  <label class="form-check-label fw-bold" for="activeToggle">Is Active</label>
+                  <label class="form-check-label fw-bold" for="activeToggle">{{ 'DESIGNATION_SALARY.IS_ACTIVE' | translate }}</label>
                 </div>
 
                 <div class="d-flex gap-2">
                   <button class="btn btn-primary w-100 py-2" (click)='saveDesignation()'>
-                    {{ isEditing ? 'Update Rate' : 'Save Rate' }}
+                    {{ isEditing ? ('DESIGNATION_SALARY.UPDATE_RATE' | translate) : ('DESIGNATION_SALARY.SAVE_RATE' | translate) }}
                   </button>
-                  <button class="btn btn-outline-secondary" *ngIf="isEditing" (click)="resetForm()">Cancel</button>
+                  <button class="btn btn-outline-secondary" *ngIf="isEditing" (click)="resetForm()">{{ 'DESIGNATION_SALARY.CANCEL' | translate }}</button>
                 </div>
               </div>
             </div>
@@ -61,11 +61,11 @@
                   <table class="table table-hover mb-0">
                     <thead class="bg-light">
                       <tr>
-                        <th class="ps-4">Designation</th>
-                        <th>Rate (Rs.)</th>
-                        <th>Type</th>
-                        <th>Status</th>
-                        <th class="text-end pe-4">Actions</th>
+                        <th class="ps-4">{{ 'DESIGNATION_SALARY.DESIGNATION' | translate }}</th>
+                        <th>{{ 'DESIGNATION_SALARY.RATE_RS' | translate }}</th>
+                        <th>{{ 'DESIGNATION_SALARY.TYPE' | translate }}</th>
+                        <th>{{ 'DESIGNATION_SALARY.STATUS' | translate }}</th>
+                        <th class="text-end pe-4">{{ 'DESIGNATION_SALARY.ACTIONS' | translate }}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -79,7 +79,7 @@
                         </td>
                         <td>
                           <span class="badge" [ngClass]="ds.isActive ? 'bg-success' : 'bg-danger'">
-                            {{ ds.isActive ? 'Active' : 'Inactive' }}
+                            {{ ds.isActive ? ('DESIGNATION_SALARY.ACTIVE' | translate) : ('DESIGNATION_SALARY.INACTIVE' | translate) }}
                           </span>
                         </td>
                         <td class="text-end pe-4">
@@ -90,7 +90,7 @@
                       </tr>
                       <tr *ngIf="designations.length === 0 && !isLoading">
                         <td colspan="5" class="text-center py-5 text-muted">
-                          No designations found. Add your first one to the left.
+                          {{ 'DESIGNATION_SALARY.NO_DESIGNATIONS' | translate }}
                         </td>
                       </tr>
                     </tbody>

@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 import { SupplyRawMaterialRequestService } from '../../../../service/supply-raw-material-request.service';
 import { EmployeeService } from '../../../../service/employee.service';
 import { RawMaterialService } from '../../../../service/raw-material.service';
@@ -11,7 +12,7 @@ import { Router } from '@angular/router';
 @Component({
   selector: 'app-convert-to-order-modal',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './convert-to-supply-order-modal.component.html',
   styleUrl: './convert-to-supply-order-modal.component.css'
 })

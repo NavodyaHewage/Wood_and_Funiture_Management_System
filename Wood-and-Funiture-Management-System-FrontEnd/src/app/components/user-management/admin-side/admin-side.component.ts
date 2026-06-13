@@ -82,6 +82,7 @@ export class AdminSideComponent implements OnInit {
     {
       label: 'FINANCIALS',
       items: [
+        { name: 'Accounts View', icon: 'bi-wallet2', route: '/accounts-dashboard' },
         { name: 'Expenses', icon: 'bi-credit-card-fill', route: '/expenses' }
       ]
     },
@@ -134,6 +135,7 @@ export class AdminSideComponent implements OnInit {
           '/order-management': 'order-management',
           '/receipts': 'receipts',
           '/expenses': 'expenses',
+          '/accounts-dashboard': 'accounts-dashboard',
           '/product-category': 'product-category',
           '/inventory': 'stock-inventory'
         };

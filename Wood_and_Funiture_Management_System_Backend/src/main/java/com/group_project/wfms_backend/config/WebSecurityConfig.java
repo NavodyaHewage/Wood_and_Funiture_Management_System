@@ -100,7 +100,8 @@ public class WebSecurityConfig {
                                 "/v1/raw-material-items/**",
                                 "/receipts/**",
                                 "/v1/supply-raw-materials/**",
-                                "/v1/raw-material-cutting/**"
+                                "/v1/raw-material-cutting/**",
+                                "/accounts-dashboard/**"
                         ).hasAnyRole("ADMIN", "EMPLOYEE")
                         .requestMatchers("/supply-requests/**").hasAnyRole("ADMIN", "EMPLOYEE", "SUPPLIER")
 

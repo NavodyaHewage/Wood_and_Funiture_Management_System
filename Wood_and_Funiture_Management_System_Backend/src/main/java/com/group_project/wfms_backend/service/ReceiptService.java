@@ -86,7 +86,8 @@ public class ReceiptService {
             CustomerOrderDetails orderDetail = orderDetailsRepository.findById(d.getCustomerOrderDetailsId())
                     .orElseThrow(() -> new RuntimeException("Order detail not found: " + d.getCustomerOrderDetailsId()));
             
-            BigDecimal lineTotal = orderDetail.getLineTotal() != null ? orderDetail.getLineTotal() : BigDecimal.ZERO;
+            BigDecimal calculatedLineTotal = orderDetail.getQuantity().multiply(orderDetail.getPrice());
+            BigDecimal lineTotal = orderDetail.getLineTotal() != null ? orderDetail.getLineTotal() : calculatedLineTotal;
             BigDecimal paidBefore = orderDetail.getPaidAmount() != null ? orderDetail.getPaidAmount() : BigDecimal.ZERO;
             BigDecimal outstanding = lineTotal.subtract(paidBefore);
             

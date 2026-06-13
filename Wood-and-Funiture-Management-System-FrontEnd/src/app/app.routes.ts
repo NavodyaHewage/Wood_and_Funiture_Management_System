@@ -31,6 +31,7 @@ import { AddReceiptComponent } from './components/receipts/add-receipt/add-recei
 import { ReceiptViewComponent } from './components/receipts/receipt-view/receipt-view.component';
 import { ExpensesComponent } from './components/expenses/expenses.component';
 import { ProductStockComponent } from './components/inventory-management/product-stock/product-stock.component';
+import { AccountsDashboardComponent } from './components/finance/accounts-dashboard/accounts-dashboard.component';
 
 export const routes: Routes = [
     { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -70,4 +71,5 @@ export const routes: Routes = [
     { path: 'receipts/view/:id', component: ReceiptViewComponent, canActivate: [permissionGuard], data: { title: 'Printable Receipt', requiredFunction: 'receipts' } },
     { path: 'expenses', component: ExpensesComponent, canActivate: [permissionGuard], data: { title: 'Expense Management', requiredFunction: 'expenses' } },
     { path: 'inventory', component: ProductStockComponent, canActivate: [permissionGuard], data: { title: 'Stock Inventory', requiredFunction: 'stock-inventory' } },
+    { path: 'accounts-dashboard', component: AccountsDashboardComponent, canActivate: [permissionGuard], data: { title: 'Accounts Dashboard', requiredFunction: 'accounts-dashboard' } },
 ];

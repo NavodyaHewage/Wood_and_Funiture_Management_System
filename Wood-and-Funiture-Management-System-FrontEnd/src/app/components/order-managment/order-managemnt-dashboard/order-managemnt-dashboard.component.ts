@@ -9,11 +9,12 @@ import { ToastService } from '../../../service/toast.service';
 import { CustomerService } from '../../../service/customer.service';
 import { ProductCategoryService } from '../../../service/product-category.service';
 import { AuthService } from '../../../service/auth.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-order-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent, TranslatePipe],
   templateUrl: './order-managemnt-dashboard.component.html',
   styleUrls: ['./order-managemnt-dashboard.component.css']
 })
@@ -221,7 +222,18 @@ export class OrderManagementDashboardComponent implements OnInit {
           this.closeModal();
           this.loadOrders();
         },
-        error: () => { this.toastService.showError('Failed to update order.'); }
+        error: (err) => { 
+          let errorMsg = 'Failed to update order.';
+          if (err.error) {
+            if (typeof err.error === 'string') {
+              try { errorMsg = JSON.parse(err.error).message || err.error; } 
+              catch (e) { errorMsg = err.error; }
+            } else {
+              errorMsg = err.error.message || 'Failed to update order.';
+            }
+          }
+          this.toastService.showError(errorMsg); 
+        }
       });
     } else {
       this.orderService.createOrder(this.orderForm).subscribe({
@@ -230,7 +242,18 @@ export class OrderManagementDashboardComponent implements OnInit {
           this.closeModal();
           this.loadOrders();
         },
-        error: () => { this.toastService.showError('Failed to create order.'); }
+        error: (err) => { 
+          let errorMsg = 'Failed to create order. Please check stock availability.';
+          if (err.error) {
+            if (typeof err.error === 'string') {
+              try { errorMsg = JSON.parse(err.error).message || err.error; } 
+              catch (e) { errorMsg = err.error; }
+            } else {
+              errorMsg = err.error.message || 'Failed to create order. Please check stock availability.';
+            }
+          }
+          this.toastService.showError(errorMsg); 
+        }
       });
     }
   }

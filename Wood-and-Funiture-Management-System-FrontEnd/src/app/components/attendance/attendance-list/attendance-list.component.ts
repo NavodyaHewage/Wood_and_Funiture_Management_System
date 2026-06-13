@@ -8,6 +8,7 @@ import { BulkAttendanceDialogComponent } from '../bulk-attendance-dialog/bulk-at
 import { AttendanceSummaryDialogComponent } from '../attendance-summary-dialog/attendance-summary-dialog.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { HeaderComponent } from '../../header/header.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-attendance-list',
@@ -19,7 +20,8 @@ import { HeaderComponent } from '../../header/header.component';
     BulkAttendanceDialogComponent,
     AttendanceSummaryDialogComponent,
     AdminSideComponent,
-    HeaderComponent
+    HeaderComponent,
+    TranslatePipe
   ],
   templateUrl: './attendance-list.component.html',
   styleUrls: ['./attendance-list.component.css']

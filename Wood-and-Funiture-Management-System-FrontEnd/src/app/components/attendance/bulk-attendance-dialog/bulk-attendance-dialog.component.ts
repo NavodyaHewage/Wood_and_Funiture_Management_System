@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, FormArray, Validators, ReactiveFormsModule, For
 import { AttendanceService, AttendanceStatus } from '../../../service/attendance.service';
 import { EmployeeService, Employee } from '../../../service/employee.service';
 import { ToastService } from '../../../service/toast.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-bulk-attendance-dialog',
@@ -11,7 +12,8 @@ import { ToastService } from '../../../service/toast.service';
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    TranslatePipe
   ],
   templateUrl: './bulk-attendance-dialog.component.html',
   styleUrls: ['./bulk-attendance-dialog.component.css']

@@ -4,11 +4,12 @@ import { FormsModule } from '@angular/forms';
 import { SupplyRawMaterialRequestService } from '../../../../service/supply-raw-material-request.service';
 import { AuthService } from '../../../../service/auth.service';
 import { ToastService } from '../../../../service/toast.service';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-raw-material-request-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './raw-material-request-list.component.html',
   styleUrl: './raw-material-request-list.component.css'
 })

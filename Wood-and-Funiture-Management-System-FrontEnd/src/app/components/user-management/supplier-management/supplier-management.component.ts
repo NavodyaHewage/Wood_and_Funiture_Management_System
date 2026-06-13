@@ -6,11 +6,12 @@ import { ToastService } from '../../../service/toast.service';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../admin-side/admin-side.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
     selector: 'app-supplier-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, AdminSideComponent],
+    imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, AdminSideComponent, TranslatePipe],
     templateUrl: './supplier-management.component.html',
     styleUrl: './supplier-management.component.css'
 })

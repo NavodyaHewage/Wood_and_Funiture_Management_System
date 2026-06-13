@@ -1,13 +1,13 @@
 <div class="modal-container">
   <div class="modal-header">
-    <h2><i class="bi bi-people-fill me-2"></i> Bulk Attendance Entry</h2>
+    <h2><i class="bi bi-people-fill me-2"></i> {{ 'ATTENDANCE_MANAGEMENT.BULK_ENTRY' | translate }}</h2>
     <button class="btn-close btn-close-white" (click)="onCancel()"></button>
   </div>
 
   <div class="modal-body p-4">
     <div class="row mb-4 align-items-end">
       <div class="col-md-6">
-        <label class="admin-label">Attendance Date</label>
+        <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.ATTENDANCE_DATE' | translate }}</label>
         <div class="admin-input-group">
           <i class="bi bi-calendar-check"></i>
           <input type="date" class="form-control" [(ngModel)]="selectedDate" (change)="onDateChange()" [max]="maxDate">
@@ -15,7 +15,7 @@
       </div>
       <div class="col-md-6 text-end">
         <span class="badge bg-soft-primary">
-          {{ activeEmployees.length }} Active Employees
+          {{ activeEmployees.length }} {{ 'ATTENDANCE_MANAGEMENT.ACTIVE_EMPLOYEES_BADGE' | translate }}
         </span>
       </div>
     </div>
@@ -25,11 +25,11 @@
         <table class="table bulk-table mb-0">
           <thead>
             <tr>
-              <th>Employee</th>
-              <th width="180">Status</th>
-              <th width="120">In</th>
-              <th width="120">Out</th>
-              <th>Remarks</th>
+              <th>{{ 'ATTENDANCE_MANAGEMENT.EMPLOYEE' | translate }}</th>
+              <th width="180">{{ 'ATTENDANCE_MANAGEMENT.STATUS' | translate }}</th>
+              <th width="120">{{ 'ATTENDANCE_MANAGEMENT.IN' | translate }}</th>
+              <th width="120">{{ 'ATTENDANCE_MANAGEMENT.OUT' | translate }}</th>
+              <th>{{ 'ATTENDANCE_MANAGEMENT.REMARKS' | translate }}</th>
             </tr>
           </thead>
           <tbody [formGroup]="bulkForm">
@@ -69,10 +69,10 @@
   </div>
 
   <div class="modal-footer p-3">
-    <button class="btn-admin-secondary me-2" (click)="onCancel()">Cancel</button>
+    <button class="btn-admin-secondary me-2" (click)="onCancel()">{{ 'ATTENDANCE_MANAGEMENT.CANCEL' | translate }}</button>
     <button class="btn-admin-primary" (click)="onSubmit()" [disabled]="isLoading">
       <span class="spinner-border spinner-border-sm me-2" *ngIf="isLoading"></span>
-      Submit All Records
+      {{ 'ATTENDANCE_MANAGEMENT.SUBMIT_ALL' | translate }}
     </button>
   </div>
 </div>

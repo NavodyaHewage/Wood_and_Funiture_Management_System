@@ -1,7 +1,7 @@
 <div class="modal-overlay" *ngIf="show" (click)="close()">
   <div class="modal-box large" style="max-width: 950px;" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h5>Convert to Supply Order (GRN)</h5>
+      <h5>{{ 'SUPPLY_REQUEST_MANAGEMENT.CONVERT_TITLE' | translate }}</h5>
       <button class="modal-close" (click)="close()"><i class="bi bi-x-lg"></i></button>
     </div>
 
@@ -9,9 +9,9 @@
       <!-- Summary Header -->
       <div class="alert alert-success mb-4" *ngIf="request">
         <i class="bi bi-info-circle-fill me-2"></i>
-        Converting Request #{{request.requestId}} from <strong>{{request.supplierName}}</strong>.
+        {{ 'SUPPLY_REQUEST_MANAGEMENT.CONVERTING' | translate }} #{{request.requestId}} {{ 'SUPPLY_REQUEST_MANAGEMENT.FROM' | translate }} <strong>{{request.supplierName}}</strong>.
         <div class="mt-2 small">
-          <strong>Target Volume (Approved by Supplier):</strong> 
+          <strong>{{ 'SUPPLY_REQUEST_MANAGEMENT.TARGET_VOLUME' | translate }}</strong> 
           <span *ngFor="let d of request.details; let last = last">
             {{d.rmName}}: {{d.supplierApprovedCft}} CFT{{!last ? ', ' : ''}}
           </span>
@@ -20,37 +20,37 @@
 
       <div class="form-grid">
         <div class="form-group">
-          <label>Invoice Number</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.INVOICE_NUMBER' | translate }}</label>
           <input type="text" value="AUTO-GENERATED" readonly style="background: #f1f1f1; color: #666;" />
         </div>
         <div class="form-group">
-          <label>Supply Date</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.SUPPLY_DATE' | translate }}</label>
           <input type="date" [(ngModel)]="conversionData.supplyDate" />
         </div>
         <div class="form-group">
-          <label>Transport Cost (Rs.)</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.TRANSPORT_COST' | translate }}</label>
           <input type="number" [(ngModel)]="conversionData.transport" min="0" placeholder="0.00" />
         </div>
         <div class="form-group">
-          <label>Cutting Fee (Rs.)</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.CUTTING_FEE' | translate }}</label>
           <input type="number" [(ngModel)]="conversionData.cuttingFee" min="0" placeholder="0.00" />
         </div>
         <div class="form-group col-span-2">
-          <label>Cutting Fee Employee</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.CUTTING_FEE_EMP' | translate }}</label>
           <select [(ngModel)]="conversionData.cuttingFeeEmployeeId">
-            <option [ngValue]="null">Select Employee</option>
+            <option [ngValue]="null">{{ 'SUPPLY_REQUEST_MANAGEMENT.SELECT_EMP' | translate }}</option>
             <option *ngFor="let e of employees" [ngValue]="e.id">{{e.fullName}}</option>
           </select>
         </div>
       </div>
 
       <div class="section-title">
-        <span>Actual Log Details</span>
+        <span>{{ 'SUPPLY_REQUEST_MANAGEMENT.ACTUAL_LOG_DETAILS' | translate }}</span>
         <div class="d-flex gap-2">
             <button *ngFor="let d of request?.details" 
                     class="btn-add-row"
                     (click)="addLog(d.rmId, d.rmName, d.unitPrice)">
-                <i class="bi bi-plus"></i> Add {{d.rmName}}
+                <i class="bi bi-plus"></i> {{ 'SUPPLY_REQUEST_MANAGEMENT.ADD' | translate }} {{d.rmName}}
             </button>
         </div>
       </div>
@@ -59,15 +59,15 @@
         <table class="details-table">
           <thead>
             <tr>
-              <th>Material</th>
-              <th>Log #</th>
-              <th>Length (ft)</th>
-              <th>Girth (ft)</th>
-              <th>Supplier (Rs)</th>
-              <th>API Price (Rs)</th>
-              <th>Negotiated (Rs)</th>
-              <th>CFT</th>
-              <th>Total</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.MATERIAL' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.LOG_NO' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.LENGTH' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.GIRTH' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.SUPPLIER_PRICE' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.API_PRICE' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.NEGOTIATED' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.CFT' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.TOTAL' | translate }}</th>
               <th></th>
             </tr>
           </thead>
@@ -107,7 +107,7 @@
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="7" class="total-label">Grand Summary</td>
+              <td colspan="7" class="total-label">{{ 'SUPPLY_REQUEST_MANAGEMENT.GRAND_SUMMARY' | translate }}</td>
               <td class="grand-total">
                 <div>{{getTotalCft() | number:'1.2-3'}} CFT</div>
                 <div class="target-badge" 
@@ -115,7 +115,7 @@
                      [class.under]="getTotalCft() <= getMaxAllowedCft()">
                   <i class="bi" [class.bi-exclamation-triangle-fill]="getTotalCft() > getMaxAllowedCft()" 
                                [class.bi-check-circle-fill]="getTotalCft() <= getMaxAllowedCft()"></i>
-                  Target: {{getMaxAllowedCft() | number:'1.2-3'}}
+                  {{ 'SUPPLY_REQUEST_MANAGEMENT.TARGET' | translate }} {{getMaxAllowedCft() | number:'1.2-3'}}
                 </div>
               </td>
               <td class="total-amount">
@@ -129,10 +129,10 @@
     </div>
 
     <div class="modal-footer">
-      <button class="btn-cancel" (click)="close()">Cancel</button>
-      <button class="btn-danger me-auto" (click)="rejectRequest()">Reject Request</button>
+      <button class="btn-cancel" (click)="close()">{{ 'SUPPLY_REQUEST_MANAGEMENT.CANCEL' | translate }}</button>
+      <button class="btn-danger me-auto" (click)="rejectRequest()">{{ 'SUPPLY_REQUEST_MANAGEMENT.REJECT_REQ' | translate }}</button>
       <button class="btn-submit" (click)="confirmConversion()">
-        Complete Order & Generate GRN
+        {{ 'SUPPLY_REQUEST_MANAGEMENT.COMPLETE_ORDER' | translate }}
       </button>
     </div>
   </div>

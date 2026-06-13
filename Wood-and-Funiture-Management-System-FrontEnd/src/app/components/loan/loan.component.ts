@@ -9,11 +9,12 @@ import { ToastService } from '../../service/toast.service';
 import { Subject, takeUntil, forkJoin } from 'rxjs';
 import { AdminSideComponent } from '../user-management/admin-side/admin-side.component';
 import { HeaderComponent } from '../header/header.component';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-loan',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, AdminSideComponent, HeaderComponent],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule, AdminSideComponent, HeaderComponent, TranslatePipe],
   templateUrl: './loan.component.html',
   styleUrls: ['./loan.component.css']
 })

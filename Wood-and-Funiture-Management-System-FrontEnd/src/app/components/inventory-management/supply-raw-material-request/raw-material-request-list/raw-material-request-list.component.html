@@ -4,19 +4,19 @@
     <div class="topbar-left">
       <div class="search-box">
         <i class="bi bi-search"></i>
-        <input type="text" placeholder="Search by supplier or ID..." [(ngModel)]="searchTerm" (input)="onSearch()" />
+        <input type="text" [placeholder]="'SUPPLY_REQUEST_MANAGEMENT.SEARCH_PLACEHOLDER' | translate" [(ngModel)]="searchTerm" (input)="onSearch()" />
       </div>
       <select class="status-select" [(ngModel)]="statusFilter" (change)="onStatusFilter()">
-        <option value="">All Status</option>
-        <option value="Pending">Pending</option>
-        <option value="Approved">Approved</option>
-        <option value="Partially_Approved">Partially Approved</option>
-        <option value="Rejected">Rejected</option>
-        <option value="Converted">Converted</option>
+        <option value="">{{ 'SUPPLY_REQUEST_MANAGEMENT.ALL_STATUS' | translate }}</option>
+        <option value="Pending">{{ 'SUPPLY_REQUEST_MANAGEMENT.PENDING' | translate }}</option>
+        <option value="Approved">{{ 'SUPPLY_REQUEST_MANAGEMENT.APPROVED' | translate }}</option>
+        <option value="Partially_Approved">{{ 'SUPPLY_REQUEST_MANAGEMENT.PARTIALLY_APPROVED' | translate }}</option>
+        <option value="Rejected">{{ 'SUPPLY_REQUEST_MANAGEMENT.REJECTED' | translate }}</option>
+        <option value="Converted">{{ 'SUPPLY_REQUEST_MANAGEMENT.CONVERTED' | translate }}</option>
       </select>
     </div>
     <button class="btn-create" (click)="onCreate.emit()" *ngIf="isAdmin">
-      <i class="bi bi-plus-lg"></i> New Request
+      <i class="bi bi-plus-lg"></i> {{ 'SUPPLY_REQUEST_MANAGEMENT.NEW_REQUEST' | translate }}
     </button>
   </div>
 
@@ -25,28 +25,28 @@
     <div class="stat-card">
       <div class="stat-icon icon-total"><i class="bi bi-clipboard-list"></i></div>
       <div class="stat-info">
-        <span class="stat-label">Total Requests</span>
+        <span class="stat-label">{{ 'SUPPLY_REQUEST_MANAGEMENT.TOTAL_REQUESTS' | translate }}</span>
         <span class="stat-value">{{ requests.length }}</span>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-icon icon-pending"><i class="bi bi-hourglass-split"></i></div>
       <div class="stat-info">
-        <span class="stat-label">Pending</span>
+        <span class="stat-label">{{ 'SUPPLY_REQUEST_MANAGEMENT.PENDING' | translate }}</span>
         <span class="stat-value">{{ getStatusCount('Pending') }}</span>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-icon icon-completed"><i class="bi bi-check-circle-fill"></i></div>
       <div class="stat-info">
-        <span class="stat-label">Approved</span>
+        <span class="stat-label">{{ 'SUPPLY_REQUEST_MANAGEMENT.APPROVED' | translate }}</span>
         <span class="stat-value">{{ getStatusCount('Approved') }}</span>
       </div>
     </div>
     <div class="stat-card">
       <div class="stat-icon icon-revenue"><i class="bi bi-box-seam"></i></div>
       <div class="stat-info">
-        <span class="stat-label">Converted</span>
+        <span class="stat-label">{{ 'SUPPLY_REQUEST_MANAGEMENT.CONVERTED' | translate }}</span>
         <span class="stat-value">{{ getStatusCount('Converted') }}</span>
       </div>
     </div>
@@ -55,13 +55,13 @@
   <!-- ── TABLE ────────────────────────────────────────────── -->
   <div class="table-card">
     <div class="table-header">
-      <h5 class="table-title">Supply Request List</h5>
-      <span class="table-count">{{ filteredRequests.length }} records</span>
+      <h5 class="table-title">{{ 'SUPPLY_REQUEST_MANAGEMENT.REQUEST_LIST' | translate }}</h5>
+      <span class="table-count">{{ filteredRequests.length }} {{ 'SUPPLY_REQUEST_MANAGEMENT.RECORDS' | translate }}</span>
     </div>
 
     <div class="loading-spinner" *ngIf="isLoading">
       <div class="spinner"></div>
-      <span>Loading requests...</span>
+      <span>{{ 'SUPPLY_REQUEST_MANAGEMENT.LOADING' | translate }}</span>
     </div>
 
     <div class="table-responsive" *ngIf="!isLoading">
@@ -70,11 +70,11 @@
           <tr>
             <th>#</th>
             <th>ID</th>
-            <th>Supplier</th>
-            <th>Request Date</th>
-            <th>Materials</th>
-            <th>Status</th>
-            <th>Actions</th>
+            <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.SUPPLIER' | translate }}</th>
+            <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.REQUEST_DATE' | translate }}</th>
+            <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.MATERIALS' | translate }}</th>
+            <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.STATUS' | translate }}</th>
+            <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.ACTIONS' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -122,7 +122,7 @@
           <tr *ngIf="filteredRequests.length === 0">
             <td colspan="7" class="empty-row">
               <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-              No requests found
+              {{ 'SUPPLY_REQUEST_MANAGEMENT.NO_REQUESTS' | translate }}
             </td>
           </tr>
         </tbody>
@@ -131,13 +131,13 @@
       <!-- ── PAGINATION ────────────────────────────────────────── -->
       <div class="pagination-footer" *ngIf="filteredRequests.length > pageSize">
         <div class="pagination-info">
-          Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, filteredRequests.length) }} of {{ filteredRequests.length }}
+          {{ 'SUPPLY_REQUEST_MANAGEMENT.SHOWING' | translate }} {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, filteredRequests.length) }} {{ 'SUPPLY_REQUEST_MANAGEMENT.OF' | translate }} {{ filteredRequests.length }}
         </div>
         <div class="pagination-btns">
           <button class="btn-page" (click)="prevPage()" [disabled]="currentPage === 1">
             <i class="bi bi-chevron-left"></i>
           </button>
-          <span class="page-indicator">Page {{ currentPage }} of {{ totalPages }}</span>
+          <span class="page-indicator">{{ 'SUPPLY_REQUEST_MANAGEMENT.PAGE' | translate }} {{ currentPage }} {{ 'SUPPLY_REQUEST_MANAGEMENT.OF' | translate }} {{ totalPages }}</span>
           <button class="btn-page" (click)="nextPage()" [disabled]="currentPage === totalPages">
             <i class="bi bi-chevron-right"></i>
           </button>

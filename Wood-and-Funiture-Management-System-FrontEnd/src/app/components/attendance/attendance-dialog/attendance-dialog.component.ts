@@ -5,13 +5,15 @@ import { AttendanceService, AttendanceStatus } from '../../../service/attendance
 import { EmployeeService, Employee } from '../../../service/employee.service';
 import { ToastService } from '../../../service/toast.service';
 import { Observable, startWith, map, of } from 'rxjs';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-attendance-dialog',
   standalone: true,
   imports: [
     CommonModule, 
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TranslatePipe
   ],
   templateUrl: './attendance-dialog.component.html',
   styleUrls: ['./attendance-dialog.component.css']

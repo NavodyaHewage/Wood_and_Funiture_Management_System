@@ -19,30 +19,30 @@
                 <li>
                     <a routerLink="/supplier-dashboard" routerLinkActive="active" class="nav-item">
                         <i class="bi bi-grid-1x2-fill"></i>
-                        <span>{{ 'Dashboard' | translate }}</span>
+                        <span>{{ 'SIDEBAR.Dashboard' | translate }}</span>
                     </a>
                 </li>
                 <li>
                     <a routerLink="/my-supplies" routerLinkActive="active" class="nav-item">
                         <i class="bi bi-box-seam"></i>
-                        <span>{{ 'My Supplies' | translate }}</span>
+                        <span>{{ 'SIDEBAR.My Supplies' | translate }}</span>
                     </a>
                 </li>
                 <li>
                     <a routerLink="/supply-request-management" routerLinkActive="active" class="nav-item">
                         <i class="bi bi-clipboard-check"></i>
-                        <span>{{ 'Supply Requests' | translate }}</span>
+                        <span>{{ 'SIDEBAR.Supply Requests' | translate }}</span>
                     </a>
                 </li>
             </ng-container>
             <ng-template #adminMenu>
                 <div class="menu-group" *ngFor="let group of filteredMenuGroups$ | async">
-                    <h3 class="group-label">{{ group.label | translate }}</h3>
+                    <h3 class="group-label">{{ 'SIDEBAR.' + group.label | translate }}</h3>
                     <ul class="nav-list p-0">
                         <li *ngFor="let item of group.items">
                             <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
                                 <i class="bi" [ngClass]="item.icon"></i>
-                                <span>{{ item.name | translate }}</span>
+                                <span>{{ 'SIDEBAR.' + item.name | translate }}</span>
                             </a>
                         </li>
                     </ul>

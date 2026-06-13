@@ -5,6 +5,7 @@ import { RouterLink } from '@angular/router';
 import { AdminSideComponent } from '../admin-side/admin-side.component';
 import { HeaderComponent } from '../../header/header.component';
 import { AuthService } from '../../../service/auth.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 interface SupplierDashboardCard {
   name: string;
@@ -15,7 +16,8 @@ interface SupplierDashboardCard {
 
 @Component({
   selector: 'app-suppliyer-management-dashboard',
-  imports: [CommonModule, RouterLink, AdminSideComponent, HeaderComponent],
+  standalone: true,
+  imports: [CommonModule, RouterLink, AdminSideComponent, HeaderComponent, TranslatePipe],
   templateUrl: './suppliyer-management-dashboard.component.html',
   styleUrl: './suppliyer-management-dashboard.component.css'
 })
@@ -24,22 +26,22 @@ export class SuppliyerManagementDashboardComponent {
 
   supplierCards: SupplierDashboardCard[] = [
     {
-      name: 'Supply Requests',
+      name: 'DASHBOARD_CARDS.SUPPLY_REQUESTS',
       route: '/supply-request-management',
       icon: 'bi-clipboard-check',
-      description: 'Review timber requests, confirm availability, and approve supply volumes.'
+      description: 'DASHBOARD_CARDS.SUPPLY_REQUESTS_DESC_SUP'
     },
     {
-      name: 'My Supplies',
+      name: 'DASHBOARD_CARDS.MY_SUPPLIES',
       route: '/my-supplies',
       icon: 'bi-stack',
-      description: 'View raw material supply orders recorded under your supplier account.'
+      description: 'DASHBOARD_CARDS.MY_SUPPLIES_DESC'
     },
     {
-      name: 'Profile',
+      name: 'DASHBOARD_CARDS.PROFILE',
       route: '/profile',
       icon: 'bi-person-circle',
-      description: 'Keep your supplier account, contact, and business details up to date.'
+      description: 'DASHBOARD_CARDS.PROFILE_DESC'
     }
   ];
 

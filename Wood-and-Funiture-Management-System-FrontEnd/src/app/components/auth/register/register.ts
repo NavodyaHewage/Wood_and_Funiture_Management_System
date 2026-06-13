@@ -7,10 +7,12 @@ import { ToastService } from '../../../service/toast.service';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 
+import { TranslatePipe } from '../../../pipes/translate.pipe';
+
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, AdminSideComponent],
+  imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, AdminSideComponent, TranslatePipe],
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })

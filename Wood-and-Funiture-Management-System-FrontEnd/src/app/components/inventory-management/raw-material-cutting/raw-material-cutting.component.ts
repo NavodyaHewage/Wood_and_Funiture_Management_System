@@ -4,13 +4,14 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Va
 import { RawMaterialCuttingService } from '../../../service/raw-material-cutting.service';
 import { ProductCategoryService } from '../../../service/product-category.service';
 import { ToastService } from '../../../service/toast.service';
+import { HeaderComponent } from "../../header/header.component";
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
-import { HeaderComponent } from '../../header/header.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-raw-material-cutting',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, AdminSideComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HeaderComponent, AdminSideComponent, TranslatePipe],
   templateUrl: './raw-material-cutting.component.html',
   styleUrls: ['./raw-material-cutting.component.css']
 })

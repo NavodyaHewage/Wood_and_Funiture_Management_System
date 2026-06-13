@@ -10,11 +10,12 @@ import { ToastService } from '../../../service/toast.service';
 import { Router } from '@angular/router';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-supply-raw-material',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, HeaderComponent, AdminSideComponent],
+  imports: [CommonModule, ReactiveFormsModule, HeaderComponent, AdminSideComponent, TranslatePipe],
   templateUrl: './supply-raw-material.component.html',
   styleUrls: ['./supply-raw-material.component.css']
 })

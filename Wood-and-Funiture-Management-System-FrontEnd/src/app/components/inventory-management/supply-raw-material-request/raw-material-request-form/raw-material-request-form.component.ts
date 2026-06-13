@@ -6,11 +6,12 @@ import { SuppliyerService } from '../../../../service/suppliyer.service';
 import { RawMaterialService } from '../../../../service/raw-material.service';
 import { ToastService } from '../../../../service/toast.service';
 import { AuthService } from '../../../../service/auth.service';
+import { TranslatePipe } from '../../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-raw-material-request-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TranslatePipe],
   templateUrl: './raw-material-request-form.component.html',
   styleUrl: './raw-material-request-form.component.css'
 })

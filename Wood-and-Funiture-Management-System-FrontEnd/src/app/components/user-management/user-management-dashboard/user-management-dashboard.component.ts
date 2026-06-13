@@ -8,11 +8,13 @@ import { AuthService } from '../../../service/auth.service';
 import { PermissionService } from '../../../service/permission.service';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../admin-side/admin-side.component';
+import { EmployeeService } from '../../../service/employee.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-user-management-dashboard',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, AdminSideComponent, FormsModule],
+  imports: [CommonModule, HeaderComponent, AdminSideComponent, FormsModule, TranslatePipe],
   templateUrl: './user-management-dashboard.component.html',
   styleUrl: './user-management-dashboard.component.css'
 })
@@ -47,6 +49,7 @@ export class UserManagementDashboardComponent implements OnInit {
     'order-management': 'Track customer furniture manufacture orders and progress.',
     'receipts': 'Issue receipts and process customer payments.',
     'expenses': 'Record business, operational, and cutting expenses.',
+    'accounts-dashboard': 'View overall company financial position and accounting metrics.',
     'product-category': 'Manage furniture product categories.',
     'stock-inventory': 'View product stock inventory levels, material descriptions, and available quantities.'
   };
