@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import com.group_project.wfms_backend.dto.auth.ExpenseAccountDTO;
+import com.group_project.wfms_backend.dto.auth.IncomeAccountDTO;
+
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -38,4 +41,8 @@ public class AccountsDashboardDTO {
     private BigDecimal totalCurrentLiabilities;
     private BigDecimal workingCapital;
     private BigDecimal totalAssets;
+
+    // 5. Incomes and Expenses Details
+    private List<IncomeAccountDTO> incomes;
+    private List<ExpenseAccountDTO> expenses;
 }

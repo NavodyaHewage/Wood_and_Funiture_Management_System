@@ -19,6 +19,27 @@ export interface RawMaterialStatusDTO {
     totalStockValue: number;
 }
 
+export interface IncomeAccountDTO {
+    incomeId: number;
+    date: string;
+    amount: number;
+    description: string;
+    receiptId: number;
+    createdById: number;
+}
+
+export interface ExpenseAccountDTO {
+    expenseId: number;
+    date: string;
+    amount: number;
+    description: string;
+    paidTo: string;
+    remarks: string;
+    expenseTypeId: number;
+    grnId: number;
+    userId: number;
+}
+
 export interface AccountsDashboardDTO {
     cashAndEquivalents: number;
     accountsReceivable: number;
@@ -42,6 +63,9 @@ export interface AccountsDashboardDTO {
     totalCurrentLiabilities: number;
     workingCapital: number;
     totalAssets: number;
+
+    incomes: IncomeAccountDTO[];
+    expenses: ExpenseAccountDTO[];
 }
 
 @Injectable({

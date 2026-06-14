@@ -4,8 +4,12 @@ import com.group_project.wfms_backend.dto.auth.ProfitSummaryDTO;
 import com.group_project.wfms_backend.dto.finance.AccountsDashboardDTO;
 import com.group_project.wfms_backend.dto.finance.ProductStockStatusDTO;
 import com.group_project.wfms_backend.dto.finance.RawMaterialStatusDTO;
+import com.group_project.wfms_backend.dto.auth.ExpenseAccountDTO;
+import com.group_project.wfms_backend.dto.auth.IncomeAccountDTO;
 import com.group_project.wfms_backend.model.*;
 import com.group_project.wfms_backend.repository.AssetAccountRepository;
+import com.group_project.wfms_backend.repository.ExpenseAccountRepository;
+import com.group_project.wfms_backend.repository.IncomeAccountRepository;
 import com.group_project.wfms_backend.repository.ProductStockRepository;
 import com.group_project.wfms_backend.repository.SupplyRawMaterialDetailsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +35,12 @@ public class AccountsDashboardService {
 
     @Autowired
     private ProfitService profitService;
+
+    @Autowired
+    private IncomeAccountRepository incomeAccountRepository;
+
+    @Autowired
+    private ExpenseAccountRepository expenseAccountRepository;
 
     public AccountsDashboardDTO getDashboardData(LocalDate start, LocalDate end) {
         AccountsDashboardDTO dto = new AccountsDashboardDTO();
@@ -116,6 +126,39 @@ public class AccountsDashboardService {
         // 4. Inventory Status
         dto.setFinishedProducts(finishedProducts);
         dto.setRawMaterials(rawMaterialDTOs);
+
+        // Fetch Incomes
+        List<IncomeAccount> incomeEntities = incomeAccountRepository.findByDateBetween(start, end);
+        List<IncomeAccountDTO> incomes = new ArrayList<>();
+        for (IncomeAccount inc : incomeEntities) {
+            IncomeAccountDTO incDto = new IncomeAccountDTO();
+            incDto.setIncomeId(inc.getIncomeId());
+            incDto.setDate(inc.getDate());
+            incDto.setAmount(inc.getAmount());
+            incDto.setDescription(inc.getDescription());
+            incDto.setReceiptId(inc.getReceipt() != null ? inc.getReceipt().getReceiptId() : null);
+            incDto.setCreatedById(inc.getCreatedBy() != null ? inc.getCreatedBy().getUserId() : null);
+            incomes.add(incDto);
+        }
+        dto.setIncomes(incomes);
+
+        // Fetch Expenses
+        List<Expenseaccount> expenseEntities = expenseAccountRepository.findByDateBetween(start, end);
+        List<ExpenseAccountDTO> expenses = new ArrayList<>();
+        for (Expenseaccount exp : expenseEntities) {
+            ExpenseAccountDTO expDto = new ExpenseAccountDTO();
+            expDto.setExpenseId(exp.getExpenseId());
+            expDto.setDate(exp.getDate());
+            expDto.setAmount(exp.getAmount());
+            expDto.setDescription(exp.getDescription());
+            expDto.setPaidTo(exp.getPaidTo());
+            expDto.setRemarks(exp.getRemarks());
+            expDto.setExpenseTypeId(exp.getExpenseType() != null ? exp.getExpenseType().getExpenseTypeId() : null);
+            expDto.setGrnId(exp.getGrn() != null ? exp.getGrn().getGrnId() : null);
+            expDto.setUserId(exp.getUser() != null ? exp.getUser().getUserId() : null);
+            expenses.add(expDto);
+        }
+        dto.setExpenses(expenses);
 
         // 5. Financial Indicators
         BigDecimal totalCurrentAssets = cashAndEquivalents.add(accountsReceivable).add(finishedProductsValue).add(rawMaterialsValue).add(loansReceivable);

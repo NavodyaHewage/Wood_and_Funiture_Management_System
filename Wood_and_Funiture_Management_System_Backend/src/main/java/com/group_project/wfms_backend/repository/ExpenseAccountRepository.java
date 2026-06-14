@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface ExpenseAccountRepository extends JpaRepository <Expenseaccount, Integer>{
@@ -15,4 +16,5 @@ public interface ExpenseAccountRepository extends JpaRepository <Expenseaccount,
     @Query("SELECT SUM(e.amount) FROM Expenseaccount e WHERE e.date BETWEEN :start AND :end")
     BigDecimal getTotalExpense(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
+    List<Expenseaccount> findByDateBetween(LocalDate start, LocalDate end);
 }

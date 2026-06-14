@@ -6,10 +6,12 @@ import { ToastService } from '../../service/toast.service';
 import { HeaderComponent } from '../header/header.component';
 import { AdminSideComponent } from '../user-management/admin-side/admin-side.component';
 
+import { TranslatePipe } from '../../pipes/translate.pipe';
+
 @Component({
     selector: 'app-profile',
     standalone: true,
-    imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent],
+    imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent, TranslatePipe],
     templateUrl: './profile.component.html',
     styleUrls: ['./profile.component.css']
 })
