@@ -7,8 +7,8 @@
     <div class="content-body">
       <div class="page-header">
         <div>
-          <h1>My Supplies</h1>
-          <p>Supply raw material orders recorded for your supplier account</p>
+          <h1>{{ 'MY_SUPPLIES.TITLE' | translate }}</h1>
+          <p>{{ 'MY_SUPPLIES.SUBTITLE' | translate }}</p>
         </div>
 
         <div class="search-box">
@@ -16,36 +16,36 @@
           <input
             type="text"
             [(ngModel)]="searchTerm"
-            placeholder="Search invoice, wood type, or date">
+            [placeholder]="'MY_SUPPLIES.SEARCH_PLACEHOLDER' | translate">
         </div>
       </div>
 
       <div class="supplier-strip">
         <div>
-          <span class="label">Login</span>
+          <span class="label">{{ 'MY_SUPPLIES.LOGIN' | translate }}</span>
           <strong>{{ currentUser?.username }}</strong>
         </div>
         <div>
-          <span class="label">Role</span>
+          <span class="label">{{ 'MY_SUPPLIES.ROLE' | translate }}</span>
           <strong>{{ currentUser?.role }}</strong>
         </div>
         <div>
-          <span class="label">Email</span>
-          <strong>{{ currentUser?.email || 'Not specified' }}</strong>
+          <span class="label">{{ 'MY_SUPPLIES.EMAIL' | translate }}</span>
+          <strong>{{ currentUser?.email || ('MY_SUPPLIES.NOT_SPECIFIED' | translate) }}</strong>
         </div>
       </div>
 
       <div class="stats-grid">
         <div class="stat-card">
-          <span>Total Orders</span>
+          <span>{{ 'MY_SUPPLIES.TOTAL_ORDERS' | translate }}</span>
           <strong>{{ totalOrders }}</strong>
         </div>
         <div class="stat-card">
-          <span>Total Material</span>
+          <span>{{ 'MY_SUPPLIES.TOTAL_MATERIAL' | translate }}</span>
           <strong>{{ totalCft | number:'1.2-2' }} CFT</strong>
         </div>
         <div class="stat-card">
-          <span>Total Net Amount</span>
+          <span>{{ 'MY_SUPPLIES.TOTAL_NET_AMOUNT' | translate }}</span>
           <strong>Rs. {{ totalAmount | number:'1.2-2' }}</strong>
         </div>
       </div>
@@ -53,7 +53,7 @@
       <div class="table-panel">
         <div *ngIf="loading" class="empty-state">
           <div class="spinner-border text-primary" role="status"></div>
-          <p>Loading your supply records...</p>
+          <p>{{ 'MY_SUPPLIES.LOADING' | translate }}</p>
         </div>
 
         <div *ngIf="!loading && errorMessage" class="empty-state warning">
@@ -64,13 +64,13 @@
         <table *ngIf="!loading && !errorMessage">
           <thead>
             <tr>
-              <th>Invoice</th>
-              <th>Date</th>
-              <th>Wood Type</th>
-              <th>Total CFT</th>
-              <th>Net Amount</th>
-              <th>GRN</th>
-              <th class="text-center">Action</th>
+              <th>{{ 'MY_SUPPLIES.TH_INVOICE' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_DATE' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_WOOD_TYPE' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_TOTAL_CFT' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_NET_AMOUNT' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_GRN' | translate }}</th>
+              <th class="text-center">{{ 'MY_SUPPLIES.TH_ACTION' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -82,7 +82,7 @@
               <td class="amount">Rs. {{ supply.netAmount | number:'1.2-2' }}</td>
               <td>
                 <span class="badge" [ngClass]="supply.grnId ? 'badge-ready' : 'badge-pending'">
-                  {{ supply.grnId ? 'Created' : 'Pending' }}
+                  {{ supply.grnId ? ('MY_SUPPLIES.STATUS_CREATED' | translate) : ('MY_SUPPLIES.STATUS_PENDING' | translate) }}
                 </span>
               </td>
               <td class="text-center">
@@ -95,7 +95,7 @@
             <tr *ngIf="filteredSupplies.length === 0">
               <td colspan="7" class="empty-row">
                 <i class="bi bi-inbox"></i>
-                <span>No supply records found for your account.</span>
+                <span>{{ 'MY_SUPPLIES.NO_RECORDS' | translate }}</span>
               </td>
             </tr>
           </tbody>
@@ -108,7 +108,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <div>
-          <h2>Supply Details</h2>
+          <h2>{{ 'MY_SUPPLIES.MODAL_TITLE' | translate }}</h2>
           <p>{{ selectedSupply?.invoiceNumber }}</p>
         </div>
         <button class="btn-icon" (click)="closeDetailsModal()" title="Close">
@@ -118,19 +118,19 @@
 
       <div class="detail-grid">
         <div>
-          <span>Date</span>
+          <span>{{ 'MY_SUPPLIES.MODAL_DATE' | translate }}</span>
           <strong>{{ selectedSupply?.supplyDate | date:'fullDate' }}</strong>
         </div>
         <div>
-          <span>Wood Type</span>
+          <span>{{ 'MY_SUPPLIES.MODAL_WOOD_TYPE' | translate }}</span>
           <strong>{{ selectedSupply?.rmName }}</strong>
         </div>
         <div>
-          <span>Total CFT</span>
+          <span>{{ 'MY_SUPPLIES.MODAL_TOTAL_CFT' | translate }}</span>
           <strong>{{ selectedSupply?.totalQuantityCft | number:'1.4-4' }}</strong>
         </div>
         <div>
-          <span>Net Amount</span>
+          <span>{{ 'MY_SUPPLIES.MODAL_NET_AMOUNT' | translate }}</span>
           <strong>Rs. {{ selectedSupply?.netAmount | number:'1.2-2' }}</strong>
         </div>
       </div>
@@ -139,12 +139,12 @@
         <table>
           <thead>
             <tr>
-              <th>Log #</th>
-              <th>Length</th>
-              <th>Girth</th>
-              <th>CFT</th>
-              <th>Price</th>
-              <th>Line Total</th>
+              <th>{{ 'MY_SUPPLIES.TH_LOG_NO' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_LENGTH' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_GIRTH' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_CFT' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_PRICE' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_LINE_TOTAL' | translate }}</th>
             </tr>
           </thead>
           <tbody>

@@ -7,10 +7,12 @@ import { AdminSideComponent } from '../admin-side/admin-side.component';
 import { AuthService } from '../../../service/auth.service';
 import { SupplyRawMaterialService } from '../../../service/supply-raw-material.service';
 
+import { TranslatePipe } from '../../../pipes/translate.pipe';
+
 @Component({
   selector: 'app-my-supplies',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent],
+  imports: [CommonModule, FormsModule, HeaderComponent, AdminSideComponent, TranslatePipe],
   templateUrl: './my-supplies.component.html',
   styleUrl: './my-supplies.component.css'
 })
