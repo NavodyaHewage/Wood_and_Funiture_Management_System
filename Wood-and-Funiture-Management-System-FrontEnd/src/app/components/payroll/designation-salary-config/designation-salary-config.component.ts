@@ -5,11 +5,12 @@ import { DesignationSalaryService, DesignationSalary, SalaryRateType } from '../
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { HeaderComponent } from '../../header/header.component';
 import { ToastService } from '../../../service/toast.service';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-designation-salary-config',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminSideComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, AdminSideComponent, HeaderComponent, TranslatePipe],
   templateUrl: './designation-salary-config.component.html',
   styleUrl: './designation-salary-config.component.css'
 })

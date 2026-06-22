@@ -15,6 +15,11 @@ export class SupplyRawMaterialService {
     return this.http.get<any[]>(this.apiUrl);
   }
 
+  getMySupplies(email?: string): Observable<any[]> {
+    const options = email ? { params: { email } } : {};
+    return this.http.get<any[]>(`${this.apiUrl}/my-supplies`, options);
+  }
+
   getById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }

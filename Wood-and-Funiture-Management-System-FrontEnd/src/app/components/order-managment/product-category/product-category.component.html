@@ -9,8 +9,8 @@
         <div class="content-body">
             <div class="header-section">
                 <div class="title-group">
-                    <h1>Product Category Management</h1>
-                    <p>Add and manage different wood/furniture categories</p>
+                    <h1>{{ 'PRODUCT_CATEGORY.TITLE' | translate }}</h1>
+                    <p>{{ 'PRODUCT_CATEGORY.SUBTITLE' | translate }}</p>
                 </div>
             </div>
 
@@ -19,34 +19,34 @@
                 <div class="col-md-4">
                     <div class="card border-0 shadow-sm category-card">
                         <div class="card-header bg-primary border-bottom-0 pt-4 px-4">
-                            <h5 class="fw-bold mb-0 text-white">{{ isEditing ? 'Edit Category' : 'Add New Category' }}</h5>
+                            <h5 class="fw-bold mb-0 text-white">{{ isEditing ? ('PRODUCT_CATEGORY.EDIT_CATEGORY' | translate) : ('PRODUCT_CATEGORY.ADD_NEW' | translate) }}</h5>
                         </div>
                         <div class="card-body p-4">
                             <form (ngSubmit)="saveCategory()">
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small fw-bold">Material Category</label>
-                                    <input type="text" class="form-control bg-light border-0 py-2" [(ngModel)]="newCategory.materialCategory" name="material" placeholder="e.g. Teak Wood" required>
+                                    <label class="form-label text-muted small fw-bold">{{ 'PRODUCT_CATEGORY.MATERIAL_CATEGORY' | translate }}</label>
+                                    <input type="text" class="form-control bg-light border-0 py-2" [(ngModel)]="newCategory.materialCategory" name="material" [placeholder]="'PRODUCT_CATEGORY.MATERIAL_PLACEHOLDER' | translate" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small fw-bold">Description</label>
-                                    <textarea class="form-control bg-light border-0 py-2" [(ngModel)]="newCategory.description" name="description" rows="3" placeholder="Category details..."></textarea>
+                                    <label class="form-label text-muted small fw-bold">{{ 'PRODUCT_CATEGORY.DESCRIPTION' | translate }}</label>
+                                    <textarea class="form-control bg-light border-0 py-2" [(ngModel)]="newCategory.description" name="description" rows="3" [placeholder]="'PRODUCT_CATEGORY.DESC_PLACEHOLDER' | translate"></textarea>
                                 </div>
                                 <div class="mb-3">
-                                    <label class="form-label text-muted small fw-bold">Unit of Measurement</label>
+                                    <label class="form-label text-muted small fw-bold">{{ 'PRODUCT_CATEGORY.UNIT' | translate }}</label>
                                     <select class="form-select bg-light border-0 py-2" [(ngModel)]="newCategory.unitOfMeasurement" name="unit">
                                         <option *ngFor="let opt of unitOptions" [value]="opt">{{ opt }}</option>
                                     </select>
                                 </div>
                                 <div class="mb-4">
-                                    <label class="form-label text-muted small fw-bold">Unit Price (LKR)</label>
+                                    <label class="form-label text-muted small fw-bold">{{ 'PRODUCT_CATEGORY.PRICE' | translate }}</label>
                                     <input type="number" class="form-control bg-light border-0 py-2" [(ngModel)]="newCategory.unitPrice" name="price" required>
                                 </div>
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm">
                                         <i class="bi" [ngClass]="isEditing ? 'bi-check-lg' : 'bi-plus-lg'"></i>
-                                        {{ isEditing ? 'Update Category' : 'Create Category' }}
+                                        {{ isEditing ? ('PRODUCT_CATEGORY.UPDATE' | translate) : ('PRODUCT_CATEGORY.CREATE' | translate) }}
                                     </button>
-                                    <button type="button" *ngIf="isEditing" (click)="resetForm()" class="btn btn-outline-secondary py-2">Cancel</button>
+                                    <button type="button" *ngIf="isEditing" (click)="resetForm()" class="btn btn-outline-secondary py-2">{{ 'PRODUCT_CATEGORY.CANCEL' | translate }}</button>
                                 </div>
                             </form>
                         </div>
@@ -57,18 +57,39 @@
                 <div class="col-md-8">
                     <div class="card border-0 shadow-sm list-card">
                         <div class="card-body p-0">
+                            <div class="list-toolbar">
+                                <div>
+                                    <h5 class="list-title">{{ 'PRODUCT_CATEGORY.LIST_TITLE' | translate }}</h5>
+                                    <p class="list-subtitle">{{ 'PRODUCT_CATEGORY.LIST_SUBTITLE' | translate }}</p>
+                                </div>
+                                <div class="search-box-clean">
+                                    <i class="bi bi-search"></i>
+                                    <input
+                                        type="text"
+                                        class="search-input-field"
+                                        [(ngModel)]="searchTerm"
+                                        (input)="onSearch()"
+                                        [placeholder]="'PRODUCT_CATEGORY.SEARCH' | translate"
+                                    >
+                                </div>
+                            </div>
                             <div class="table-responsive">
                                 <table class="table table-hover align-middle mb-0">
                                     <thead class="bg-light">
                                         <tr>
-                                            <th class="ps-4 py-3 text-muted small fw-bold">CATEGORY</th>
-                                            <th class="py-3 text-muted small fw-bold">UNIT</th>
-                                            <th class="py-3 text-muted small fw-bold">PRICE</th>
-                                            <th class="pe-4 py-3 text-end text-muted small fw-bold">ACTIONS</th>
+                                            <th class="ps-4 py-3 text-muted small fw-bold">{{ 'PRODUCT_CATEGORY.TH_CATEGORY' | translate }}</th>
+                                            <th class="py-3 text-muted small fw-bold">{{ 'PRODUCT_CATEGORY.TH_UNIT' | translate }}</th>
+                                            <th class="py-3 text-muted small fw-bold">{{ 'PRODUCT_CATEGORY.TH_PRICE' | translate }}</th>
+                                            <th class="pe-4 py-3 text-end text-muted small fw-bold">{{ 'PRODUCT_CATEGORY.TH_ACTIONS' | translate }}</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let cat of categories">
+                                        <tr *ngIf="isLoading">
+                                            <td colspan="4" class="text-center py-5 text-muted">
+                                                {{ 'PRODUCT_CATEGORY.LOADING' | translate }}
+                                            </td>
+                                        </tr>
+                                        <tr *ngFor="let cat of paginatedCategories">
                                             <td class="ps-4 py-3">
                                                 <div class="fw-bold text-dark">{{ cat.materialCategory }}</div>
                                                 <small class="text-muted text-truncate d-block" style="max-width: 200px;">{{ cat.description }}</small>
@@ -86,14 +107,36 @@
                                                 </button>
                                             </td>
                                         </tr>
-                                        <tr *ngIf="categories.length === 0">
+                                        <tr *ngIf="!isLoading && totalCategories === 0">
                                             <td colspan="4" class="text-center py-5 text-muted">
                                                 <i class="bi bi-inbox fs-1 d-block mb-2"></i>
-                                                No categories found. Add your first one!
+                                                {{ searchTerm ? ('PRODUCT_CATEGORY.NO_CATEGORIES' | translate) : ('PRODUCT_CATEGORY.NO_CATEGORIES_ADD' | translate) }}
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
+                                <div class="pagination-footer" *ngIf="!isLoading && totalCategories > pageSize">
+                                    <div class="pagination-info">
+                                        {{ 'PRODUCT_CATEGORY.SHOWING' | translate }} {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalCategories) }} {{ 'PRODUCT_CATEGORY.OF' | translate }} {{ totalCategories }}
+                                    </div>
+                                    <div class="pagination-btns">
+                                        <button
+                                            class="btn-secondary btn-pagination"
+                                            [disabled]="currentPage === 1"
+                                            (click)="prevPage()"
+                                        >
+                                            <i class="bi bi-chevron-left"></i> {{ 'PRODUCT_CATEGORY.PREVIOUS' | translate }}
+                                        </button>
+                                        <span class="page-number">{{ 'PRODUCT_CATEGORY.PAGE' | translate }} {{ currentPage }} {{ 'PRODUCT_CATEGORY.OF' | translate }} {{ totalPages }}</span>
+                                        <button
+                                            class="btn-secondary btn-pagination"
+                                            [disabled]="currentPage === totalPages"
+                                            (click)="nextPage()"
+                                        >
+                                            {{ 'PRODUCT_CATEGORY.NEXT' | translate }} <i class="bi bi-chevron-right"></i>
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

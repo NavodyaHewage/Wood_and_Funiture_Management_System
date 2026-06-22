@@ -20,10 +20,10 @@ public class TestController {
         return "User Content - Any authenticated user can access";
     }
 
-    @GetMapping("/manager")
-    @PreAuthorize("hasRole('MANAGER')")
-    public String managerAccess() {
-        return "Manager Content - Only MANAGER role can access";
+    @GetMapping("/employee")
+    @PreAuthorize("hasRole('EMPLOYEE')")
+    public String employeeAccess() {
+        return "Employee Content - Only EMPLOYEE role can access";
     }
 
     @GetMapping("/admin")
@@ -32,15 +32,15 @@ public class TestController {
         return "Admin Content - Only ADMIN role can access";
     }
 
-    @GetMapping("/manager-or-admin")
-    @PreAuthorize("hasAnyRole('MANAGER', 'ADMIN')")
-    public String managerOrAdminAccess() {
-        return "Manager or Admin Content - MANAGER or ADMIN roles can access";
+    @GetMapping("/employee-or-admin")
+    @PreAuthorize("hasAnyRole('EMPLOYEE', 'ADMIN')")
+    public String employeeOrAdminAccess() {
+        return "Employee or Admin Content - EMPLOYEE or ADMIN roles can access";
     }
 
     @GetMapping("/all-roles")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MANAGER', 'SUPPLIER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'EMPLOYEE', 'SUPPLIER')")
     public String allRolesAccess() {
-        return "All Roles Content - ADMIN, MANAGER, or SUPPLIER can access";
+        return "All Roles Content - ADMIN, EMPLOYEE, or SUPPLIER can access";
     }
 }

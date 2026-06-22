@@ -54,6 +54,8 @@ public class GRNService {
         if (grn.getSupplyOrder() != null) {
             dto.setSupplyOrderId(grn.getSupplyOrder().getSupplyId());
             dto.setSupplyOrderInvoiceNumber(grn.getSupplyOrder().getInvoiceNumber());
+            dto.setTransportCost(grn.getSupplyOrder().getTransport());
+            dto.setCuttingFee(grn.getSupplyOrder().getCuttingFee());
         }
 
         if (grn.getGrnDetails() != null) {

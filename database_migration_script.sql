@@ -15,7 +15,7 @@ USE timber_business;
 -- (COMMENTED OUT AS PER REQUEST - Do not modify User table due to authentication dependencies)
 /*
 ALTER TABLE User 
-MODIFY COLUMN Role ENUM('Admin', 'Supplier', 'Manager', 'CUSTOMER') NOT NULL;
+MODIFY COLUMN Role ENUM('Admin', 'Supplier', 'Employee', 'CUSTOMER') NOT NULL;
 */
 
 -- 2. SUPPLIER TABLE: Add NIC

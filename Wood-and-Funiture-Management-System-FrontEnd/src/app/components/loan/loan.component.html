@@ -10,44 +10,44 @@
         <!-- Header -->
         <div class="header-section">
           <div class="title-group">
-            <h1>Loan & Advance Management</h1>
-            <p>Track employee loans, advances, and recovery rules</p>
+            <h1>{{ 'LOAN_ADVANCE.TITLE' | translate }}</h1>
+            <p>{{ 'LOAN_ADVANCE.SUBTITLE' | translate }}</p>
           </div>
           <button class="btn-refresh-minimal" (click)="loadLoans()">
-            <i class="bi bi-arrow-clockwise"></i> Refresh Data
+            <i class="bi bi-arrow-clockwise"></i> {{ 'LOAN_ADVANCE.REFRESH_DATA' | translate }}
           </button>
         </div>
 
         <!-- Stats Grid -->
         <div class="stats-grid">
           <div class="stat-card">
-            <div class="stat-label">Total Active Loans</div>
+            <div class="stat-label">{{ 'LOAN_ADVANCE.TOTAL_ACTIVE_LOANS' | translate }}</div>
             <div class="stat-value">{{ metrics.totalActive }}</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Expected Collection (Monthly)</div>
+            <div class="stat-label">{{ 'LOAN_ADVANCE.EXPECTED_COLLECTION' | translate }}</div>
             <div class="stat-value">LKR {{ metrics.expectedCollection | number:'1.2-2' }}</div>
           </div>
           <div class="stat-card">
-            <div class="stat-label">Pending Requests</div>
+            <div class="stat-label">{{ 'LOAN_ADVANCE.PENDING_REQUESTS' | translate }}</div>
             <div class="stat-value">{{ metrics.pendingCount }}</div>
           </div>
         </div>
 
         <div class="dual-layout">
           <!-- Left: Loan Issuance Form -->
-          <div class="form-section">
+          <!-- <div class="form-section"> -->
             <div class="premium-card">
               <div class="card-header-clean">
-                <h3>Issue New Loan / Advance</h3>
+                <h3>{{ 'LOAN_ADVANCE.ISSUE_NEW' | translate }}</h3>
               </div>
               <div class="card-body-clean">
                 <form [formGroup]="loanForm" (ngSubmit)="onSubmit()">
                   <div class="row g-3">
                     <div class="col-12">
-                      <label class="clean-label">Select Employee</label>
+                      <label class="clean-label">{{ 'LOAN_ADVANCE.SELECT_EMPLOYEE' | translate }}</label>
                       <select class="clean-select" formControlName="employeeId">
-                        <option value="" disabled selected>-- Select Employee --</option>
+                        <option value="" disabled selected>{{ 'LOAN_ADVANCE.SELECT_EMP_OPTION' | translate }}</option>
                         <option *ngFor="let emp of employees" [value]="emp.id">
                           {{emp.fullName}} ({{emp.designation}})
                         </option>
@@ -55,32 +55,32 @@
                     </div>
 
                     <div class="col-md-6">
-                      <label class="clean-label">Type</label>
+                      <label class="clean-label">{{ 'LOAN_ADVANCE.TYPE' | translate }}</label>
                       <select class="clean-select" formControlName="type">
-                        <option value="Loan">Loan</option>
-                        <option value="Advance">Advance</option>
+                        <option value="Loan">{{ 'LOAN_ADVANCE.LOAN' | translate }}</option>
+                        <option value="Advance">{{ 'LOAN_ADVANCE.ADVANCE' | translate }}</option>
                       </select>
                     </div>
 
                     <div class="col-md-6">
-                      <label class="clean-label">Amount (LKR)</label>
+                      <label class="clean-label">{{ 'LOAN_ADVANCE.AMOUNT' | translate }}</label>
                       <input type="number" class="clean-input" formControlName="loanAmount" placeholder="0.00">
                     </div>
 
                     <div class="col-md-6" *ngIf="loanForm.get('type')?.value === 'Loan'">
-                      <label class="clean-label">Installments (Months)</label>
+                      <label class="clean-label">{{ 'LOAN_ADVANCE.INSTALLMENTS' | translate }}</label>
                       <input type="number" class="clean-input" formControlName="installments">
                     </div>
 
                     <div class="col-md-6" *ngIf="loanForm.get('type')?.value === 'Loan'">
-                      <label class="clean-label">Monthly Deduction</label>
+                      <label class="clean-label">{{ 'LOAN_ADVANCE.MONTHLY_DEDUCTION' | translate }}</label>
                       <div class="highlight-box-clean">
                         LKR {{loanForm.get('deductionAmount')?.value | number}}
                       </div>
                     </div>
 
                     <div class="col-12">
-                      <label class="clean-label">Reason / Purpose</label>
+                      <label class="clean-label">{{ 'LOAN_ADVANCE.REASON' | translate }}</label>
                       <textarea class="clean-textarea" formControlName="reason" rows="2" placeholder="Brief reason..."></textarea>
                     </div>
 
@@ -88,35 +88,35 @@
                     <div class="col-12" *ngIf="hasActiveLoanWarning">
                       <div class="alert-clean-warning">
                         <i class="bi bi-exclamation-triangle-fill"></i>
-                        <span>Active balance: <strong>LKR {{selectedEmployeeBalance | number}}</strong></span>
+                        <span>{{ 'LOAN_ADVANCE.ACTIVE_BALANCE_WARNING' | translate }} <strong>LKR {{selectedEmployeeBalance | number}}</strong></span>
                       </div>
                     </div>
 
                     <div class="col-12 mt-4">
                       <button type="submit" class="btn-primary w-100" [disabled]="loading">
-                        {{ loading ? 'Processing...' : 'Apply Loan & Set Rule' }}
+                        {{ loading ? ('LOAN_ADVANCE.PROCESSING' | translate) : ('LOAN_ADVANCE.APPLY_LOAN' | translate) }}
                       </button>
                     </div>
                   </div>
                 </form>
               </div>
             </div>
-          </div>
+          <!-- </div> -->
 
           <!-- Right: Active Loans Table -->
           <div class="list-section">
             <div class="premium-card">
               <div class="card-header-clean">
-                <h3>Loan History & Tracking</h3>
+                <h3>{{ 'LOAN_ADVANCE.LOAN_HISTORY' | translate }}</h3>
               </div>
               <div class="table-container-clean">
                 <table class="table-premium">
                   <thead>
                     <tr>
-                      <th>Employee</th>
-                      <th>Amount</th>
-                      <th>Progress</th>
-                      <th>Status</th>
+                      <th>{{ 'LOAN_ADVANCE.EMPLOYEE' | translate }}</th>
+                      <th>{{ 'LOAN_ADVANCE.AMOUNT_TH' | translate }}</th>
+                      <th>{{ 'LOAN_ADVANCE.PROGRESS' | translate }}</th>
+                      <th>{{ 'LOAN_ADVANCE.STATUS' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -130,7 +130,7 @@
                       <td>
                         <div class="amount-info">
                           <span class="total">LKR {{loan.loanAmount | number}}</span>
-                          <span class="balance">Bal: {{loan.balance | number}}</span>
+                          <span class="balance">{{ 'LOAN_ADVANCE.BAL' | translate }} {{loan.balance | number}}</span>
                         </div>
                       </td>
                       <td>
@@ -148,7 +148,7 @@
                       </td>
                     </tr>
                     <tr *ngIf="loans.length === 0 && !loading">
-                      <td colspan="4" class="text-center py-4 text-muted">No records found.</td>
+                      <td colspan="4" class="text-center py-4 text-muted">{{ 'LOAN_ADVANCE.NO_RECORDS' | translate }}</td>
                     </tr>
                   </tbody>
                 </table>

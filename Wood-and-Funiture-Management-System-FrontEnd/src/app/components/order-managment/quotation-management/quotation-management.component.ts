@@ -10,11 +10,12 @@ import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { ProductCategoryService } from '../../../service/product-category.service';
 import { FormsModule } from '@angular/forms';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-quotation-management',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, HeaderComponent, AdminSideComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, HeaderComponent, AdminSideComponent, TranslatePipe],
   templateUrl: './quotation-management.component.html',
   styleUrls: ['./quotation-management.component.css']
 })
@@ -383,7 +384,16 @@ export class QuotationManagementComponent implements OnInit {
       error: (err) => {
         this.isLoading = false;
         console.error('Error converting quotation', err);
-        this.toastService.show(err.error?.message || 'Error converting quotation to order', 'error');
+        let errorMsg = 'Error converting quotation to order. Please check stock availability.';
+        if (err.error) {
+          if (typeof err.error === 'string') {
+            try { errorMsg = JSON.parse(err.error).message || err.error; } 
+            catch (e) { errorMsg = err.error; }
+          } else {
+            errorMsg = err.error.message || 'Error converting quotation to order. Please check stock availability.';
+          }
+        }
+        this.toastService.show(errorMsg, 'error');
       }
     });
   }

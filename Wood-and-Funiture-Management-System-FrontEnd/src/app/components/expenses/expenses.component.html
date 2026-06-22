@@ -2,38 +2,38 @@
 <div class="modal-backdrop" *ngIf="showViewModal" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.35); z-index: 1000;"></div>
 <div class="modal-premium" *ngIf="showViewModal" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 1rem; box-shadow: 0 8px 32px rgba(0,0,0,0.18); z-index: 1001; min-width: 350px; max-width: 95vw; min-height: 200px; padding: 2rem 2.5rem;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-    <h2 style="margin: 0; font-size: 1.35rem; color: #713600;">Expense Details</h2>
+    <h2 style="margin: 0; font-size: 1.35rem; color: #713600;">{{ 'EXPENSE_MANAGEMENT.EXPENSE_DETAILS' | translate }}</h2>
     <button (click)="closeViewModal()" style="background: none; border: none; font-size: 1.5rem; color: #888; cursor: pointer;">
       <i class="bi bi-x-lg"></i>
     </button>
   </div>
   <div *ngIf="selectedExpense">
     <div style="margin-bottom: 1rem;">
-      <strong>Description:</strong> <span>{{ selectedExpense.description }}</span>
+      <strong>{{ 'EXPENSE_MANAGEMENT.DESCRIPTION' | translate }}</strong> <span>{{ selectedExpense.description }}</span>
     </div>
     <div style="margin-bottom: 1rem;">
-      <strong>Date:</strong> <span>{{ selectedExpense.date | date:'mediumDate' }}</span>
+      <strong>{{ 'EXPENSE_MANAGEMENT.DATE' | translate }}</strong> <span>{{ selectedExpense.date | date:'mediumDate' }}</span>
     </div>
     <div style="margin-bottom: 1rem;">
-      <strong>Amount:</strong> <span>LKR {{ selectedExpense.amount | number:'1.2-2' }}</span>
+      <strong>{{ 'EXPENSE_MANAGEMENT.AMOUNT' | translate }}</strong> <span>LKR {{ selectedExpense.amount | number:'1.2-2' }}</span>
     </div>
     <div style="margin-bottom: 1rem;">
-      <strong>Category:</strong> <span>{{ getCategoryName(selectedExpense.expenseTypeId) }}</span>
+      <strong>{{ 'EXPENSE_MANAGEMENT.CATEGORY' | translate }}</strong> <span>{{ getCategoryName(selectedExpense.expenseTypeId) }}</span>
     </div>
     <div style="margin-bottom: 1rem;">
-      <strong>Recipient:</strong> <span>{{ selectedExpense.paidTo }}</span>
+      <strong>{{ 'EXPENSE_MANAGEMENT.RECIPIENT' | translate }}</strong> <span>{{ selectedExpense.paidTo }}</span>
     </div>
     <div style="margin-bottom: 1rem;" *ngIf="selectedExpense.grnId">
-      <strong>GRN:</strong> <span>{{ getGrnNumber(selectedExpense.grnId) }}</span>
+      <strong>{{ 'EXPENSE_MANAGEMENT.GRN' | translate }}</strong> <span>{{ getGrnNumber(selectedExpense.grnId) }}</span>
     </div>
     <div style="margin-bottom: 1rem;" *ngIf="selectedExpense.remarks">
-      <strong>Remarks:</strong> <span>{{ selectedExpense.remarks }}</span>
+      <strong>{{ 'EXPENSE_MANAGEMENT.REMARKS' | translate }}</strong> <span>{{ selectedExpense.remarks }}</span>
     </div>
     <div style="margin-bottom: 1rem;">
-      <strong>Expense ID:</strong> <span>#{{ selectedExpense.expenseId }}</span>
+      <strong>{{ 'EXPENSE_MANAGEMENT.EXPENSE_ID' | translate }}</strong> <span>#{{ selectedExpense.expenseId }}</span>
     </div>
     <div style="margin-bottom: 1rem;">
-      <strong>User ID:</strong> <span>#{{ selectedExpense.userId }}</span>
+      <strong>{{ 'EXPENSE_MANAGEMENT.USER_ID' | translate }}</strong> <span>#{{ selectedExpense.userId }}</span>
     </div>
   </div>
 </div>
@@ -52,11 +52,11 @@
         <!-- Welcome Header -->
         <div class="header-section">
           <div class="title-group">
-            <h1>Expense Account Management</h1>
-            <p>Track, manage, and audit corporate expenditures and supplier invoices</p>
+            <h1>{{ 'EXPENSE_MANAGEMENT.TITLE' | translate }}</h1>
+            <p>{{ 'EXPENSE_MANAGEMENT.SUBTITLE' | translate }}</p>
           </div>
           <button class="btn-refresh-minimal" (click)="loadExpenses()">
-            <i class="bi bi-arrow-clockwise"></i> Refresh Data
+            <i class="bi bi-arrow-clockwise"></i> {{ 'EXPENSE_MANAGEMENT.REFRESH_DATA' | translate }}
           </button>
         </div>
 
@@ -67,7 +67,7 @@
               <i class="bi bi-currency-dollar"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label">Total Expenditure</div>
+              <div class="stat-label">{{ 'EXPENSE_MANAGEMENT.TOTAL_EXPENDITURE' | translate }}</div>
               <div class="stat-value">LKR {{ metrics.totalExpenses | number:'1.2-2' }}</div>
             </div>
           </div>
@@ -77,7 +77,7 @@
               <i class="bi bi-tags-fill"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label">Active Cost Categories</div>
+              <div class="stat-label">{{ 'EXPENSE_MANAGEMENT.ACTIVE_CATEGORIES' | translate }}</div>
               <div class="stat-value">{{ metrics.activeTypesCount }}</div>
             </div>
           </div>
@@ -87,7 +87,7 @@
               <i class="bi bi-calendar3"></i>
             </div>
             <div class="stat-info">
-              <div class="stat-label">Month-to-Date Cost</div>
+              <div class="stat-label">{{ 'EXPENSE_MANAGEMENT.MTD_COST' | translate }}</div>
               <div class="stat-value">LKR {{ metrics.monthToDateExpenses | number:'1.2-2' }}</div>
             </div>
           </div>
@@ -97,17 +97,17 @@
           <!-- Left: Expenditure Form -->
             <div class="premium-card">
               <div class="card-header-clean">
-                <h3>{{ isEditMode ? 'Modify Expense Entry #' + editingExpenseId : 'Record New Expenditure' }}</h3>
-                <p class="subtitle">{{ isEditMode ? 'Update transaction details' : 'Enter a new business cost item' }}</p>
+                <h3>{{ isEditMode ? ('EXPENSE_MANAGEMENT.MODIFY_ENTRY' | translate) + editingExpenseId : ('EXPENSE_MANAGEMENT.RECORD_NEW' | translate) }}</h3>
+                <p class="subtitle">{{ isEditMode ? ('EXPENSE_MANAGEMENT.UPDATE_DETAILS' | translate) : ('EXPENSE_MANAGEMENT.ENTER_NEW' | translate) }}</p>
               </div>
               <div class="card-body-clean">
                 <form [formGroup]="expenseForm" (ngSubmit)="onSubmit()">
                   <div class="row g-3">
                     
                     <div class="col-12">
-                      <label class="clean-label">Cost Category <span class="required">*</span></label>
+                      <label class="clean-label">{{ 'EXPENSE_MANAGEMENT.COST_CATEGORY' | translate }} <span class="required">*</span></label>
                       <select class="clean-select" formControlName="expenseTypeId">
-                        <option value="" disabled selected>-- Choose Category --</option>
+                        <option value="" disabled selected>{{ 'EXPENSE_MANAGEMENT.CHOOSE_CATEGORY' | translate }}</option>
                         <option *ngFor="let t of expenseTypes" [value]="t.expenseTypeId">
                           {{ t.typeName }}
                         </option>
@@ -118,7 +118,7 @@
                     </div>
 
                     <div class="col-md-6">
-                      <label class="clean-label">Amount (LKR) <span class="required">*</span></label>
+                      <label class="clean-label">{{ 'EXPENSE_MANAGEMENT.AMOUNT_LKR' | translate }} <span class="required">*</span></label>
                       <input type="number" class="clean-input" formControlName="amount" placeholder="0.00" min="0.01" step="0.01">
                       <div class="error-msg" *ngIf="expenseForm.get('amount')?.touched && expenseForm.get('amount')?.invalid">
                         Valid positive amount is required.
@@ -126,7 +126,7 @@
                     </div>
 
                     <div class="col-md-6">
-                      <label class="clean-label">Date <span class="required">*</span></label>
+                      <label class="clean-label">{{ 'EXPENSE_MANAGEMENT.DATE_LABEL' | translate }} <span class="required">*</span></label>
                       <input type="date" class="clean-input" formControlName="date">
                       <div class="error-msg" *ngIf="expenseForm.get('date')?.touched && expenseForm.get('date')?.invalid">
                         Transaction date is required.
@@ -134,25 +134,25 @@
                     </div>
 
                     <div class="col-12">
-                      <label class="clean-label">Paid To / Recipient <span class="required">*</span></label>
-                      <input type="text" class="clean-input" formControlName="paidTo" placeholder="Supplier, Employee, or Vendor name">
+                      <label class="clean-label">{{ 'EXPENSE_MANAGEMENT.PAID_TO' | translate }} <span class="required">*</span></label>
+                      <input type="text" class="clean-input" formControlName="paidTo" [placeholder]="'EXPENSE_MANAGEMENT.PAID_TO_PLACEHOLDER' | translate">
                       <div class="error-msg" *ngIf="expenseForm.get('paidTo')?.touched && expenseForm.get('paidTo')?.invalid">
                         Recipient name is required.
                       </div>
                     </div>
 
                     <div class="col-12">
-                      <label class="clean-label">Description <span class="required">*</span></label>
-                      <textarea class="clean-textarea" formControlName="description" rows="2" placeholder="What was this expenditure for?"></textarea>
+                      <label class="clean-label">{{ 'EXPENSE_MANAGEMENT.DESC_LABEL' | translate }} <span class="required">*</span></label>
+                      <textarea class="clean-textarea" formControlName="description" rows="2" [placeholder]="'EXPENSE_MANAGEMENT.DESC_PLACEHOLDER' | translate"></textarea>
                       <div class="error-msg" *ngIf="expenseForm.get('description')?.touched && expenseForm.get('description')?.invalid">
                         A short description is required (min 3 chars).
                       </div>
                     </div>
 
                     <div class="col-12">
-                      <label class="clean-label">Associated GRN (Optional)</label>
+                      <label class="clean-label">{{ 'EXPENSE_MANAGEMENT.ASSOC_GRN' | translate }}</label>
                       <select class="clean-select" formControlName="grnId">
-                        <option [ngValue]="null">-- Not Associated with GRN --</option>
+                        <option [ngValue]="null">{{ 'EXPENSE_MANAGEMENT.NOT_ASSOC_GRN' | translate }}</option>
                         <option *ngFor="let g of grns" [value]="g.grnId">
                           {{ g.grnNumber }} (LKR {{ g.totalAmount | number }})
                         </option>
@@ -160,17 +160,17 @@
                     </div>
 
                     <div class="col-12">
-                      <label class="clean-label">Audit Remarks (Optional)</label>
-                      <input type="text" class="clean-input" formControlName="remarks" placeholder="Optional audit or tracking notes">
+                      <label class="clean-label">{{ 'EXPENSE_MANAGEMENT.AUDIT_REMARKS' | translate }}</label>
+                      <input type="text" class="clean-input" formControlName="remarks" [placeholder]="'EXPENSE_MANAGEMENT.AUDIT_PLACEHOLDER' | translate">
                     </div>
 
                     <div class="col-12 mt-4 button-group-clean">
                       <button type="submit" class="btn-primary flex-grow-1" [disabled]="loading">
                         <i class="bi bi-check-circle-fill"></i>
-                        {{ loading ? 'Saving...' : (isEditMode ? 'Update Transaction' : 'Record Transaction') }}
+                        {{ loading ? ('EXPENSE_MANAGEMENT.SAVING' | translate) : (isEditMode ? ('EXPENSE_MANAGEMENT.UPDATE_TRANS' | translate) : ('EXPENSE_MANAGEMENT.RECORD_TRANS' | translate)) }}
                       </button>
                       <button type="button" class="btn-secondary" *ngIf="isEditMode" (click)="cancelEdit()">
-                        Cancel
+                        {{ 'EXPENSE_MANAGEMENT.CANCEL' | translate }}
                       </button>
                     </div>
                   </div>
@@ -183,18 +183,18 @@
             <div class="premium-card">
               <div class="card-header-clean with-search">
                 <div class="header-text-box">
-                  <h3>Expenditure Audit Logs</h3>
-                  <p class="subtitle">Search and audit recorded transactions</p>
+                  <h3>{{ 'EXPENSE_MANAGEMENT.AUDIT_LOGS' | translate }}</h3>
+                  <p class="subtitle">{{ 'EXPENSE_MANAGEMENT.AUDIT_SUBTITLE' | translate }}</p>
                 </div>
                 <div class="search-box-clean">
                   <i class="bi bi-search"></i>
-                  <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Filter expenses..." class="search-input-field">
+                  <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" [placeholder]="'EXPENSE_MANAGEMENT.FILTER_EXPENSES' | translate" class="search-input-field">
                 </div>
                 <div style="margin-left: 1rem; display: flex; align-items: center; gap: 0.5rem;">
-                  <label style="font-size: 0.85rem; font-weight: 700; color: #6d6458; text-transform: uppercase;">Sort:</label>
+                  <label style="font-size: 0.85rem; font-weight: 700; color: #6d6458; text-transform: uppercase;">{{ 'EXPENSE_MANAGEMENT.SORT' | translate }}</label>
                   <select [(ngModel)]="sortOrder" (change)="onSortChange()" style="padding: 0.3rem 0.7rem; border-radius: 0.5rem; border: 1.5px solid #e0e0e0; color: #38240D; font-size: 0.85rem; outline: none;">
-                    <option value="date_desc">Latest First</option>
-                    <option value="date_asc">Oldest First</option>
+                    <option value="date_desc">{{ 'EXPENSE_MANAGEMENT.LATEST_FIRST' | translate }}</option>
+                    <option value="date_asc">{{ 'EXPENSE_MANAGEMENT.OLDEST_FIRST' | translate }}</option>
                   </select>
                 </div>
               </div>
@@ -203,11 +203,11 @@
                 <table class="table-premium">
                   <thead>
                     <tr>
-                      <th>Transaction</th>
-                      <th>Recipient</th>
-                      <th>Category</th>
-                      <th>Amount</th>
-                      <th class="text-end">Actions</th>
+                      <th>{{ 'EXPENSE_MANAGEMENT.TRANSACTION' | translate }}</th>
+                      <th>{{ 'EXPENSE_MANAGEMENT.RECIPIENT_TH' | translate }}</th>
+                      <th>{{ 'EXPENSE_MANAGEMENT.CATEGORY_TH' | translate }}</th>
+                      <th>{{ 'EXPENSE_MANAGEMENT.AMOUNT_TH' | translate }}</th>
+                      <th class="text-end">{{ 'EXPENSE_MANAGEMENT.ACTIONS' | translate }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -226,7 +226,7 @@
                       <td>
                         <div class="recipient-info">
                           <span class="recipient-name">{{ e.paidTo }}</span>
-                          <small class="meta-sub" *ngIf="e.remarks">Notes: {{ e.remarks }}</small>
+                          <small class="meta-sub" *ngIf="e.remarks">{{ 'EXPENSE_MANAGEMENT.NOTES' | translate }} {{ e.remarks }}</small>
                         </div>
                       </td>
                       <td>
@@ -248,13 +248,13 @@
                     <tr *ngIf="filteredExpenses.length === 0 && !loading">
                       <td colspan="5" class="text-center py-5 text-muted">
                         <i class="bi bi-inbox fs-2 d-block mb-2"></i>
-                        No expense records found.
+                        {{ 'EXPENSE_MANAGEMENT.NO_RECORDS' | translate }}
                       </td>
                     </tr>
                     <tr *ngIf="loading && expenses.length === 0">
                       <td colspan="5" class="text-center py-5 text-muted">
                         <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
-                        <span class="ms-2">Loading data...</span>
+                        <span class="ms-2">{{ 'EXPENSE_MANAGEMENT.LOADING' | translate }}</span>
                       </td>
                     </tr>
                   </tbody>
@@ -262,7 +262,7 @@
                 <!-- Pagination Footer -->
                 <div class="pagination-footer" *ngIf="!loading && totalFilteredExpenses > pageSize">
                   <div class="pagination-info">
-                    Showing {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalFilteredExpenses) }} of {{ totalFilteredExpenses }}
+                    {{ 'EXPENSE_MANAGEMENT.SHOWING' | translate }} {{ (currentPage - 1) * pageSize + 1 }} - {{ Math.min(currentPage * pageSize, totalFilteredExpenses) }} {{ 'EXPENSE_MANAGEMENT.OF' | translate }} {{ totalFilteredExpenses }}
                   </div>
                   <div class="pagination-btns">
                     <button 
@@ -270,15 +270,15 @@
                       [disabled]="currentPage === 1" 
                       (click)="prevPage()"
                     >
-                      <i class="bi bi-chevron-left"></i> Previous
+                      <i class="bi bi-chevron-left"></i> {{ 'EXPENSE_MANAGEMENT.PREVIOUS' | translate }}
                     </button>
-                    <span class="page-number">Page {{ currentPage }} of {{ totalPages }}</span>
+                    <span class="page-number">{{ 'EXPENSE_MANAGEMENT.PAGE' | translate }} {{ currentPage }} {{ 'EXPENSE_MANAGEMENT.OF' | translate }} {{ totalPages }}</span>
                     <button 
                       class="btn-secondary btn-pagination" 
                       [disabled]="currentPage === totalPages" 
                       (click)="nextPage()"
                     >
-                      Next <i class="bi bi-chevron-right"></i>
+                      {{ 'EXPENSE_MANAGEMENT.NEXT' | translate }} <i class="bi bi-chevron-right"></i>
                     </button>
                   </div>
                 </div>

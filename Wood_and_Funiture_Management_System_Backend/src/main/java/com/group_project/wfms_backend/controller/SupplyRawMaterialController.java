@@ -2,8 +2,10 @@ package com.group_project.wfms_backend.controller;
 
 import com.group_project.wfms_backend.dto.auth.SupplyRawMaterialRequestDTO;
 import com.group_project.wfms_backend.dto.auth.SupplyRawMaterialResponseDTO;
+import com.group_project.wfms_backend.security.UserDetailsImpl;
 import com.group_project.wfms_backend.service.SupplyRawMaterialService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +36,13 @@ public class SupplyRawMaterialController {
     @GetMapping
     public ResponseEntity<List<SupplyRawMaterialResponseDTO>> getAllSupplyRawMaterials() {
         return ResponseEntity.ok(supplyRawMaterialService.getAllSupplyRawMaterials());
+    }
+
+    @GetMapping("/my-supplies")
+    public ResponseEntity<List<SupplyRawMaterialResponseDTO>> getMySupplyRawMaterials(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestParam(required = false) String email) {
+        return ResponseEntity.ok(supplyRawMaterialService.getSupplyRawMaterialsForLoggedSupplier(userDetails, email));
     }
 
     @GetMapping("/grn-by-invoice/{invoiceNumber}")

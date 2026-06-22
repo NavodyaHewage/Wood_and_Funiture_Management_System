@@ -239,7 +239,7 @@ public class UserService {
      * Change password using username and old password (public access)
      */
     @Transactional
-    public MessageResponse changePassword(String username, String oldPassword, String newPassword) {
+    public MessageResponse changePassword(String username, String oldPassword, String newPassword, String email, String phoneNumber) {
         if (username == null || username.isEmpty()) {
             throw new RuntimeException("Username is required");
         }
@@ -254,6 +254,16 @@ public class UserService {
         // Verify old password
         if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
             throw new RuntimeException("Old password is incorrect");
+        }
+        
+        // Verify email
+        if (email == null || user.getEmail() == null || !email.trim().equalsIgnoreCase(user.getEmail().trim())) {
+            throw new RuntimeException("Verification failed: Email does not match our records.");
+        }
+        
+        // Verify phone number
+        if (phoneNumber == null || user.getPhoneNumber() == null || !phoneNumber.trim().equals(user.getPhoneNumber().trim())) {
+            throw new RuntimeException("Verification failed: Phone number does not match our records.");
         }
 
         // Update password
@@ -362,14 +372,14 @@ public class UserService {
         long totalUsers = userRepository.count();
         long activeUsers = userRepository.findByIsActiveTrue().size();
         long adminCount = userRepository.findByRole(UserRole.ADMIN).size();
-        long managerCount = userRepository.findByRole(UserRole.MANAGER).size();
+        long employeeCount = userRepository.findByRole(UserRole.EMPLOYEE).size();
         long supplierCount = userRepository.findByRole(UserRole.SUPPLIER).size();
 
         stats.put("totalUsers", totalUsers);
         stats.put("activeUsers", activeUsers);
         stats.put("inactiveUsers", totalUsers - activeUsers);
         stats.put("adminCount", adminCount);
-        stats.put("managerCount", managerCount);
+        stats.put("employeeCount", employeeCount);
         stats.put("supplierCount", supplierCount);
 
         return stats;

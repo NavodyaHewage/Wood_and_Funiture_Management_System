@@ -6,11 +6,12 @@ import { ToastService } from '../../../service/toast.service';
 import { FormsModule } from '@angular/forms';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../admin-side/admin-side.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
     selector: 'app-customer-management',
     standalone: true,
-    imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, AdminSideComponent],
+    imports: [CommonModule, FormsModule, RouterLink, HeaderComponent, AdminSideComponent, TranslatePipe],
     templateUrl: './customer-management.component.html',
     styleUrl: './customer-management.component.css'
 })

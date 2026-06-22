@@ -6,6 +6,7 @@ import { RawMaterialRequestListComponent } from './raw-material-request-list/raw
 import { RawMaterialRequestFormComponent } from './raw-material-request-form/raw-material-request-form.component';
 import { SupplierApprovalFormComponent } from './supplier-approval-form/supplier-approval-form.component';
 import { ConvertToOrderModalComponent } from './convert-to-supply-order-modal/convert-to-supply-order-modal.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-supply-raw-material-request',
@@ -17,7 +18,8 @@ import { ConvertToOrderModalComponent } from './convert-to-supply-order-modal/co
     RawMaterialRequestListComponent,
     RawMaterialRequestFormComponent,
     SupplierApprovalFormComponent,
-    ConvertToOrderModalComponent
+    ConvertToOrderModalComponent,
+    TranslatePipe
   ],
   templateUrl: './supply-raw-material-request.component.html',
   styleUrl: './supply-raw-material-request.component.css'

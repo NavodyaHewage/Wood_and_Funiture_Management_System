@@ -5,11 +5,13 @@ import { NavService } from '../../service/nav.service';
 import { AuthService } from '../../service/auth.service';
 import { Observable } from 'rxjs';
 import { ToastService } from '../../service/toast.service';
+import { LanguageService } from '../../service/language.service';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, TranslatePipe],
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
@@ -23,7 +25,8 @@ export class HeaderComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     private eRef: ElementRef,
-    private toastService: ToastService
+    private toastService: ToastService,
+    public lang: LanguageService
   ) {
     this.pageTitle$ = this.navService.title$;
     this.currentUser$ = this.authService.currentUser;

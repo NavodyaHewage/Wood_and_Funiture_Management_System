@@ -10,8 +10,8 @@
         <!-- Header & Action Row -->
         <div class="header-section">
           <div class="title-group">
-            <h1 style="color: #713600; font-weight: 700; margin: 0 0 4px 0;">Receipt & Payment History</h1>
-            <p style="color: #6d6458; margin: 0;">Manage and view customer invoice payment allocations</p>
+            <h1 style="color: #713600; font-weight: 700; margin: 0 0 4px 0;">{{ 'RECEIPT_MANAGEMENT.TITLE' | translate }}</h1>
+            <p style="color: #6d6458; margin: 0;">{{ 'RECEIPT_MANAGEMENT.SUBTITLE' | translate }}</p>
           </div>
           
           <div class="header-actions">
@@ -23,13 +23,13 @@
                 name="searchTerm" 
                 [(ngModel)]="searchTerm" 
                 (input)="onSearch()" 
-                placeholder="Search receipt, customer, or order..."
+                [placeholder]="'RECEIPT_MANAGEMENT.SEARCH_PLACEHOLDER' | translate"
               >
             </div>
             
             <!-- Standard Amber-Gold Primary Button -->
             <button class="btn-primary" (click)="navigateToAdd()">
-              <i class="bi bi-plus-circle"></i> Add Receipt
+              <i class="bi bi-plus-circle"></i> {{ 'RECEIPT_MANAGEMENT.ADD_RECEIPT' | translate }}
             </button>
           </div>
         </div>
@@ -38,21 +38,21 @@
         <div class="stats-grid">
           <div class="stat-card">
             <div class="stat-label">
-              <i class="bi bi-cash-coin" style="color: #C05800; margin-right: 0.5rem;"></i> Total Revenue Received
+              <i class="bi bi-cash-coin" style="color: #C05800; margin-right: 0.5rem;"></i> {{ 'RECEIPT_MANAGEMENT.TOTAL_REVENUE' | translate }}
             </div>
             <div class="stat-value text-gold">LKR {{ metrics.totalRevenue | number:'1.2-2' }}</div>
           </div>
 
           <div class="stat-card">
             <div class="stat-label">
-              <i class="bi bi-receipt" style="color: #C05800; margin-right: 0.5rem;"></i> Total Receipts Generated
+              <i class="bi bi-receipt" style="color: #C05800; margin-right: 0.5rem;"></i> {{ 'RECEIPT_MANAGEMENT.TOTAL_RECEIPTS' | translate }}
             </div>
             <div class="stat-value">{{ metrics.totalCount }}</div>
           </div>
 
           <div class="stat-card">
             <div class="stat-label">
-              <i class="bi bi-wallet2" style="color: #C05800; margin-right: 0.5rem;"></i> Cash Payments
+              <i class="bi bi-wallet2" style="color: #C05800; margin-right: 0.5rem;"></i> {{ 'RECEIPT_MANAGEMENT.CASH_PAYMENTS' | translate }}
             </div>
             <div class="stat-value" style="font-size: 1.25rem;">LKR {{ metrics.cashAmount | number:'1.2-2' }}</div>
           </div>
@@ -61,15 +61,15 @@
         <!-- Filter Sort Selection Bar -->
         <div class="form-card" style="margin-bottom: 1.5rem; padding: 1rem; border-radius: 0.75rem; border: 1px solid rgba(113, 54, 0, 0.1);">
           <div style="display: flex; justify-content: flex-end; align-items: center; gap: 0.75rem;">
-            <label style="font-size: 0.85rem; font-weight: 700; color: #6d6458; text-transform: uppercase;">Sort Order:</label>
+            <label style="font-size: 0.85rem; font-weight: 700; color: #6d6458; text-transform: uppercase;">{{ 'RECEIPT_MANAGEMENT.SORT_ORDER' | translate }}</label>
             <select 
               name="sortOrder" 
               [(ngModel)]="sortOrder" 
               (change)="onSortChange()" 
               style="padding: 0.5rem 1rem; border-radius: 0.5rem; border: 1.5px solid rgba(192, 88, 0, 0.15); color: #38240D; font-size: 0.85rem; outline: none;"
             >
-              <option value="date_desc">Latest First (Default)</option>
-              <option value="date_asc">Oldest First</option>
+              <option value="date_desc">{{ 'RECEIPT_MANAGEMENT.LATEST_FIRST' | translate }}</option>
+              <option value="date_asc">{{ 'RECEIPT_MANAGEMENT.OLDEST_FIRST' | translate }}</option>
             </select>
           </div>
         </div>
@@ -78,25 +78,25 @@
         <div class="table-container">
           <div *ngIf="isLoading" class="flex-center" style="padding: 3rem; flex-direction: column;">
             <div class="spinner-premium" style="width: 30px; height: 30px; border: 3px solid rgba(192, 88, 0, 0.1); border-top-color: #c05800; border-radius: 50%; animation: spin 0.8s linear infinite;"></div>
-            <p style="margin-top: 0.75rem; color: #8c8273;">Retrieving payment data...</p>
+            <p style="margin-top: 0.75rem; color: #8c8273;">{{ 'RECEIPT_MANAGEMENT.RETRIEVING_DATA' | translate }}</p>
           </div>
 
           <div *ngIf="!isLoading && receipts.length === 0" class="flex-center" style="padding: 4rem; flex-direction: column; text-align: center;">
             <i class="bi bi-receipt" style="font-size: 3rem; color: rgba(113, 54, 0, 0.15); margin-bottom: 0.5rem;"></i>
-            <h3 style="color: #713600; font-size: 1.15rem; margin-bottom: 0.25rem;">No Receipts Recorded</h3>
-            <p style="color: #8c8273; font-size: 0.9rem; max-width: 350px;">We couldn't find any receipts matches. Click "Add Receipt" to log a new payment.</p>
+            <h3 style="color: #713600; font-size: 1.15rem; margin-bottom: 0.25rem;">{{ 'RECEIPT_MANAGEMENT.NO_RECEIPTS' | translate }}</h3>
+            <p style="color: #8c8273; font-size: 0.9rem; max-width: 350px;">{{ 'RECEIPT_MANAGEMENT.NO_RECEIPTS_DESC' | translate }}</p>
           </div>
 
           <table *ngIf="!isLoading && receipts.length > 0">
             <thead>
               <tr>
-                <th>Receipt Number</th>
-                <th>Date</th>
-                <th>Customer Name</th>
-                <th>Order Number</th>
-                <th>Payment Mode</th>
-                <th style="text-align: right;">Total Amount</th>
-                <th style="text-align: center; width: 100px;">Actions</th>
+                <th>{{ 'RECEIPT_MANAGEMENT.RECEIPT_NO' | translate }}</th>
+                <th>{{ 'RECEIPT_MANAGEMENT.DATE' | translate }}</th>
+                <th>{{ 'RECEIPT_MANAGEMENT.CUSTOMER_NAME' | translate }}</th>
+                <th>{{ 'RECEIPT_MANAGEMENT.ORDER_NO' | translate }}</th>
+                <th>{{ 'RECEIPT_MANAGEMENT.PAYMENT_MODE' | translate }}</th>
+                <th style="text-align: right;">{{ 'RECEIPT_MANAGEMENT.TOTAL_AMOUNT' | translate }}</th>
+                <th style="text-align: center; width: 100px;">{{ 'RECEIPT_MANAGEMENT.ACTIONS' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -107,11 +107,11 @@
                 <td style="font-weight: 500;">{{ r.date | date:'mediumDate' }}</td>
                 <td>
                   <strong style="color: #2b261f;">{{ r.customerName }}</strong>
-                  <span style="font-size: 0.75rem; color: #8c8273; display: block;">ID: #{{ r.customerId }}</span>
+                  <span style="font-size: 0.75rem; color: #8c8273; display: block;">{{ 'RECEIPT_MANAGEMENT.ID' | translate }} #{{ r.customerId }}</span>
                 </td>
                 <td>
                   <span *ngIf="r.orderNumber" style="font-weight: 600; color: #713600;">{{ r.orderNumber }}</span>
-                  <span *ngIf="!r.orderNumber" style="color: #8c8273; font-style: italic;">N/A</span>
+                  <span *ngIf="!r.orderNumber" style="color: #8c8273; font-style: italic;">{{ 'RECEIPT_MANAGEMENT.NA' | translate }}</span>
                 </td>
                 <td>
                   <span class="badge" [ngClass]="getPaymentMethodBadge(r.paymentMethod)">
@@ -133,7 +133,7 @@
           <!-- Pagination Footer -->
           <div class="pagination-footer" *ngIf="!isLoading && totalReceipts > 0">
             <span class="pagination-info">
-              Showing page <strong>{{ currentPage }}</strong> of <strong>{{ totalPages }}</strong> ({{ totalReceipts }} Total Records)
+              {{ 'RECEIPT_MANAGEMENT.SHOWING_PAGE' | translate }} <strong>{{ currentPage }}</strong> {{ 'RECEIPT_MANAGEMENT.OF' | translate }} <strong>{{ totalPages }}</strong> ({{ totalReceipts }} {{ 'RECEIPT_MANAGEMENT.TOTAL_RECORDS' | translate }})
             </span>
             <div class="pagination-btns">
               <button 
@@ -142,16 +142,16 @@
                 (click)="prevPage()"
                 style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
               >
-                <i class="bi bi-chevron-left"></i> Previous
+                <i class="bi bi-chevron-left"></i> {{ 'RECEIPT_MANAGEMENT.PREVIOUS' | translate }}
               </button>
-              <span class="page-number">Page {{ currentPage }}</span>
+              <span class="page-number">{{ 'RECEIPT_MANAGEMENT.PAGE' | translate }} {{ currentPage }}</span>
               <button 
                 class="btn-secondary" 
                 [disabled]="currentPage === totalPages" 
                 (click)="nextPage()"
                 style="padding: 0.4rem 0.8rem; font-size: 0.85rem;"
               >
-                Next <i class="bi bi-chevron-right"></i>
+                {{ 'RECEIPT_MANAGEMENT.NEXT' | translate }} <i class="bi bi-chevron-right"></i>
               </button>
             </div>
           </div>

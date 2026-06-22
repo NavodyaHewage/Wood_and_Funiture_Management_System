@@ -13,18 +13,12 @@ export const roleGuard: CanActivateFn = (
   const currentUser = authService.currentUserValue;
 
   if (currentUser && currentUser.role) {
-    const userRole = currentUser.role.toLowerCase();
+    const userRole = authService.normalizeRole(currentUser.role);
     if (userRole === expectedRole || !expectedRole) {
       return true;
     } else {
       // Role not authorized, redirect to their proper dashboard
-      if (userRole === 'supplier') {
-         router.navigate(['/supplier-dashboard']);
-      } else if (userRole === 'manager') {
-         router.navigate(['/manager-dashboard']);
-      } else {
-         router.navigate(['/admin-dashboard']);
-      }
+      router.navigateByUrl(authService.getDashboardRoute(currentUser.role));
       return false;
     }
   }

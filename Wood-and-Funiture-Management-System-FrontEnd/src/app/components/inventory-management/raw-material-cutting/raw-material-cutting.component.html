@@ -9,13 +9,13 @@
                 <!-- Header Section -->
                 <div class="header-section">
                     <div class="title-group">
-                        <h1>Raw Material Cutting Process</h1>
-                        <p>Select logs to visualize dimensions and record cutting output</p>
+                        <h1>{{ 'RAW_MATERIAL_CUTTING.TITLE' | translate }}</h1>
+                        <p>{{ 'RAW_MATERIAL_CUTTING.SUBTITLE' | translate }}</p>
                     </div>
                     <div class="header-actions">
                         <div class="search-box-premium">
                             <i class="bi bi-search"></i>
-                            <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" placeholder="Search by Invoice or Log #...">
+                            <input type="text" [(ngModel)]="searchTerm" (input)="onSearch()" [placeholder]="'RAW_MATERIAL_CUTTING.SEARCH' | translate">
                         </div>
                     </div>
                 </div>
@@ -27,12 +27,12 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        <th style="width: 50px;">Select</th>
-                                        <th>Invoice #</th>
-                                        <th>Log #</th>
-                                        <th>Length (ft)</th>
-                                        <th>Girth (ft)</th>
-                                        <th>Volume (CFT)</th>
+                                        <th style="width: 50px;">{{ 'RAW_MATERIAL_CUTTING.SELECT' | translate }}</th>
+                                        <th>{{ 'RAW_MATERIAL_CUTTING.INVOICE_NO' | translate }}</th>
+                                        <th>{{ 'RAW_MATERIAL_CUTTING.LOG_NO' | translate }}</th>
+                                        <th>{{ 'RAW_MATERIAL_CUTTING.LENGTH' | translate }}</th>
+                                        <th>{{ 'RAW_MATERIAL_CUTTING.GIRTH' | translate }}</th>
+                                        <th>{{ 'RAW_MATERIAL_CUTTING.VOLUME' | translate }}</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -55,7 +55,7 @@
                                     <tr *ngIf="filteredLogs.length === 0">
                                         <td colspan="6" class="text-center py-5">
                                             <i class="bi bi-inbox fs-1 text-muted"></i>
-                                            <p class="text-muted mt-2">No matching raw materials found.</p>
+                                            <p class="text-muted mt-2">{{ 'RAW_MATERIAL_CUTTING.NO_LOGS' | translate }}</p>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -83,7 +83,7 @@
                     <div class="visualization-section">
                         <div class="viz-card" *ngIf="activeLog; else noSelection">
                             <div class="viz-header">
-                                <h3>Cylindrical Log Visualizer</h3>
+                                <h3>{{ 'RAW_MATERIAL_CUTTING.VISUALIZER' | translate }}</h3>
                                 <span class="log-id">LOG #{{activeLog.logNumber}}</span>
                             </div>
                             
@@ -111,14 +111,14 @@
 
                                 <div class="viz-footer-clean">
                                     <div class="info-row">
-                                        <span class="label">Invoice Reference</span>
+                                        <span class="label">{{ 'RAW_MATERIAL_CUTTING.INVOICE_REF' | translate }}</span>
                                         <span class="value">{{activeLog.invoiceNumber}}</span>
                                     </div>
                                     <div class="info-row highlight">
-                                        <span class="label">Total Volume</span>
+                                        <span class="label">{{ 'RAW_MATERIAL_CUTTING.TOTAL_VOLUME' | translate }}</span>
                                         <span class="value cft">{{activeLog.totalQuantityCft}} <small>CFT</small></span>
                                     </div>
-                                    <p class="formula-info">Calculated via Hopper's Rule: (Girth² × Length) / 12</p>
+                                    <p class="formula-info">{{ 'RAW_MATERIAL_CUTTING.FORMULA' | translate }}</p>
                                 </div>
                             </div>
                         </div>
@@ -127,7 +127,7 @@
                                 <div class="empty-icon-wrapper">
                                     <i class="bi bi-box-seam"></i>
                                 </div>
-                                <p>Select exactly one log row to visualize its dimensions</p>
+                                <p>{{ 'RAW_MATERIAL_CUTTING.SELECT_ONE' | translate }}</p>
                             </div>
                         </ng-template>
                     </div>
@@ -137,11 +137,11 @@
                 <div class="section-card mt-5 animate-in" *ngIf="selectedLogIds.length > 0">
                     <div class="card-header-clean">
                         <div class="title-group">
-                            <h2>Generated Products</h2>
-                            <p>Specify the types and quantities obtained after cutting</p>
+                            <h2>{{ 'RAW_MATERIAL_CUTTING.GENERATED_PRODUCTS' | translate }}</h2>
+                            <p>{{ 'RAW_MATERIAL_CUTTING.SPECIFY_PRODUCTS' | translate }}</p>
                         </div>
                         <button type="button" class="btn-add-minimal" (click)="addProduct()">
-                            <i class="bi bi-plus-circle-fill"></i> Add Another Row
+                            <i class="bi bi-plus-circle-fill"></i> {{ 'RAW_MATERIAL_CUTTING.ADD_ROW' | translate }}
                         </button>
                     </div>
 
@@ -152,9 +152,9 @@
                                 
                                 <div class="input-grid">
                                     <div class="input-group-clean">
-                                        <label>Product Category</label>
+                                        <label>{{ 'RAW_MATERIAL_CUTTING.PRODUCT_CAT' | translate }}</label>
                                         <select formControlName="productCategoryId" class="minimal-select">
-                                            <option value="" disabled selected>Choose Category...</option>
+                                            <option value="" disabled selected>{{ 'RAW_MATERIAL_CUTTING.CHOOSE_CAT' | translate }}</option>
                                             <option *ngFor="let cat of productCategories" [value]="cat.productCatId">
                                                 {{cat.materialCategory}} - {{cat.description}}
                                             </option>
@@ -162,7 +162,7 @@
                                     </div>
 
                                     <div class="input-group-clean">
-                                        <label>Quantity Produced</label>
+                                        <label>{{ 'RAW_MATERIAL_CUTTING.QTY_PRODUCED' | translate }}</label>
                                         <div class="number-input-wrapper">
                                             <input type="number" formControlName="quantity" placeholder="0.00" class="minimal-input">
                                             <span class="unit-label">{{ getUnitForCategory(product.get('productCategoryId')?.value) }}</span>
@@ -179,13 +179,13 @@
                         <div class="form-footer-clean">
                             <div class="selection-status">
                                 <i class="bi bi-check-circle-fill"></i>
-                                <span><strong>{{selectedLogIds.length}}</strong> logs selected for processing</span>
+                                <span><strong>{{selectedLogIds.length}}</strong> {{ 'RAW_MATERIAL_CUTTING.LOGS_SELECTED' | translate }}</span>
                             </div>
                             <div class="action-group">
-                                <button type="button" class="btn-ghost" (click)="resetForm()">Clear All</button>
+                                <button type="button" class="btn-ghost" (click)="resetForm()">{{ 'RAW_MATERIAL_CUTTING.CLEAR_ALL' | translate }}</button>
                                 <button type="submit" class="btn-process" [disabled]="isSubmitting || selectedLogIds.length === 0">
-                                    <span *ngIf="!isSubmitting"><i class="bi bi-scissors"></i> Process Cutting</span>
-                                    <span *ngIf="isSubmitting"><i class="spinner-border spinner-border-sm me-2"></i> Processing...</span>
+                                    <span *ngIf="!isSubmitting"><i class="bi bi-scissors"></i> {{ 'RAW_MATERIAL_CUTTING.PROCESS_CUTTING' | translate }}</span>
+                                    <span *ngIf="isSubmitting"><i class="spinner-border spinner-border-sm me-2"></i> {{ 'RAW_MATERIAL_CUTTING.PROCESSING' | translate }}</span>
                                 </button>
                             </div>
                         </div>

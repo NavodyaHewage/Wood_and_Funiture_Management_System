@@ -4,9 +4,12 @@
             <img src="/logo.jpg" alt="Logo" class="mini-logo">
         </div>
         <div class="sidebar-info">
-            <h5 class="m-0" [ngClass]="{'supplier-text': isSupplier(user)}">{{ isSupplier(user) ? 'WFMS Supplier' :
-                'WFMS Admin' }}</h5>
-            <small class="text-white-50">{{ isSupplier(user) ? 'Partner Portal' : 'Management System' }}</small>
+            <h5 class="m-0" [ngClass]="{'supplier-text': isSupplier(user)}">
+                {{ isSupplier(user) ? ('SIDEBAR.BRAND_TITLE_SUPPLIER' | translate) : ('SIDEBAR.BRAND_TITLE_ADMIN' | translate) }}
+            </h5>
+            <small class="text-white-50">
+                {{ isSupplier(user) ? ('SIDEBAR.BRAND_SUB_SUPPLIER' | translate) : ('SIDEBAR.BRAND_SUB_ADMIN' | translate) }}
+            </small>
         </div>
     </div>
 
@@ -16,30 +19,30 @@
                 <li>
                     <a routerLink="/supplier-dashboard" routerLinkActive="active" class="nav-item">
                         <i class="bi bi-grid-1x2-fill"></i>
-                        <span>Dashboard</span>
+                        <span>{{ 'SIDEBAR.Dashboard' | translate }}</span>
                     </a>
                 </li>
                 <li>
                     <a routerLink="/my-supplies" routerLinkActive="active" class="nav-item">
                         <i class="bi bi-box-seam"></i>
-                        <span>My Supplies</span>
+                        <span>{{ 'SIDEBAR.My Supplies' | translate }}</span>
                     </a>
                 </li>
                 <li>
                     <a routerLink="/supply-request-management" routerLinkActive="active" class="nav-item">
                         <i class="bi bi-clipboard-check"></i>
-                        <span>Supply Requests</span>
+                        <span>{{ 'SIDEBAR.Supply Requests' | translate }}</span>
                     </a>
                 </li>
             </ng-container>
             <ng-template #adminMenu>
-                <div class="menu-group" *ngFor="let group of menuGroups">
-                    <h3 class="group-label">{{ group.label }}</h3>
+                <div class="menu-group" *ngFor="let group of filteredMenuGroups$ | async">
+                    <h3 class="group-label">{{ 'SIDEBAR.' + group.label | translate }}</h3>
                     <ul class="nav-list p-0">
                         <li *ngFor="let item of group.items">
                             <a [routerLink]="item.route" routerLinkActive="active" class="nav-item">
                                 <i class="bi" [ngClass]="item.icon"></i>
-                                <span>{{ item.name }}</span>
+                                <span>{{ 'SIDEBAR.' + item.name | translate }}</span>
                             </a>
                         </li>
                     </ul>
@@ -53,9 +56,9 @@
             <i class="bi bi-person-circle fs-4"></i>
             <div class="ms-2">
                 <div class="fw-bold">{{ user.username }}</div>
-                <small class="text-white-50">{{ isSupplier(user) ? 'Authorized Partner' : (user.role === 'Admin' ?
-                    'Administrator' : user.role) }}</small>
-
+                <small class="text-white-50">
+                    {{ isSupplier(user) ? ('HEADER.PARTNER' | translate) : (user.role === 'Admin' ? ('HEADER.SYSTEM_ADMIN' | translate) : user.role) }}
+                </small>
             </div>
         </div>
     </div>

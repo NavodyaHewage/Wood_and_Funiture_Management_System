@@ -2,7 +2,7 @@
   <div class="drawer-header">
     <h2>
       <i class="bi" [ngClass]="isEditMode ? 'bi-pencil-square' : 'bi-person-plus-fill'"></i>
-      {{ isEditMode ? 'Edit Attendance' : 'Mark Attendance' }}
+      {{ isEditMode ? ('ATTENDANCE_MANAGEMENT.EDIT_ATTENDANCE' | translate) : ('ATTENDANCE_MANAGEMENT.MARK_ATTENDANCE' | translate) }}
     </h2>
     <button class="btn-close btn-close-white" (click)="onCancel()"></button>
   </div>
@@ -11,7 +11,7 @@
     <form [formGroup]="attendanceForm" class="admin-form">
       <!-- Employee Search -->
       <div class="form-group mb-4" *ngIf="!isEditMode">
-        <label class="admin-label">Select Employee</label>
+        <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.SELECT_EMPLOYEE' | translate }}</label>
         <div class="admin-input-group">
           <i class="bi bi-search"></i>
           <input type="text" 
@@ -28,7 +28,7 @@
 
       <!-- Read-only Employee Info (Edit Mode) -->
       <div class="form-group mb-4" *ngIf="isEditMode">
-        <label class="admin-label">Employee</label>
+        <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.EMPLOYEE' | translate }}</label>
         <div class="read-only-box">
           <i class="bi bi-person-check-fill me-2"></i>
           {{ attendance?.employeeName }} (ID: {{ attendance?.employeeId }})
@@ -38,7 +38,7 @@
       <div class="row g-3 mb-4">
         <!-- Date Picker -->
         <div class="col-md-6">
-          <label class="admin-label">Attendance Date</label>
+          <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.ATTENDANCE_DATE' | translate }}</label>
           <div class="admin-input-group">
             <i class="bi bi-calendar-event"></i>
             <input type="date" formControlName="date" [max]="maxDate">
@@ -47,7 +47,7 @@
 
         <!-- Status Selector -->
         <div class="col-md-6">
-          <label class="admin-label">Attendance Status</label>
+          <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.ATTENDANCE_STATUS' | translate }}</label>
           <select formControlName="status" class="form-select admin-select" (change)="onStatusChange()">
             <option *ngFor="let s of statuses" [value]="s">
               {{ formatStatusLabel(s) }}
@@ -59,14 +59,14 @@
       <!-- Check-in / Check-out (Conditional) -->
       <div class="row g-3 mb-4" *ngIf="showTimeFields">
         <div class="col-md-6">
-          <label class="admin-label">Check-In Time</label>
+          <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.CHECK_IN_TIME' | translate }}</label>
           <div class="admin-input-group">
             <i class="bi bi-clock-fill"></i>
             <input type="time" formControlName="checkIn">
           </div>
         </div>
         <div class="col-md-6">
-          <label class="admin-label">Check-Out Time</label>
+          <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.CHECK_OUT_TIME' | translate }}</label>
           <div class="admin-input-group">
             <i class="bi bi-clock-history"></i>
             <input type="time" formControlName="checkOut">
@@ -76,7 +76,7 @@
 
       <!-- Remarks -->
       <div class="form-group mb-4">
-        <label class="admin-label">Remarks / Notes</label>
+        <label class="admin-label">{{ 'ATTENDANCE_MANAGEMENT.REMARKS_NOTES' | translate }}</label>
         <div class="admin-input-group">
           <i class="bi bi-chat-left-text"></i>
           <textarea formControlName="remarks" rows="3" placeholder="Additional details..."></textarea>
@@ -89,19 +89,19 @@
       <!-- Duplicate Warning -->
       <div class="alert alert-warning animate-fade-in" *ngIf="duplicateRecord">
         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-        A record already exists for this date. Saving will update it.
+        {{ 'ATTENDANCE_MANAGEMENT.WARNING_MSG' | translate }}
         <button type="button" class="btn btn-sm btn-outline-warning ms-3" (click)="switchToEditMode()">
-          Switch to Edit
+          {{ 'ATTENDANCE_MANAGEMENT.SWITCH_EDIT' | translate }}
         </button>
       </div>
     </form>
   </div>
 
   <div class="drawer-footer">
-    <button class="btn-admin-secondary" (click)="onCancel()">Cancel</button>
+    <button class="btn-admin-secondary" (click)="onCancel()">{{ 'ATTENDANCE_MANAGEMENT.CANCEL' | translate }}</button>
     <button class="btn-admin-primary" (click)="onSubmit()" [disabled]="attendanceForm.invalid || isLoading">
       <span class="spinner-border spinner-border-sm me-2" *ngIf="isLoading"></span>
-      {{ isEditMode ? 'Update Record' : 'Save Attendance' }}
+      {{ isEditMode ? ('ATTENDANCE_MANAGEMENT.UPDATE_RECORD' | translate) : ('ATTENDANCE_MANAGEMENT.SAVE_ATTENDANCE' | translate) }}
     </button>
   </div>
 </div>

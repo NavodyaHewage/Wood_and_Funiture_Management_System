@@ -37,14 +37,14 @@ public class SupplyRawMaterialDetails {
     @Column(name = "Girth_ft", precision = 10, scale = 2, nullable = false)
     private BigDecimal girthFt;
 
-    // Generated column — (Length * Girth * Girth) / 12
+    // Generated column — (Length * Girth * Girth) / 2304 (Hoppus Formula with Girth in Inches)
     @Column(name = "Total_Quantity_CFT", precision = 10, scale = 3, insertable = false, updatable = false)
     private BigDecimal totalQuantityCft;
 
     @Column(name = "Price", precision = 10, scale = 2, nullable = false)
     private BigDecimal price;
 
-    // Generated column — (Length * Girth * Girth / 12) * Price
+    // Generated column — ((Length * Girth * Girth) / 2304) * Price
     @Column(name = "Line_Total", precision = 15, scale = 2, insertable = false, updatable = false)
     private BigDecimal lineTotal;
 

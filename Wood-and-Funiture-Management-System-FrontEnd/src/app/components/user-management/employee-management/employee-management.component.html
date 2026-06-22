@@ -7,26 +7,26 @@
         <div class="content-body">
             <div class="header-section">
                 <div class="title-group">
-                    <h1>Employee Management</h1>
-                    <p>Maintain staff records and designations</p>
+                    <h1>{{ 'EMPLOYEE_MANAGEMENT.TITLE' | translate }}</h1>
+                    <p>{{ 'EMPLOYEE_MANAGEMENT.SUBTITLE' | translate }}</p>
                 </div>
                 <button class="btn-primary" routerLink="/register">
                     <i class="bi bi-person-plus-fill"></i>
-                    Add New Employee
+                    {{ 'EMPLOYEE_MANAGEMENT.ADD_NEW' | translate }}
                 </button>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-label">Total Workforce</div>
+                    <div class="stat-label">{{ 'EMPLOYEE_MANAGEMENT.TOTAL_WORKFORCE' | translate }}</div>
                     <div class="stat-value">{{ employees.length }}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Active Staff</div>
+                    <div class="stat-label">{{ 'EMPLOYEE_MANAGEMENT.ACTIVE_STAFF' | translate }}</div>
                     <div class="stat-value" style="color: #065f46;">{{ getStatusCount(true) }}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">On Leave/Inactive</div>
+                    <div class="stat-label">{{ 'EMPLOYEE_MANAGEMENT.ON_LEAVE_INACTIVE' | translate }}</div>
                     <div class="stat-value" style="color: #991b1b;">{{ getStatusCount(false) }}</div>
                 </div>
             </div>
@@ -35,14 +35,14 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>#ID</th>
-                            <th>Employee Info</th>
-                            <th>NIC</th>
-                            <th>Designation</th>
-                            <th>Mobile</th>
-                            <th>Joined Date</th>
-                            <th>Status</th>
-                            <th class="text-center">Actions</th>
+                            <th>{{ 'EMPLOYEE_MANAGEMENT.ID' | translate }}</th>
+                            <th>{{ 'EMPLOYEE_MANAGEMENT.EMP_INFO' | translate }}</th>
+                            <th>{{ 'EMPLOYEE_MANAGEMENT.NIC' | translate }}</th>
+                            <th>{{ 'EMPLOYEE_MANAGEMENT.DESIGNATION' | translate }}</th>
+                            <th>{{ 'EMPLOYEE_MANAGEMENT.MOBILE' | translate }}</th>
+                            <th>{{ 'EMPLOYEE_MANAGEMENT.JOINED_DATE' | translate }}</th>
+                            <th>{{ 'EMPLOYEE_MANAGEMENT.STATUS' | translate }}</th>
+                            <th class="text-center">{{ 'EMPLOYEE_MANAGEMENT.ACTIONS' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,19 +65,19 @@
                             <td>{{ emp.dateJoined | date:'MMM d, y' }}</td>
                             <td>
                                 <span class="badge" [ngClass]="emp.isActive ? 'badge-approved' : 'badge-rejected'">
-                                    {{ emp.isActive ? 'Active' : 'Inactive' }}
+                                    {{ emp.isActive ? ('EMPLOYEE_MANAGEMENT.ACTIVE' | translate) : ('EMPLOYEE_MANAGEMENT.INACTIVE' | translate) }}
                                 </span>
                             </td>
                             <td class="text-center">
                                 <div class="action-btns">
-                                    <button class="btn-icon" title="Edit Details" (click)="onEdit(emp)">
+                                    <button class="btn-icon" [title]="'EMPLOYEE_MANAGEMENT.EDIT_DETAILS' | translate" (click)="onEdit(emp)">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="btn-icon" [title]="emp.isActive ? 'Deactivate' : 'Activate'"
+                                    <button class="btn-icon" [title]="emp.isActive ? ('EMPLOYEE_MANAGEMENT.DEACTIVATE' | translate) : ('EMPLOYEE_MANAGEMENT.ACTIVATE' | translate)"
                                         (click)="onToggleStatus(emp)">
                                         <i class="bi" [ngClass]="emp.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
                                     </button>
-                                    <button class="btn-icon" title="Delete record"
+                                    <button class="btn-icon" [title]="'EMPLOYEE_MANAGEMENT.DELETE_RECORD' | translate"
                                         (click)="onDelete(emp.id, emp.fullName)">
                                         <i class="bi bi-trash3"></i>
                                     </button>
@@ -96,45 +96,45 @@
     <div class="modal-content">
         <div class="header-section">
             <div class="title-group">
-                <h3>Edit Employee Details</h3>
+                <h3>{{ 'EMPLOYEE_MANAGEMENT.EDIT_TITLE' | translate }}</h3>
             </div>
             <button class="btn-icon" (click)="closeModal()">&times;</button>
         </div>
         <div class="modal-body" *ngIf="selectedEmployee">
             <div class="form-grid">
                 <div class="form-group full-width">
-                    <label>Employee Name</label>
+                    <label>{{ 'EMPLOYEE_MANAGEMENT.EMP_NAME' | translate }}</label>
                     <input type="text" class="form-control" [(ngModel)]="selectedEmployee.fullName">
                 </div>
                 <div class="form-group">
-                    <label>NIC</label>
+                    <label>{{ 'EMPLOYEE_MANAGEMENT.NIC' | translate }}</label>
                     <input type="text" class="form-control" [(ngModel)]="selectedEmployee.nic">
                 </div>
                 <div class="form-group">
-                    <label>Designation</label>
+                    <label>{{ 'EMPLOYEE_MANAGEMENT.DESIGNATION' | translate }}</label>
                     <input type="text" class="form-control" [(ngModel)]="selectedEmployee.designation">
                 </div>
                 <div class="form-group">
-                    <label>Mobile Number</label>
+                    <label>{{ 'EMPLOYEE_MANAGEMENT.MOBILE' | translate }}</label>
                     <input type="text" class="form-control" [(ngModel)]="selectedEmployee.mobileNumber">
                 </div>
                 <div class="form-group">
-                    <label>Email Address</label>
+                    <label>{{ 'EMPLOYEE_MANAGEMENT.EMAIL' | translate }}</label>
                     <input type="email" class="form-control" [(ngModel)]="selectedEmployee.email">
                 </div>
                 <div class="form-group full-width">
-                    <label>Address</label>
+                    <label>{{ 'EMPLOYEE_MANAGEMENT.ADDRESS' | translate }}</label>
                     <input type="text" class="form-control" [(ngModel)]="selectedEmployee.address">
                 </div>
                 <div class="form-group">
-                    <label>Joined Date</label>
+                    <label>{{ 'EMPLOYEE_MANAGEMENT.JOINED_DATE' | translate }}</label>
                     <input type="date" class="form-control" [(ngModel)]="selectedEmployee.dateJoined">
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn-secondary" (click)="closeModal()">Cancel</button>
-            <button class="btn-primary" (click)="onUpdateEmployee()">Save Changes</button>
+            <button class="btn-secondary" (click)="closeModal()">{{ 'EMPLOYEE_MANAGEMENT.CANCEL' | translate }}</button>
+            <button class="btn-primary" (click)="onUpdateEmployee()">{{ 'EMPLOYEE_MANAGEMENT.SAVE_CHANGES' | translate }}</button>
         </div>
     </div>
 </div>

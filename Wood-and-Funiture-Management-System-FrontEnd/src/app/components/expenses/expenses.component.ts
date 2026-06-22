@@ -11,11 +11,12 @@ import { ExpenseAccountDTO, ExpenseTypeDTO } from '../../model/expense.model';
 import { ToastService } from '../../service/toast.service';
 import { AdminSideComponent } from '../user-management/admin-side/admin-side.component';
 import { HeaderComponent } from '../header/header.component';
+import { TranslatePipe } from '../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-expenses',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, AdminSideComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, HttpClientModule, AdminSideComponent, HeaderComponent, TranslatePipe],
   templateUrl: './expenses.component.html',
   styleUrls: ['./expenses.component.css']
 })

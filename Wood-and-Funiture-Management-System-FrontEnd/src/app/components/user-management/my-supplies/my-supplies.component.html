@@ -1,0 +1,164 @@
+<div class="dashboard-layout">
+  <app-admin-side></app-admin-side>
+
+  <main class="main-content">
+    <app-header></app-header>
+
+    <div class="content-body">
+      <div class="page-header">
+        <div>
+          <h1>{{ 'MY_SUPPLIES.TITLE' | translate }}</h1>
+          <p>{{ 'MY_SUPPLIES.SUBTITLE' | translate }}</p>
+        </div>
+
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input
+            type="text"
+            [(ngModel)]="searchTerm"
+            [placeholder]="'MY_SUPPLIES.SEARCH_PLACEHOLDER' | translate">
+        </div>
+      </div>
+
+      <div class="supplier-strip">
+        <div>
+          <span class="label">{{ 'MY_SUPPLIES.LOGIN' | translate }}</span>
+          <strong>{{ currentUser?.username }}</strong>
+        </div>
+        <div>
+          <span class="label">{{ 'MY_SUPPLIES.ROLE' | translate }}</span>
+          <strong>{{ currentUser?.role }}</strong>
+        </div>
+        <div>
+          <span class="label">{{ 'MY_SUPPLIES.EMAIL' | translate }}</span>
+          <strong>{{ currentUser?.email || ('MY_SUPPLIES.NOT_SPECIFIED' | translate) }}</strong>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span>{{ 'MY_SUPPLIES.TOTAL_ORDERS' | translate }}</span>
+          <strong>{{ totalOrders }}</strong>
+        </div>
+        <div class="stat-card">
+          <span>{{ 'MY_SUPPLIES.TOTAL_MATERIAL' | translate }}</span>
+          <strong>{{ totalCft | number:'1.2-2' }} CFT</strong>
+        </div>
+        <div class="stat-card">
+          <span>{{ 'MY_SUPPLIES.TOTAL_NET_AMOUNT' | translate }}</span>
+          <strong>Rs. {{ totalAmount | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <div class="table-panel">
+        <div *ngIf="loading" class="empty-state">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p>{{ 'MY_SUPPLIES.LOADING' | translate }}</p>
+        </div>
+
+        <div *ngIf="!loading && errorMessage" class="empty-state warning">
+          <i class="bi bi-exclamation-circle"></i>
+          <p>{{ errorMessage }}</p>
+        </div>
+
+        <table *ngIf="!loading && !errorMessage">
+          <thead>
+            <tr>
+              <th>{{ 'MY_SUPPLIES.TH_INVOICE' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_DATE' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_WOOD_TYPE' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_TOTAL_CFT' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_NET_AMOUNT' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_GRN' | translate }}</th>
+              <th class="text-center">{{ 'MY_SUPPLIES.TH_ACTION' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let supply of filteredSupplies">
+              <td><span class="invoice-badge">{{ supply.invoiceNumber }}</span></td>
+              <td>{{ supply.supplyDate | date:'mediumDate' }}</td>
+              <td>{{ supply.rmName }}</td>
+              <td>{{ supply.totalQuantityCft | number:'1.2-2' }}</td>
+              <td class="amount">Rs. {{ supply.netAmount | number:'1.2-2' }}</td>
+              <td>
+                <span class="badge" [ngClass]="supply.grnId ? 'badge-ready' : 'badge-pending'">
+                  {{ supply.grnId ? ('MY_SUPPLIES.STATUS_CREATED' | translate) : ('MY_SUPPLIES.STATUS_PENDING' | translate) }}
+                </span>
+              </td>
+              <td class="text-center">
+                <button class="btn-icon" (click)="openDetailsModal(supply)" title="View supply details">
+                  <i class="bi bi-list-ul"></i>
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="filteredSupplies.length === 0">
+              <td colspan="7" class="empty-row">
+                <i class="bi bi-inbox"></i>
+                <span>{{ 'MY_SUPPLIES.NO_RECORDS' | translate }}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal-overlay" *ngIf="showDetailsModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div>
+          <h2>{{ 'MY_SUPPLIES.MODAL_TITLE' | translate }}</h2>
+          <p>{{ selectedSupply?.invoiceNumber }}</p>
+        </div>
+        <button class="btn-icon" (click)="closeDetailsModal()" title="Close">
+          <i class="bi bi-x-lg"></i>
+        </button>
+      </div>
+
+      <div class="detail-grid">
+        <div>
+          <span>{{ 'MY_SUPPLIES.MODAL_DATE' | translate }}</span>
+          <strong>{{ selectedSupply?.supplyDate | date:'fullDate' }}</strong>
+        </div>
+        <div>
+          <span>{{ 'MY_SUPPLIES.MODAL_WOOD_TYPE' | translate }}</span>
+          <strong>{{ selectedSupply?.rmName }}</strong>
+        </div>
+        <div>
+          <span>{{ 'MY_SUPPLIES.MODAL_TOTAL_CFT' | translate }}</span>
+          <strong>{{ selectedSupply?.totalQuantityCft | number:'1.4-4' }}</strong>
+        </div>
+        <div>
+          <span>{{ 'MY_SUPPLIES.MODAL_NET_AMOUNT' | translate }}</span>
+          <strong>Rs. {{ selectedSupply?.netAmount | number:'1.2-2' }}</strong>
+        </div>
+      </div>
+
+      <div class="items-table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>{{ 'MY_SUPPLIES.TH_LOG_NO' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_LENGTH' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_GIRTH' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_CFT' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_PRICE' | translate }}</th>
+              <th>{{ 'MY_SUPPLIES.TH_LINE_TOTAL' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let detail of selectedSupply?.supplyDetails">
+              <td>{{ detail.logNumber }}</td>
+              <td>{{ detail.lengthFt }}</td>
+              <td>{{ detail.girthFt }}</td>
+              <td>{{ detail.totalQuantityCft | number:'1.4-4' }}</td>
+              <td>Rs. {{ detail.price | number:'1.2-2' }}</td>
+              <td class="amount">Rs. {{ detail.lineTotal | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

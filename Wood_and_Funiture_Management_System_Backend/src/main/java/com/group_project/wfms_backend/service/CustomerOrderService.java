@@ -21,6 +21,7 @@ public class CustomerOrderService {
     private final CustomerRepository customerRepository;
     private final ProductCategoryRepository productCategoryRepository;
     private final UserRepository userRepository;
+    private final ProductStockRepository productStockRepository;
 
 
     @Transactional
@@ -45,6 +46,19 @@ public class CustomerOrderService {
         List<CustomerOrderDetails> details = dto.getOrderDetails().stream().map(d -> {
             ProductCategory cat = productCategoryRepository.findById(d.getProductCatId())
                     .orElseThrow(() -> new RuntimeException("Product category not found: " + d.getProductCatId()));
+
+            // Check and Deduct Stock
+            ProductStock stock = productStockRepository.findByProductCategory_ProductCatId(d.getProductCatId())
+                    .orElseThrow(() -> new RuntimeException("Stock record not found for category: " + cat.getMaterialCategory()));
+
+            if (stock.getAvailableQuantity().compareTo(d.getQuantity()) < 0) {
+                throw new RuntimeException("Insufficient stock for: " + cat.getMaterialCategory() 
+                    + ". Available: " + stock.getAvailableQuantity() + ", Required: " + d.getQuantity());
+            }
+
+            stock.setAvailableQuantity(stock.getAvailableQuantity().subtract(d.getQuantity()));
+            productStockRepository.save(stock);
+
             CustomerOrderDetails detail = new CustomerOrderDetails();
             detail.setOrder(order);
             detail.setProductCategory(cat);
@@ -171,9 +185,12 @@ public class CustomerOrderService {
                     line.setName(d.getName());
                     line.setQuantity(d.getQuantity());
                     line.setPrice(d.getPrice());
-                    line.setLineTotal(d.getLineTotal());
+                    
+                    BigDecimal calculatedLineTotal = d.getQuantity().multiply(d.getPrice());
+                    BigDecimal lineTotal = d.getLineTotal() != null ? d.getLineTotal() : calculatedLineTotal;
+                    
+                    line.setLineTotal(lineTotal);
                     line.setPaidAmount(d.getPaidAmount() != null ? d.getPaidAmount() : BigDecimal.ZERO);
-                    BigDecimal lineTotal = d.getLineTotal() != null ? d.getLineTotal() : BigDecimal.ZERO;
                     BigDecimal paid = d.getPaidAmount() != null ? d.getPaidAmount() : BigDecimal.ZERO;
                     line.setOutstanding(lineTotal.subtract(paid));
                     return line;
@@ -214,7 +231,7 @@ public class CustomerOrderService {
                 dd.setName(d.getName());
                 dd.setQuantity(d.getQuantity());
                 dd.setPrice(d.getPrice());
-                dd.setLineTotal(d.getLineTotal());
+                dd.setLineTotal(d.getLineTotal() != null ? d.getLineTotal() : d.getQuantity().multiply(d.getPrice()));
                 return dd;
             }).collect(Collectors.toList()));
         }

@@ -6,11 +6,12 @@ import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { FormsModule } from '@angular/forms';
 import { GrnInvoiceComponent } from '../grn-invoice/grn-invoice.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-supply-raw-material-dashboard',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, AdminSideComponent, GrnInvoiceComponent, FormsModule],
+  imports: [CommonModule, HeaderComponent, AdminSideComponent, GrnInvoiceComponent, FormsModule, TranslatePipe],
   templateUrl: './supply-raw-material-dashboard.component.html',
   styleUrls: ['./supply-raw-material-dashboard.component.css']
 })

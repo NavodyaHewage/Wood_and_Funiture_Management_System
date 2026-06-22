@@ -7,11 +7,12 @@ import { ToastService } from '../../../service/toast.service';
 import { AuthService } from '../../../service/auth.service';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { HeaderComponent } from '../../header/header.component';
+import { TranslatePipe } from '../../../pipes/translate.pipe';
 
 @Component({
   selector: 'app-payroll-management',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminSideComponent, HeaderComponent],
+  imports: [CommonModule, FormsModule, AdminSideComponent, HeaderComponent, TranslatePipe],
   templateUrl: './payroll-management.component.html',
   styleUrl: './payroll-management.component.css'
 })

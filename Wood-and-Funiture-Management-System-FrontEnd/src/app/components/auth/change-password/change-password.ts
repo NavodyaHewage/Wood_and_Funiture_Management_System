@@ -18,7 +18,9 @@ export class ChangePassword {
         username: '',
         oldPassword: '',
         newPassword: '',
-        confirmPassword: ''
+        confirmPassword: '',
+        email: '',
+        phoneNumber: ''
     };
 
     isLoading = false;
@@ -86,6 +88,11 @@ export class ChangePassword {
         this.errorMessage = '';
         this.successMessage = '';
 
+        if (!this.passwordData.email || !this.passwordData.phoneNumber) {
+            this.toastService.showWarning('Please provide your email and phone number for verification.');
+            return;
+        }
+
         if (this.passwordData.newPassword !== this.passwordData.confirmPassword) {
             this.toastService.showError(this.lang.translate('CHANGE_PASSWORD.PASSWORDS_NOT_MATCH'));
             return;
@@ -100,12 +107,14 @@ export class ChangePassword {
         this.authService.changePassword(
             this.passwordData.username,
             this.passwordData.oldPassword,
-            this.passwordData.newPassword
+            this.passwordData.newPassword,
+            this.passwordData.email,
+            this.passwordData.phoneNumber
         ).subscribe({
             next: (response) => {
                 this.isLoading = false;
                 this.toastService.showSuccess(this.lang.translate('CHANGE_PASSWORD.SUCCESS_CHANGE'));
-                this.passwordData = { username: '', oldPassword: '', newPassword: '', confirmPassword: '' };
+                this.passwordData = { username: '', oldPassword: '', newPassword: '', confirmPassword: '', email: '', phoneNumber: '' };
 
                 setTimeout(() => {
                     this.router.navigate(['/login']);

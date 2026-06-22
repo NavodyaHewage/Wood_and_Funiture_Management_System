@@ -3,6 +3,7 @@ package com.group_project.wfms_backend.config;
 import com.group_project.wfms_backend.security.UserDetailsServiceImpl;
 import com.group_project.wfms_backend.security.jwt.AuthEntryPointJwt;
 import com.group_project.wfms_backend.security.jwt.AuthTokenFilter;
+import com.group_project.wfms_backend.security.EmployeePermissionFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +35,7 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthEntryPointJwt unauthorizedHandler;
     private final AuthTokenFilter authTokenFilter;
+    private final EmployeePermissionFilter employeePermissionFilter;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -71,8 +73,9 @@ public class WebSecurityConfig {
                         // Admin only endpoints
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/users/**", "/users").hasRole("ADMIN")
+                        .requestMatchers("/v1/supply-raw-materials/my-supplies").hasRole("SUPPLIER")
 
-                        // Management endpoints - Admin and Manager
+                        // Management endpoints - Admin and Employee
                         .requestMatchers(
                                 "/employees/**",
                                 "/suppliers/**",
@@ -97,15 +100,17 @@ public class WebSecurityConfig {
                                 "/v1/raw-material-items/**",
                                 "/receipts/**",
                                 "/v1/supply-raw-materials/**",
-                                "/v1/raw-material-cutting/**"
-                        ).hasAnyRole("ADMIN", "MANAGER")
-                        .requestMatchers("/supply-requests/**").hasAnyRole("ADMIN", "MANAGER", "SUPPLIER")
+                                "/v1/raw-material-cutting/**",
+                                "/accounts-dashboard/**"
+                        ).hasAnyRole("ADMIN", "EMPLOYEE")
+                        .requestMatchers("/supply-requests/**").hasAnyRole("ADMIN", "EMPLOYEE", "SUPPLIER")
 
                         // Any other request must be authenticated
                         .anyRequest().authenticated());
 
         http.authenticationProvider(authenticationProvider());
         http.addFilterBefore(authTokenFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAfter(employeePermissionFilter, AuthTokenFilter.class);
 
         return http.build();
     }

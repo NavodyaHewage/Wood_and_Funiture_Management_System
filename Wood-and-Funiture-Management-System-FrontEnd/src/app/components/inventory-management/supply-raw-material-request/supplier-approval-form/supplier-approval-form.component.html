@@ -1,39 +1,39 @@
 <div class="modal-overlay" *ngIf="show" (click)="close()">
   <div class="modal-box large" (click)="$event.stopPropagation()">
     <div class="modal-header">
-      <h5>Review Request #{{request?.requestId}}</h5>
+      <h5>{{ 'SUPPLY_REQUEST_MANAGEMENT.REVIEW_REQUEST' | translate }} #{{request?.requestId}}</h5>
       <button class="modal-close" (click)="close()"><i class="bi bi-x-lg"></i></button>
     </div>
 
     <div class="modal-body" *ngIf="request">
       <div class="view-grid mb-4">
         <div class="view-item">
-          <label>Supplier</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.SUPPLIER' | translate }}</label>
           <span>{{request.supplierName}}</span>
         </div>
         <div class="view-item">
-          <label>Date</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.DATE' | translate }}</label>
           <span>{{request.requestDate | date:'mediumDate'}}</span>
         </div>
         <div class="view-item">
-          <label>Transport</label>
+          <label>{{ 'SUPPLY_REQUEST_MANAGEMENT.TRANSPORT' | translate }}</label>
           <span>{{request.transportBySupplier ? 'By Supplier' : 'Not Specified'}}</span>
         </div>
       </div>
       
       <div class="section-title">
-        <span>Approve Quantities & Set Prices</span>
+        <span>{{ 'SUPPLY_REQUEST_MANAGEMENT.APPROVE_QUANTITIES' | translate }}</span>
       </div>
 
       <div class="details-table-wrap">
         <table class="details-table">
           <thead>
             <tr>
-              <th>Material</th>
-              <th>Requested CFT</th>
-              <th>Approved CFT</th>
-              <th>Unit Price (Rs.)</th>
-              <th>Total (Est.)</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.MATERIAL' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.REQUESTED_CFT' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.APPROVED_CFT' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.UNIT_PRICE' | translate }}</th>
+              <th>{{ 'SUPPLY_REQUEST_MANAGEMENT.TOTAL_EST' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -56,11 +56,11 @@
     </div>
 
     <div class="modal-footer" *ngIf="!isReadOnly">
-      <button class="btn-danger" (click)="rejectRequest()">Reject</button>
-      <button class="btn-submit" (click)="saveApproval()">Approve Request</button>
+      <button class="btn-danger" (click)="rejectRequest()">{{ 'SUPPLY_REQUEST_MANAGEMENT.REJECT' | translate }}</button>
+      <button class="btn-submit" (click)="saveApproval()">{{ 'SUPPLY_REQUEST_MANAGEMENT.APPROVE_REQ' | translate }}</button>
     </div>
     <div class="modal-footer" *ngIf="isReadOnly">
-      <button class="btn-submit" (click)="close()">Close</button>
+      <button class="btn-submit" (click)="close()">{{ 'SUPPLY_REQUEST_MANAGEMENT.CLOSE' | translate }}</button>
     </div>
   </div>
 </div>

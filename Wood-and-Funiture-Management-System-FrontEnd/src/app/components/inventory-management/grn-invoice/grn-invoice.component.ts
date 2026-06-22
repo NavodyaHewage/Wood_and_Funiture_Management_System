@@ -80,6 +80,13 @@ export class GrnInvoiceComponent implements OnInit {
     }
   }
 
+  get netAmount(): number {
+    if (!this.grnData) return 0;
+    const transport = this.grnData.transportCost || 0;
+    const cutting = this.grnData.cuttingFee || 0;
+    return this.grnData.totalAmount - transport - cutting;
+  }
+
   goBack(): void {
     if (this.grnId) {
       this.onClose.emit();

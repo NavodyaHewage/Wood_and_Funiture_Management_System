@@ -44,7 +44,10 @@ export class Login {
   }
 
   onLogin() {
-    // ... validation logic ...
+    this.isLoading = true;
+    this.errorMessage = '';
+    this.successMessage = '';
+
     this.authService.login(this.loginData.username, this.loginData.password).subscribe({
       next: (response) => {
         this.isLoading = false;
@@ -62,16 +65,8 @@ export class Login {
 
         // Show success message briefly before redirecting
         setTimeout(() => {
-                 // Role-based routing
-          const userRole = response.role ? response.role.toLowerCase() : '';
-          if (userRole === 'supplier') {
-            this.router.navigate(['/supplier-dashboard']);
-          } else if (userRole === 'manager') {
-            this.router.navigate(['/manager-dashboard']);
-          } else {
-            // Admin or fallback
-            this.router.navigate(['/admin-dashboard']);
-          }
+          const dashboardRoute = this.authService.getDashboardRoute(response.role);
+          this.router.navigateByUrl(dashboardRoute);
         }, 800);
       },
       error: (error) => {

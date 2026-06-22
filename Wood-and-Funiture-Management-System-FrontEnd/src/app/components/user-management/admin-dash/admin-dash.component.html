@@ -12,8 +12,8 @@
             <!-- For now, we show a welcome message. 
                  Later, this could have <router-outlet> for child views -->
             <div class="welcome-section">
-                <h1>Welcome to Sachintha Timber Mall</h1>
-                <p>Manage your wood and furniture inventory efficiently.</p>
+                <h1>{{ 'ADMIN_DASHBOARD.WELCOME' | translate }}</h1>
+                <p>{{ 'ADMIN_DASHBOARD.SUBTITLE' | translate }}</p>
             </div>
 
             <!-- Stats Grid placeholder -->
@@ -21,75 +21,75 @@
                 <div class="stat-card" routerLink="/user-management" style="cursor: pointer;">
                     <i class="bi bi-people"></i>
                     <div class="stat-info">
-                        <h3>Users</h3>
-                        <p>Manage Staff & Roles</p>
+                        <h3>{{ 'ADMIN_DASHBOARD.USERS' | translate }}</h3>
+                        <p>{{ 'ADMIN_DASHBOARD.USERS_DESC' | translate }}</p>
                     </div>
                 </div>
                 <div class="stat-card" routerLink="/employee-management" style="cursor: pointer;">
                     <i class="bi bi-person-badge"></i>
                     <div class="stat-info">
-                        <h3>Employees</h3>
-                        <p>Staff Records & Status</p>
+                        <h3>{{ 'ADMIN_DASHBOARD.EMPLOYEES' | translate }}</h3>
+                        <p>{{ 'ADMIN_DASHBOARD.EMPLOYEES_DESC' | translate }}</p>
                     </div>
                 </div>
                 <div class="stat-card" routerLink="/supplier-management" style="cursor: pointer;">
                     <i class="bi bi-truck"></i>
                     <div class="stat-info">
-                        <h3>Suppliers</h3>
-                        <p>Manage Contributors</p>
+                        <h3>{{ 'ADMIN_DASHBOARD.SUPPLIERS' | translate }}</h3>
+                        <p>{{ 'ADMIN_DASHBOARD.SUPPLIERS_DESC' | translate }}</p>
                     </div>
                 </div>
                 <div class="stat-card" routerLink="/customer-management" style="cursor: pointer;">
                     <i class="bi bi-person-heart"></i>
                     <div class="stat-info">
-                        <h3>Customers</h3>
-                        <p>Client Directory</p>
+                        <h3>{{ 'ADMIN_DASHBOARD.CUSTOMERS' | translate }}</h3>
+                        <p>{{ 'ADMIN_DASHBOARD.CUSTOMERS_DESC' | translate }}</p>
                     </div>
                 </div>
                 <div class="stat-card" routerLink="/supply-request-management" style="cursor: pointer;">
                     <i class="bi bi-clipboard-check"></i>
                     <div class="stat-info">
-                        <h3>Supply</h3>
-                        <p>Material Requests</p>
+                        <h3>{{ 'ADMIN_DASHBOARD.SUPPLY' | translate }}</h3>
+                        <p>{{ 'ADMIN_DASHBOARD.SUPPLY_DESC' | translate }}</p>
                     </div>
                 </div>
             </div>
 
             <!-- Quick Actions -->
             <div class="quick-actions-section mt-5">
-                <h3 class="mb-4">Quick Actions</h3>
+                <h3 class="mb-4">{{ 'ADMIN_DASHBOARD.QUICK_ACTIONS' | translate }}</h3>
                 <div class="actions-grid">
                     <button class="btn btn-action-card" routerLink="/register">
                         <i class="bi bi-person-plus"></i>
-                        <span>Add New Staff</span>
+                        <span>{{ 'ADMIN_DASHBOARD.ADD_STAFF' | translate }}</span>
                     </button>
                     <button class="btn btn-action-card" routerLink="/supply-request-management">
                         <i class="bi bi-clipboard-plus"></i>
-                        <span>New Supply Request</span>
+                        <span>{{ 'ADMIN_DASHBOARD.NEW_SUPPLY' | translate }}</span>
                     </button>
                     <button class="btn btn-action-card" routerLink="/quotation-management">
                         <i class="bi bi-file-earmark-plus"></i>
-                        <span>Create Quotation</span>
+                        <span>{{ 'ADMIN_DASHBOARD.CREATE_QUOTE' | translate }}</span>
                     </button>
                     <button class="btn btn-action-card" routerLink="/order-management">
                         <i class="bi bi-cart-plus"></i>
-                        <span>Create Order</span>
+                        <span>{{ 'ADMIN_DASHBOARD.CREATE_ORDER' | translate }}</span>
                     </button>
                     <button class="btn btn-action-card" routerLink="/log-management">
                         <i class="bi bi-tree"></i>
-                        <span>Log Management</span>
+                        <span>{{ 'ADMIN_DASHBOARD.LOG_MGMT' | translate }}</span>
                     </button>
                     <button class="btn btn-action-card" routerLink="/log-management/cutting">
                         <i class="bi bi-scissors"></i>
-                        <span>Material Cutting</span>
+                        <span>{{ 'ADMIN_DASHBOARD.MATERIAL_CUTTING' | translate }}</span>
                     </button>
                     <button class="btn btn-action-card" routerLink="/attendance-management">
                         <i class="bi bi-calendar-check"></i>
-                        <span>Record Attendance</span>
+                        <span>{{ 'ADMIN_DASHBOARD.RECORD_ATTENDANCE' | translate }}</span>
                     </button>
                     <button class="btn btn-action-card" routerLink="/payroll-management">
                         <i class="bi bi-wallet2"></i>
-                        <span>Run Payroll</span>
+                        <span>{{ 'ADMIN_DASHBOARD.RUN_PAYROLL' | translate }}</span>
                     </button>
                 </div>
             </div>

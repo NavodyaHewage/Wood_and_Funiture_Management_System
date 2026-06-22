@@ -7,26 +7,26 @@
         <div class="content-body">
             <div class="header-section">
                 <div class="title-group">
-                    <h1>Customer Management</h1>
-                    <p>Manage customer profiles and interaction history</p>
+                    <h1>{{ 'CUSTOMER_MANAGEMENT.TITLE' | translate }}</h1>
+                    <p>{{ 'CUSTOMER_MANAGEMENT.SUBTITLE' | translate }}</p>
                 </div>
                 <button class="btn-primary" routerLink="/register">
                     <i class="bi bi-person-plus-fill"></i>
-                    Add New Customer
+                    {{ 'CUSTOMER_MANAGEMENT.ADD_NEW' | translate }}
                 </button>
             </div>
 
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-label">Total Clients</div>
+                    <div class="stat-label">{{ 'CUSTOMER_MANAGEMENT.TOTAL_CLIENTS' | translate }}</div>
                     <div class="stat-value">{{ customers.length }}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Active Members</div>
+                    <div class="stat-label">{{ 'CUSTOMER_MANAGEMENT.ACTIVE_MEMBERS' | translate }}</div>
                     <div class="stat-value" style="color: #065f46;">{{ getStatusCount(true) }}</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-label">Inactive Members</div>
+                    <div class="stat-label">{{ 'CUSTOMER_MANAGEMENT.INACTIVE_MEMBERS' | translate }}</div>
                     <div class="stat-value" style="color: #991b1b;">{{ getStatusCount(false) }}</div>
                 </div>
             </div>
@@ -35,13 +35,13 @@
                 <table>
                     <thead>
                         <tr>
-                            <th>#ID</th>
-                            <th>Customer Info</th>
-                            <th>Contact Details</th>
-                            <th>Address</th>
-                            <th>Created Date</th>
-                            <th>Status</th>
-                            <th class="text-center">Actions</th>
+                            <th>{{ 'CUSTOMER_MANAGEMENT.ID' | translate }}</th>
+                            <th>{{ 'CUSTOMER_MANAGEMENT.CUST_INFO' | translate }}</th>
+                            <th>{{ 'CUSTOMER_MANAGEMENT.CONTACT_DETAILS' | translate }}</th>
+                            <th>{{ 'CUSTOMER_MANAGEMENT.ADDRESS' | translate }}</th>
+                            <th>{{ 'CUSTOMER_MANAGEMENT.CREATED_DATE' | translate }}</th>
+                            <th>{{ 'CUSTOMER_MANAGEMENT.STATUS' | translate }}</th>
+                            <th class="text-center">{{ 'CUSTOMER_MANAGEMENT.ACTIONS' | translate }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,19 +68,19 @@
                             <td>{{ cust.createdDate | date:'MMM d, y' }}</td>
                             <td>
                                 <span class="badge" [ngClass]="cust.isActive ? 'badge-approved' : 'badge-rejected'">
-                                    {{ cust.isActive ? 'Active' : 'Inactive' }}
+                                    {{ cust.isActive ? ('CUSTOMER_MANAGEMENT.ACTIVE' | translate) : ('CUSTOMER_MANAGEMENT.INACTIVE' | translate) }}
                                 </span>
                             </td>
                             <td class="text-center">
                                 <div class="action-btns">
-                                    <button class="btn-icon" title="Edit Details" (click)="onEdit(cust)">
+                                    <button class="btn-icon" [title]="'CUSTOMER_MANAGEMENT.EDIT_DETAILS' | translate" (click)="onEdit(cust)">
                                         <i class="bi bi-pencil-square"></i>
                                     </button>
-                                    <button class="btn-icon" [title]="cust.isActive ? 'Deactivate' : 'Activate'"
+                                    <button class="btn-icon" [title]="cust.isActive ? ('CUSTOMER_MANAGEMENT.DEACTIVATE' | translate) : ('CUSTOMER_MANAGEMENT.ACTIVATE' | translate)"
                                         (click)="onToggleStatus(cust)">
                                         <i class="bi" [ngClass]="cust.isActive ? 'bi-toggle-on' : 'bi-toggle-off'"></i>
                                     </button>
-                                    <button class="btn-icon" title="Delete record" (click)="onDelete(cust.cusId, cust.cusName)">
+                                    <button class="btn-icon" [title]="'CUSTOMER_MANAGEMENT.DELETE_RECORD' | translate" (click)="onDelete(cust.cusId, cust.cusName)">
                                         <i class="bi bi-trash3"></i>
                                     </button>
                                 </div>
@@ -98,37 +98,37 @@
     <div class="modal-content">
         <div class="header-section">
             <div class="title-group">
-                <h3>Edit Customer Details</h3>
+                <h3>{{ 'CUSTOMER_MANAGEMENT.EDIT_TITLE' | translate }}</h3>
             </div>
             <button class="btn-icon" (click)="closeModal()">&times;</button>
         </div>
         <div class="modal-body" *ngIf="selectedCustomer">
             <div class="form-grid">
                 <div class="form-group full-width">
-                    <label>Customer Name</label>
+                    <label>{{ 'CUSTOMER_MANAGEMENT.CUST_NAME' | translate }}</label>
                     <input type="text" class="form-control" [(ngModel)]="selectedCustomer.cusName">
                 </div>
                 <div class="form-group">
-                    <label>NIC</label>
+                    <label>{{ 'CUSTOMER_MANAGEMENT.NIC' | translate }}</label>
                     <input type="text" class="form-control" [(ngModel)]="selectedCustomer.nic">
                 </div>
                 <div class="form-group">
-                    <label>Mobile Number</label>
+                    <label>{{ 'CUSTOMER_MANAGEMENT.MOBILE' | translate }}</label>
                     <input type="text" class="form-control" [(ngModel)]="selectedCustomer.mobile">
                 </div>
                 <div class="form-group full-width">
-                    <label>Email Address</label>
+                    <label>{{ 'CUSTOMER_MANAGEMENT.EMAIL' | translate }}</label>
                     <input type="email" class="form-control" [(ngModel)]="selectedCustomer.email">
                 </div>
                 <div class="form-group full-width">
-                    <label>Address</label>
+                    <label>{{ 'CUSTOMER_MANAGEMENT.ADDRESS' | translate }}</label>
                     <input type="text" class="form-control" [(ngModel)]="selectedCustomer.address">
                 </div>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn-secondary" (click)="closeModal()">Cancel</button>
-            <button class="btn-primary" (click)="onUpdateCustomer()">Save Changes</button>
+            <button class="btn-secondary" (click)="closeModal()">{{ 'CUSTOMER_MANAGEMENT.CANCEL' | translate }}</button>
+            <button class="btn-primary" (click)="onUpdateCustomer()">{{ 'CUSTOMER_MANAGEMENT.SAVE_CHANGES' | translate }}</button>
         </div>
     </div>
 </div>
