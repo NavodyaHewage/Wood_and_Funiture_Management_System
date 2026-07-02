@@ -1,3 +1,8 @@
+-- =====================================================================
+-- FULL DATABASE SCHEMA
+-- Includes all original tables plus additional Foreign Key constraints
+-- =====================================================================
+
 CREATE TABLE `user` (
                         `user_id` int NOT NULL AUTO_INCREMENT,
                         `user_name` varchar(100) NOT NULL,
@@ -546,4 +551,55 @@ CREATE TABLE `grn_details` (
                                CONSTRAINT `FKm7bmlle3b2kfrbhok30mdb0gx` FOREIGN KEY (`Supply_RAW_Material_Details_ID`) REFERENCES `supply_raw_material_details` (`Supply_RAW_Material_Details_ID`)
 ) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- =====================================================================
+-- ORIGINAL DEFERRED CONSTRAINT (already present in your dump)
+-- =====================================================================
 ALTER TABLE `grn` ADD CONSTRAINT `FK7eh0pnbm8caac3dymru8desry` FOREIGN KEY (`expense_id`) REFERENCES `expence_account` (`expense_id`);
+
+-- =====================================================================
+-- NEW FOREIGN KEY CONSTRAINTS (added)
+-- Run the orphan-check SELECTs first if this schema already has data,
+-- since ALTER TABLE will fail on rows that violate the constraint.
+-- =====================================================================
+
+-- 1. Link employee's designation to the defined designation/salary structure
+ALTER TABLE `employee`
+    ADD CONSTRAINT `fk_employee_designation`
+        FOREIGN KEY (`Designation`)
+            REFERENCES `designation_salary` (`designation_name`);
+
+-- 2. Link a raw material supply to its cutting-fee record
+ALTER TABLE `supply_raw_material`
+    ADD CONSTRAINT `fk_supplyraw_cuttingfee`
+        FOREIGN KEY (`Cutting_Fee_id`)
+            REFERENCES `raw_material_cutting_fee` (`Id`);
+
+-- 3. Link a loan repayment record to the salary period it was deducted from
+ALTER TABLE `employee_loan_details`
+    ADD CONSTRAINT `fk_loandetails_salarydetails`
+        FOREIGN KEY (`Salary_details_id`)
+            REFERENCES `employee_salary_details` (`Salary_details_id`);
+
+
+INSERT INTO `expence_type` (`type_name`, `description`) VALUES
+                                                            ('Raw Material Purchase', 'Cost of purchasing raw wood/timber materials from suppliers'),
+                                                            ('Employee Salary', 'Monthly or periodic salary payments to employees'),
+                                                            ('Cutting Fee', 'Fees paid for cutting raw materials into usable pieces'),
+                                                            ('Utilities', 'Electricity, water, and other utility bills'),
+                                                            ('Maintenance', 'Equipment and facility maintenance costs'),
+                                                            ('Office Expenses', 'General office supplies and administrative costs'),
+                                                            ('Other', 'Miscellaneous expenses not covered by other categories');
+
+INSERT INTO `user` (
+    `user_name`, `email`, `password`, `role`, `phone_number`
+    `is_active`, `account_locked`, `failed_login_attempts`
+) VALUES (
+             'admin',
+             'admin@woodfurniture.com',
+             '$2a$10$REPLACE_WITH_REAL_BCRYPT_HASH',
+             'ADMIN',
+             '0779134741',
+             1,
+             b'0',
+             0
+         );
