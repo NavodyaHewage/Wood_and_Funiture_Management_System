@@ -41,6 +41,20 @@
                                     <label class="form-label text-muted small fw-bold">{{ 'PRODUCT_CATEGORY.PRICE' | translate }}</label>
                                     <input type="number" class="form-control bg-light border-0 py-2" [(ngModel)]="newCategory.unitPrice" name="price" required>
                                 </div>
+
+                                <div class="mb-4">
+                                    <label class="form-label text-muted small fw-bold">Raw Materials</label>
+                                    <div class="border rounded p-2" style="max-height: 150px; overflow-y: auto;">
+                                        <div class="form-check" *ngFor="let rm of rawMaterials">
+                                            <input class="form-check-input" type="checkbox" [id]="'rm-' + rm.rmId"
+                                                [checked]="isRawMaterialSelected(rm.rmId)"
+                                                (change)="toggleRawMaterial(rm.rmId, $any($event.target).checked)">
+                                            <label class="form-check-label small" [for]="'rm-' + rm.rmId">{{ rm.rmName }}</label>
+                                        </div>
+                                        <div class="text-muted small" *ngIf="rawMaterials.length === 0">No raw materials found</div>
+                                    </div>
+                                    <small class="text-muted">Used to filter this category in Raw Material Cutting</small>
+                                </div>
                                 <div class="d-grid gap-2">
                                     <button type="submit" class="btn btn-primary py-2 fw-bold shadow-sm">
                                         <i class="bi" [ngClass]="isEditing ? 'bi-check-lg' : 'bi-plus-lg'"></i>

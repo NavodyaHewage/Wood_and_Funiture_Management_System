@@ -220,7 +220,7 @@
                       <td>
                         <select [(ngModel)]="row.productCatId" (change)="onCategoryChange(i)">
                           <option [value]="0" disabled>{{ 'ORDER_MANAGEMENT.SELECT' | translate }}</option>
-                          <option *ngFor="let p of productCategories" [value]="p.id">{{ p.name }}</option>
+                          <option *ngFor="let p of productCategories" [value]="p.id">{{ p.name }}{{ p.description ? ' (' + p.description + ')' : '' }}</option>
                         </select>
                       </td>
                       <td><input type="text" [(ngModel)]="row.name" [placeholder]="'ORDER_MANAGEMENT.ITEM_DESC' | translate" /></td>

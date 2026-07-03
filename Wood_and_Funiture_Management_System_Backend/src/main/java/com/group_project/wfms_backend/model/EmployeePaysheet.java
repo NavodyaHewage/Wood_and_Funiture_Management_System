@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -25,6 +26,11 @@ public class EmployeePaysheet {
 
     @Column(name = "Year")
     private Integer year;
+
+    // Exact calendar date this paysheet was generated for. Set for DAILY paysheets so a single
+    // employee can have one distinct snapshot per day; left null for MONTHLY paysheets.
+    @Column(name = "Pay_Date")
+    private LocalDate date;
 
     @Column(name = "Present_Days")
     private Integer presentDays;

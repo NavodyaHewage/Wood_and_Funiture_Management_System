@@ -140,8 +140,10 @@
                         <div class="col-md-6"
                             *ngIf="registerData.entityType === 'EMPLOYEE' && !registerData.isSystemUser">
                             <label class="admin-label">{{ 'REGISTER_USER.DESIGNATION' | translate }}</label>
-                            <input type="text" name="designation" [(ngModel)]="registerData.designation"
-                                placeholder="e.g. Carpenter" class="admin-control">
+                            <select name="designation" [(ngModel)]="registerData.designation" class="admin-control">
+                                <option value="" disabled selected>-- Select Designation --</option>
+                                <option *ngFor="let d of designations" [value]="d">{{ d }}</option>
+                            </select>
                         </div>
 
                         <!-- Date Joined -->

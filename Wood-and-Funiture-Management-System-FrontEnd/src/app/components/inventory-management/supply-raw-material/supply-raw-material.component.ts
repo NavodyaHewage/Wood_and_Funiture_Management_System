@@ -152,7 +152,7 @@ export class SupplyRawMaterialComponent implements OnInit {
     const row = this.supplyDetails.at(index);
     const l = row.get('lengthFt')?.value || 0;
     const g = row.get('girthFt')?.value || 0;
-    
+
     // Formula: (L * G * G) / 2304
     const cft = (l * g * g) / 2304;
     row.patchValue({ totalQuantityCft: parseFloat(cft.toFixed(4)) });
@@ -196,7 +196,7 @@ export class SupplyRawMaterialComponent implements OnInit {
 
     this.isSubmitting = true;
     const payload = this.supplyForm.getRawValue();
-    
+
     // Set rmId to the first row's rmId for backward compatibility with main table
     if (payload.supplyDetails && payload.supplyDetails.length > 0) {
       payload.rmId = payload.supplyDetails[0].rmId;

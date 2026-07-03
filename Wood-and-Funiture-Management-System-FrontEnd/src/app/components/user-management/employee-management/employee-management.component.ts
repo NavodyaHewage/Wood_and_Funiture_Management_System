@@ -20,6 +20,9 @@ export class EmployeeManagementComponent implements OnInit {
     isLoading = false;
     selectedEmployee: Employee | null = null;
     isEditModalOpen = false;
+    showDeleteModal = false;
+    pendingDeleteId: number | null = null;
+    pendingDeleteName = '';
 
     constructor(
         private employeeService: EmployeeService,
@@ -62,17 +65,33 @@ export class EmployeeManagementComponent implements OnInit {
     }
 
     onDelete(id: number, name: string) {
-        if (confirm(`Are you sure you want to delete employee "${name}"?`)) {
-            this.employeeService.deleteEmployee(id).subscribe({
-                next: () => {
-                    this.employees = this.employees.filter(e => e.id !== id);
-                    this.toastService.showSuccess(`Employee ${name} deleted.`);
-                },
-                error: (err) => {
-                    this.toastService.showError('Failed to delete employee');
-                }
-            });
-        }
+        this.pendingDeleteId = id;
+        this.pendingDeleteName = name;
+        this.showDeleteModal = true;
+    }
+
+    confirmDelete() {
+        if (this.pendingDeleteId === null) return;
+        const id = this.pendingDeleteId;
+        const name = this.pendingDeleteName;
+
+        this.employeeService.deleteEmployee(id).subscribe({
+            next: () => {
+                this.employees = this.employees.filter(e => e.id !== id);
+                this.toastService.showSuccess(`Employee ${name} deleted.`);
+                this.cancelDelete();
+            },
+            error: (err) => {
+                this.toastService.showError('Failed to delete employee');
+                this.cancelDelete();
+            }
+        });
+    }
+
+    cancelDelete() {
+        this.showDeleteModal = false;
+        this.pendingDeleteId = null;
+        this.pendingDeleteName = '';
     }
 
     onEdit(employee: Employee) {
