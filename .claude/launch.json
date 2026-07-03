@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend",
+      "runtimeExecutable": "Wood_and_Funiture_Management_System_Backend/mvnw.cmd",
+      "runtimeArgs": ["spring-boot:run", "-Dspring-boot.run.arguments=--server.port=8090"],
+      "port": 8090
+    },
+    {
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["--prefix", "Wood-and-Funiture-Management-System-FrontEnd", "run", "start"],
+      "port": 4200
+    }
+  ]
+}
