@@ -16,7 +16,7 @@ import java.math.BigDecimal;
 public class ReceiptDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="Receipt_Details_Id")
     private Integer receiptDetailsId;
 
