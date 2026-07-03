@@ -204,9 +204,9 @@
                              (blur)="toggleDropdown(i, false)"
                              [placeholder]="'QUOTATION_MANAGEMENT.SEARCH_CAT' | translate">
                       <div class="dropdown-list" *ngIf="details.at(i).get('showDropdown')?.value && filteredCategories.length > 0">
-                        <div class="dropdown-item" *ngFor="let cat of filteredCategories" 
+                        <div class="dropdown-item" *ngFor="let cat of filteredCategories"
                              (mousedown)="onCategorySelect(i, cat)">
-                          {{ cat.name }} - <small>Rs. {{ cat.price }}</small>
+                          {{ cat.name }}{{ cat.description ? ' (' + cat.description + ')' : '' }} - <small>Rs. {{ cat.price }}</small>
                         </div>
                       </div>
                     </div>

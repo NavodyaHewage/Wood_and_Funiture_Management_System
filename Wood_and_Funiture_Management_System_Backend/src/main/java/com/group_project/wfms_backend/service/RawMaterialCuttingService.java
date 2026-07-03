@@ -35,7 +35,9 @@ public class RawMaterialCuttingService {
         if (details.getSupplyRawMaterial() != null) {
             invoiceNumber = details.getSupplyRawMaterial().getInvoiceNumber();
         }
-        
+
+        RawMaterialItem rawMaterialItem = details.getRawMaterialItem();
+
         return new PendingRawMaterialDTO(
                 details.getId(),
                 invoiceNumber,
@@ -44,7 +46,9 @@ public class RawMaterialCuttingService {
                 details.getGirthFt(),
                 details.getTotalQuantityCft(),
                 details.getPrice(),
-                details.getStatus().name()
+                details.getStatus().name(),
+                rawMaterialItem != null ? rawMaterialItem.getRmId() : null,
+                rawMaterialItem != null ? rawMaterialItem.getRmName() : null
         );
     }
 

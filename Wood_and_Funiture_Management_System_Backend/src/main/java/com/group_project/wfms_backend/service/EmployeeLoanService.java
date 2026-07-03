@@ -189,7 +189,7 @@ public class EmployeeLoanService {
     }
 
     @Transactional
-    public void recordRepayment(Integer loanId, BigDecimal amount) {
+    public void recordRepayment(Integer loanId, BigDecimal amount, java.time.LocalDate date, Integer salaryDetailsId) {
         Employee_loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new EntityNotFoundException("Loan not found with ID: " + loanId));
 
@@ -197,10 +197,10 @@ public class EmployeeLoanService {
         BigDecimal newDeducted = currentDeducted.add(amount);
         loan.setTotalDeducted(newDeducted);
 
-        // Check if fully settled
+        // Check if fully settled, otherwise reflect partial progress in the status
         if (newDeducted.compareTo(loan.getLoanAmount()) >= 0) {
             loan.setStatus(com.group_project.wfms_backend.model.LoanStatus.SETTLED);
-            
+
             // Deactivate any active rules for this loan
             // We use the repository directly here for efficiency
             loanDeductionRuleRepository.findActiveRulesByEmployeeId(loan.getEmployee().getId())
@@ -210,12 +210,30 @@ public class EmployeeLoanService {
                     r.setIsActive(false);
                     loanDeductionRuleRepository.save(r);
                 });
+        } else if (newDeducted.compareTo(BigDecimal.ZERO) > 0) {
+            loan.setStatus(com.group_project.wfms_backend.model.LoanStatus.PARTIALLY_PAID);
         }
         loanRepository.save(loan);
+
+        // Record this repayment so callers can avoid double-deducting the same period
+        com.group_project.wfms_backend.model.EmployeeLoanDetails detail = new com.group_project.wfms_backend.model.EmployeeLoanDetails();
+        detail.setLoan(loan);
+        detail.setDate(date != null ? date : java.time.LocalDate.now());
+        detail.setAmount(amount);
+        detail.setSalaryDetailsId(salaryDetailsId);
+        detail.setRemarks("Auto-deducted via payroll confirmation");
+        loanDetailsRepository.save(detail);
+    }
+
+    public boolean hasRepaymentForPeriod(Integer loanId, Integer month, Integer year) {
+        return loanDetailsRepository.existsByLoanIdAndPeriod(loanId, month, year);
     }
 
     @Autowired
     private com.group_project.wfms_backend.repository.LoanDeductionRuleRepository loanDeductionRuleRepository;
+
+    @Autowired
+    private com.group_project.wfms_backend.repository.EmployeeLoanDetailsRepository loanDetailsRepository;
 
     // MAPPING HELPER
     private EmployeeLoanDTO convertToDTO(Employee_loan loan) {

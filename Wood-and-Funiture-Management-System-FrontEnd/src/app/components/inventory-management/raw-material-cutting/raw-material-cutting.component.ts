@@ -140,6 +140,27 @@ export class RawMaterialCuttingComponent implements OnInit {
     return category ? category.unitOfMeasurement : 'Units';
   }
 
+  // Categories to offer in the "Product Category" dropdown, filtered to the raw material
+  // type(s) of the currently selected log(s). Categories with no raw materials assigned yet
+  // are always shown so existing/untagged categories don't disappear from the dropdown.
+  get filteredCategoriesForCutting(): any[] {
+    const selectedRmIds = new Set(
+      this.pendingLogs
+        .filter(log => this.selectedLogIds.includes(log.id))
+        .map(log => log.rawMaterialItemId)
+        .filter(id => id != null)
+    );
+
+    if (selectedRmIds.size === 0) {
+      return this.productCategories;
+    }
+
+    return this.productCategories.filter(cat => {
+      const catRmIds: number[] = (cat.rawMaterials || []).map((rm: any) => rm.rmId);
+      return catRmIds.length === 0 || catRmIds.some(id => selectedRmIds.has(id));
+    });
+  }
+
   onSubmit(): void {
     if (this.selectedLogIds.length === 0) {
       this.toastService.showWarning('Please select at least one raw material log');

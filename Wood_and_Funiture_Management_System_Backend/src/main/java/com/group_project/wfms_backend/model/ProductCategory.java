@@ -34,6 +34,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name="product_category")
@@ -59,4 +61,14 @@ public class ProductCategory {
 
     @Column(name="unit_price", precision = 10, scale = 2)
     private BigDecimal unitPrice;
+
+    // Which raw material types (logs) this category can be cut from - used to filter the
+    // Product Category dropdown in the Raw Material Cutting screen by the selected log(s).
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "product_category_raw_material",
+        joinColumns = @JoinColumn(name = "product_cat_id"),
+        inverseJoinColumns = @JoinColumn(name = "rm_id")
+    )
+    private List<RawMaterialItem> rawMaterials = new ArrayList<>();
 }

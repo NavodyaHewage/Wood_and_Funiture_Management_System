@@ -54,9 +54,11 @@ public class EmployeePaysheetService {
         DesignationSalary ds = designationSalaryRepository.findByDesignationNameAndIsActiveTrue(employee.getDesignation())
                 .orElseThrow(() -> new RuntimeException("Salary Mapping Error: No salary record found for designation '" + employee.getDesignation() + "'. Please add it in the Designation Salary section."));
 
+        java.time.LocalDate payDate = request.getDate() != null ? request.getDate() : java.time.LocalDate.now();
+
         BigDecimal baseSalary;
         if ("DAILY".equalsIgnoreCase(request.getPaymentType())) {
-            // Calculate for TODAY only
+            // Calculate for the selected date only (defaults to today)
             baseSalary = ds.getBasicSalary(); // Assuming basicSalary in meta-table is the Daily Rate for Daily types
             if (ds.getSalaryType() == SalaryRateType.MONTHLY) {
                 baseSalary = ds.getBasicSalary().divide(BigDecimal.valueOf(30), 2, RoundingMode.HALF_UP);
@@ -81,8 +83,8 @@ public class EmployeePaysheetService {
                     .mapToDouble(this::calculateDailyOT)
                     .sum();
         } else {
-            // Check OT for today only
-            totalOtHours = attendanceRepository.findByEmployeeIdAndDate(employee.getId(), java.time.LocalDate.now())
+            // Check OT for the selected date only
+            totalOtHours = attendanceRepository.findByEmployeeIdAndDate(employee.getId(), payDate)
                     .map(this::calculateDailyOT)
                     .orElse(0.0);
         }
@@ -172,14 +174,22 @@ public class EmployeePaysheetService {
         payment.setRemarks("Processed via " + request.getPaymentType() + " automation");
         salaryPaymentRepository.save(payment);
 
-        // 3. Create Paysheet Snapshot (Optional: only for Monthly or as a history log)
-        EmployeePaysheet paysheet = new EmployeePaysheet(); // New entry for every payment or update existing? Let's update monthly.
-        paysheet = paysheetRepository.findByEmployeeIdAndMonthAndYear(request.getEmployeeId(), request.getMonth(), request.getYear())
-                .orElse(new EmployeePaysheet());
-        
+        // 3. Create Paysheet Snapshot
+        // DAILY paysheets get their own distinct snapshot per exact date so a user can generate
+        // and later look up any specific day's paysheet via the calendar. MONTHLY paysheets keep
+        // being upserted per (employee, month, year) as before.
+        boolean isDaily = "DAILY".equalsIgnoreCase(request.getPaymentType());
+        java.time.LocalDate payDate = request.getDate() != null ? request.getDate() : java.time.LocalDate.now();
+
+        EmployeePaysheet paysheet = isDaily
+                ? paysheetRepository.findByEmployeeIdAndDate(request.getEmployeeId(), payDate).orElse(new EmployeePaysheet())
+                : paysheetRepository.findByEmployeeIdAndMonthAndYear(request.getEmployeeId(), request.getMonth(), request.getYear())
+                        .orElse(new EmployeePaysheet());
+
         paysheet.setEmployee(employee);
         paysheet.setMonth(request.getMonth());
         paysheet.setYear(request.getYear());
+        paysheet.setDate(isDaily ? payDate : null);
         paysheet.setBaseSalary(response.getBaseSalary());
         paysheet.setOvertimeAmount(response.getOvertimeAmount());
         paysheet.setLoanDeduction(response.getLoanDeduction());
@@ -209,9 +219,18 @@ public class EmployeePaysheetService {
         expenseAccountRepository.save(expense);
 
         // 4. Update Loan Outstanding Balances and Deactivate Rules via Reusable Service
-        List<Loan_Deduction_Rule> activeRules = loanDeductionRuleRepository.findActiveRulesByEmployeeId(employee.getId());
-        for (Loan_Deduction_Rule rule : activeRules) {
-            loanService.recordRepayment(rule.getEmployeeloan().getLoanId(), rule.getDeductionAmount());
+        // Only deduct when loan deduction is enabled for this run, and only once per rule per
+        // calendar month/year - otherwise confirming a DAILY payroll multiple times in the same
+        // month would re-apply the full monthly deduction amount on every confirm.
+        if (Boolean.TRUE.equals(request.getIsLoanDeductionEnabled())) {
+            List<Loan_Deduction_Rule> activeRules = loanDeductionRuleRepository.findActiveRulesByEmployeeId(employee.getId());
+            for (Loan_Deduction_Rule rule : activeRules) {
+                Integer loanId = rule.getEmployeeloan().getLoanId();
+                if (!loanService.hasRepaymentForPeriod(loanId, request.getMonth(), request.getYear())) {
+                    loanService.recordRepayment(loanId, rule.getDeductionAmount(),
+                            payDate, savedSalary.getSalaryDetailsId());
+                }
+            }
         }
     }
 
@@ -223,16 +242,19 @@ public class EmployeePaysheetService {
         return 0.0;
     }
 
-    @Transactional
-    public void generateAndSavePaysheet(Integer employeeId, Integer month, Integer year) {
-        // Existing method logic (can be updated to use calculatePayroll logic)
-    }
-
     // සේවකයෙකුගේ පේෂීට් එකක් preview බැලීම සඳහා
     public List<PaySheetDTO> getEmployeePaysheets(Integer employeeId) {
         return paysheetRepository.findByEmployeeId(employeeId).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    // Look up the DAILY paysheet previously generated for a specific calendar date (used by the
+    // Payroll Management calendar view). Returns null if none has been generated for that date.
+    public PaySheetDTO getEmployeePaysheetByDate(Integer employeeId, java.time.LocalDate date) {
+        return paysheetRepository.findByEmployeeIdAndDate(employeeId, date)
+                .map(this::convertToDTO)
+                .orElse(null);
     }
 
     private PaySheetDTO convertToDTO(EmployeePaysheet entity) {
@@ -241,7 +263,12 @@ public class EmployeePaysheetService {
         dto.setDesignation(entity.getEmployee().getDesignation());
         dto.setMonth(entity.getMonth());
         dto.setYear(entity.getYear());
+        dto.setDate(entity.getDate());
         dto.setPresentDays(entity.getPresentDays());
+        dto.setBaseSalary(entity.getBaseSalary());
+        dto.setOvertimeAmount(entity.getOvertimeAmount());
+        dto.setLoanDeduction(entity.getLoanDeduction());
+        dto.setOtherDeduction(entity.getOtherDeduction());
         dto.setTotalEarnings(entity.getTotalEarnings());
         dto.setNetSalary(entity.getNetSalary());
         return dto;

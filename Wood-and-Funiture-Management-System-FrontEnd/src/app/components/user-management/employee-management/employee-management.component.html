@@ -138,3 +138,24 @@
         </div>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal">
+    <div class="modal-content">
+        <div class="header-section">
+            <h3>Confirm Delete</h3>
+            <button class="btn-icon" (click)="cancelDelete()">&times;</button>
+        </div>
+        <div class="modal-body text-center py-4">
+            <div class="mb-3">
+                <i class="bi bi-exclamation-triangle text-danger" style="font-size: 3rem;"></i>
+            </div>
+            <p class="fs-5 mb-0">Are you sure you want to delete this employee?</p>
+            <p class="text-muted">{{ pendingDeleteName }}</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-secondary" (click)="cancelDelete()">No</button>
+            <button class="btn-primary" (click)="confirmDelete()">Yes</button>
+        </div>
+    </div>
+</div>

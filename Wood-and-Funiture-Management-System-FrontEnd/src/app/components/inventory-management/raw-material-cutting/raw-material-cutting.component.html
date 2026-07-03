@@ -31,7 +31,7 @@
                                         <th>{{ 'RAW_MATERIAL_CUTTING.INVOICE_NO' | translate }}</th>
                                         <th>{{ 'RAW_MATERIAL_CUTTING.LOG_NO' | translate }}</th>
                                         <th>{{ 'RAW_MATERIAL_CUTTING.LENGTH' | translate }}</th>
-                                        <th>{{ 'RAW_MATERIAL_CUTTING.GIRTH' | translate }}</th>
+                                        <th>CFT</th>
                                         <th>{{ 'RAW_MATERIAL_CUTTING.VOLUME' | translate }}</th>
                                     </tr>
                                 </thead>
@@ -49,7 +49,7 @@
                                         <td><span class="invoice-badge">{{log.invoiceNumber}}</span></td>
                                         <td><span class="fw-bold">#{{log.logNumber}}</span></td>
                                         <td>{{log.lengthFt}}</td>
-                                        <td>{{log.girthFt}}</td>
+                                        <td>{{log.totalQuantityCft}}</td>
                                         <td><span class="volume-badge">{{log.totalQuantityCft}}</span></td>
                                     </tr>
                                     <tr *ngIf="filteredLogs.length === 0">
@@ -155,7 +155,7 @@
                                         <label>{{ 'RAW_MATERIAL_CUTTING.PRODUCT_CAT' | translate }}</label>
                                         <select formControlName="productCategoryId" class="minimal-select">
                                             <option value="" disabled selected>{{ 'RAW_MATERIAL_CUTTING.CHOOSE_CAT' | translate }}</option>
-                                            <option *ngFor="let cat of productCategories" [value]="cat.productCatId">
+                                            <option *ngFor="let cat of filteredCategoriesForCutting" [value]="cat.productCatId">
                                                 {{cat.materialCategory}} - {{cat.description}}
                                             </option>
                                         </select>

@@ -9,4 +9,5 @@ export interface ProductCategory {
     materialCategory: string;
     unitOfMeasurement: UnitOfMeasurement;
     unitPrice: number;
+    rawMaterials?: { rmId: number; rmName?: string }[];
 }

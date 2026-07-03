@@ -9,7 +9,7 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
 /**
  * TimberVolumeCalculationComponent
- * 
+ *
  * Handles real-time CFT calculations using the Hoppus formula: (Girth² * Length) / 2304
  * Note: Despite the database column being named 'Girth_ft', it stores measurements in INCHES.
  */
@@ -56,13 +56,13 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
     const decimalPattern = '^[0-9]+(\\.[0-9]{1,2})?$';
     this.logForm = this.fb.group({
       lengthFt: [null, [
-        Validators.required, 
-        Validators.min(0.01), 
+        Validators.required,
+        Validators.min(0.01),
         Validators.pattern(decimalPattern)
       ]],
       girthIn: [null, [
-        Validators.required, 
-        Validators.min(0.01), 
+        Validators.required,
+        Validators.min(0.01),
         Validators.max(240),
         Validators.pattern(decimalPattern)
       ]],
@@ -143,7 +143,7 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
     // Calculate Volume independently if Girth and Length are valid
     if (girthCtrl?.valid && lengthCtrl?.valid && girth > 0 && length > 0) {
       this.currentVolume = (girth * girth * length) / this.HOPPUS_DIVISOR;
-      
+
       // Check for rounding to zero
       if (Number(this.currentVolume.toFixed(3)) <= 0) {
         this.currentVolume = 0;

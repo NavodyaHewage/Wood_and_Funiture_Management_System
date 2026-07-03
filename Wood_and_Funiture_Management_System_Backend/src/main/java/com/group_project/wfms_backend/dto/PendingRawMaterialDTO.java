@@ -18,4 +18,6 @@ public class PendingRawMaterialDTO {
     private BigDecimal totalQuantityCft;
     private BigDecimal price;
     private String status;
+    private Integer rawMaterialItemId;
+    private String rawMaterialName;
 }
