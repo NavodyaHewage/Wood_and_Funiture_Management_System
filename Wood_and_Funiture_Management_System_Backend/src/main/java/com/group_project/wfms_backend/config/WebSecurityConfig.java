@@ -5,6 +5,7 @@ import com.group_project.wfms_backend.security.jwt.AuthEntryPointJwt;
 import com.group_project.wfms_backend.security.jwt.AuthTokenFilter;
 import com.group_project.wfms_backend.security.EmployeePermissionFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -36,6 +37,9 @@ public class WebSecurityConfig {
     private final AuthEntryPointJwt unauthorizedHandler;
     private final AuthTokenFilter authTokenFilter;
     private final EmployeePermissionFilter employeePermissionFilter;
+
+    @Value("${cors.allowed-origins}")
+    private String corsAllowedOrigins;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -118,7 +122,9 @@ public class WebSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200"));
+        configuration.setAllowedOrigins(Arrays.stream(corsAllowedOrigins.split(","))
+                .map(String::trim)
+                .toList());
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
