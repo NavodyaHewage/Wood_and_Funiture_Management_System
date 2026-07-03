@@ -31,7 +31,7 @@
                                         <th>{{ 'RAW_MATERIAL_CUTTING.INVOICE_NO' | translate }}</th>
                                         <th>{{ 'RAW_MATERIAL_CUTTING.LOG_NO' | translate }}</th>
                                         <th>{{ 'RAW_MATERIAL_CUTTING.LENGTH' | translate }}</th>
-                                        <th>{{ 'RAW_MATERIAL_CUTTING.GIRTH' | translate }}</th>
+                                        <th>CFT</th>
                                         <th>{{ 'RAW_MATERIAL_CUTTING.VOLUME' | translate }}</th>
                                     </tr>
                                 </thead>
@@ -48,8 +48,8 @@
                                         </td>
                                         <td><span class="invoice-badge">{{log.invoiceNumber}}</span></td>
                                         <td><span class="fw-bold">#{{log.logNumber}}</span></td>
-                                        <td>{{log.lengthFt * 12 | number:'1.0-1'}}</td>
-                                        <td>{{log.girthFt}}</td>
+                                        <td>{{log.lengthFt}}</td>
+                                        <td>{{log.totalQuantityCft}}</td>
                                         <td><span class="volume-badge">{{log.totalQuantityCft}}</span></td>
                                     </tr>
                                     <tr *ngIf="filteredLogs.length === 0">
@@ -101,10 +101,10 @@
                                         
                                         <!-- Dimension Indicators -->
                                         <div class="dimension-line length-dim">
-                                            <span class="dim-value">{{activeLog.lengthFt * 12 | number:'1.0-1'}} in</span>
+                                            <span class="dim-value">{{activeLog.lengthFt}} ft</span>
                                         </div>
                                         <div class="dimension-line girth-dim">
-                                            <span class="dim-value">{{activeLog.girthFt}} in Girth</span>
+                                            <span class="dim-value">{{activeLog.girthFt}} ft Girth</span>
                                         </div>
                                     </div>
                                 </div>

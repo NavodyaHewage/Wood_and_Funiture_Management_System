@@ -103,9 +103,7 @@ export class SupplyRawMaterialComponent implements OnInit {
     const row = this.fb.group({
       rmId: [prevRmId, Validators.required],
       logNumber: [nextLogNum, Validators.required],
-      // Entered/displayed in inches; converted to feet only when building the submit payload,
-      // since the backend's Length_ft column and the CFT (Hoppus) formula expect feet.
-      lengthIn: [0, [Validators.required, Validators.min(0.1)]],
+      lengthFt: [0, [Validators.required, Validators.min(0.1)]],
       girthFt: [0, [Validators.required, Validators.min(0.1)]],
       totalQuantityCft: [{ value: 0, disabled: true }],
       price: [0, [Validators.required, Validators.min(1)]],
@@ -152,9 +150,8 @@ export class SupplyRawMaterialComponent implements OnInit {
 
   calculateCft(index: number): void {
     const row = this.supplyDetails.at(index);
-    const lengthIn = row.get('lengthIn')?.value || 0;
+    const l = row.get('lengthFt')?.value || 0;
     const g = row.get('girthFt')?.value || 0;
-    const l = lengthIn / 12; // Hoppus formula requires Length in feet
 
     // Formula: (L * G * G) / 2304
     const cft = (l * g * g) / 2304;
@@ -199,14 +196,6 @@ export class SupplyRawMaterialComponent implements OnInit {
 
     this.isSubmitting = true;
     const payload = this.supplyForm.getRawValue();
-
-    // Convert each row's Length back to feet for the backend (Length_ft column/Hoppus formula)
-    if (payload.supplyDetails) {
-      payload.supplyDetails = payload.supplyDetails.map((detail: any) => {
-        const { lengthIn, ...rest } = detail;
-        return { ...rest, lengthFt: (lengthIn || 0) / 12 };
-      });
-    }
 
     // Set rmId to the first row's rmId for backward compatibility with main table
     if (payload.supplyDetails && payload.supplyDetails.length > 0) {
