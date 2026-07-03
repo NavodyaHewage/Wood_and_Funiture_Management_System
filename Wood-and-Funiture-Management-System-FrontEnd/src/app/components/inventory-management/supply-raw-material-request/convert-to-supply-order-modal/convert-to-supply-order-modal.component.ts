@@ -102,7 +102,9 @@ export class ConvertToOrderModalComponent implements OnInit, OnChanges {
       rmId: rmId,
       rmName: rmName,
       logNumber: this.conversionData.supplyDetails.filter((d: any) => d.rmId === rmId).length + 1,
-      lengthFt: 0,
+      // Entered/displayed in inches; converted to feet only when building the submit payload,
+      // since the backend's Length_ft column and the CFT (Hoppus) formula expect feet.
+      lengthIn: 0,
       girthFt: 0,
       supplierPrice: supplierPrice || 0,
       apiPrice: apiPrice || 0,
@@ -117,8 +119,9 @@ export class ConvertToOrderModalComponent implements OnInit, OnChanges {
   }
 
   calculateCft(log: any) {
-    if (log.lengthFt && log.girthFt) {
-      return (log.lengthFt * log.girthFt * log.girthFt) / 2304;
+    if (log.lengthIn && log.girthFt) {
+      const lengthFt = log.lengthIn / 12;
+      return (lengthFt * log.girthFt * log.girthFt) / 2304;
     }
     return 0;
   }
@@ -137,12 +140,21 @@ export class ConvertToOrderModalComponent implements OnInit, OnChanges {
   }
 
   confirmConversion() {
-    if (this.conversionData.supplyDetails.some((l: any) => l.lengthFt <= 0 || l.girthFt <= 0)) {
+    if (this.conversionData.supplyDetails.some((l: any) => l.lengthIn <= 0 || l.girthFt <= 0)) {
       this.toastService.showError('Please enter valid dimensions for all logs');
       return;
     }
 
-    this.requestService.convertToOrder(this.request.requestId, this.conversionData).subscribe({
+    // Convert each log's Length back to feet for the backend (Length_ft column/Hoppus formula)
+    const payload = {
+      ...this.conversionData,
+      supplyDetails: this.conversionData.supplyDetails.map((log: any) => {
+        const { lengthIn, ...rest } = log;
+        return { ...rest, lengthFt: (lengthIn || 0) / 12 };
+      })
+    };
+
+    this.requestService.convertToOrder(this.request.requestId, payload).subscribe({
       next: (response: any) => {
         this.toastService.showSuccess('Converted to Supply Order and GRN generated');
         this.onSaved.emit();

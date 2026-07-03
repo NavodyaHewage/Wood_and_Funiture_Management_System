@@ -9,9 +9,11 @@ import { trigger, transition, style, animate } from '@angular/animations';
 
 /**
  * TimberVolumeCalculationComponent
- * 
- * Handles real-time CFT calculations using the Hoppus formula: (Girth² * Length) / 2304
- * Note: Despite the database column being named 'Girth_ft', it stores measurements in INCHES.
+ *
+ * Handles real-time CFT calculations using the Hoppus formula: (Girth² * Length) / 2304,
+ * where Length must be in FEET and Girth in INCHES.
+ * Both dimensions are entered and displayed in inches here for consistency with the rest of
+ * the system; Length is converted inches -> feet internally before the formula is applied.
  */
 @Component({
   selector: 'app-timber-volume-calculation',
@@ -55,14 +57,14 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
   ) {
     const decimalPattern = '^[0-9]+(\\.[0-9]{1,2})?$';
     this.logForm = this.fb.group({
-      lengthFt: [null, [
-        Validators.required, 
-        Validators.min(0.01), 
+      lengthIn: [null, [
+        Validators.required,
+        Validators.min(0.01),
         Validators.pattern(decimalPattern)
       ]],
       girthIn: [null, [
-        Validators.required, 
-        Validators.min(0.01), 
+        Validators.required,
+        Validators.min(0.01),
         Validators.max(240),
         Validators.pattern(decimalPattern)
       ]],
@@ -111,18 +113,18 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
 
   validateAndCalculate() {
     const girth = this.logForm.get('girthIn')?.value;
-    const length = this.logForm.get('lengthFt')?.value;
+    const lengthInches = this.logForm.get('lengthIn')?.value;
     const woodTypeId = this.logForm.get('woodTypeId')?.value;
 
     const girthCtrl = this.logForm.get('girthIn');
-    const lengthCtrl = this.logForm.get('lengthFt');
+    const lengthCtrl = this.logForm.get('lengthIn');
 
     // Reset Warnings
     this.girthWarning = '';
     this.lengthWarning = '';
 
     // Check if fields are empty
-    if (!girth && !length && !woodTypeId) {
+    if (!girth && !lengthInches && !woodTypeId) {
       this.currentVolume = null;
       this.currentEstimatedValue = null;
       return;
@@ -135,21 +137,23 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
       this.girthWarning = 'Very small girth detected (<6 inches). Please verify measurement.';
     }
 
-    // Check Length Warnings
-    if (length > 100) {
-      this.lengthWarning = 'Unusual length detected (>100 ft). Please confirm.';
+    // Check Length Warnings (>100 ft, expressed in inches)
+    if (lengthInches > 1200) {
+      this.lengthWarning = 'Unusual length detected (>1200 in / 100 ft). Please confirm.';
     }
 
-    // Calculate Volume independently if Girth and Length are valid
-    if (girthCtrl?.valid && lengthCtrl?.valid && girth > 0 && length > 0) {
-      this.currentVolume = (girth * girth * length) / this.HOPPUS_DIVISOR;
-      
+    // Calculate Volume independently if Girth and Length are valid.
+    // Hoppus formula requires Length in FEET, so convert the inches input before applying it.
+    if (girthCtrl?.valid && lengthCtrl?.valid && girth > 0 && lengthInches > 0) {
+      const lengthFt = lengthInches / 12;
+      this.currentVolume = (girth * girth * lengthFt) / this.HOPPUS_DIVISOR;
+
       // Check for rounding to zero
       if (Number(this.currentVolume.toFixed(3)) <= 0) {
         this.currentVolume = 0;
       }
     } else {
-      this.currentVolume = (girth > 0 || length > 0) ? 0 : null;
+      this.currentVolume = (girth > 0 || lengthInches > 0) ? 0 : null;
     }
 
     // Calculate Value if Wood Type is also valid
@@ -187,7 +191,7 @@ export class TimberVolumeCalculationComponent implements OnInit, OnDestroy {
 
   resetEntryForm() {
     this.logForm.reset({
-      lengthFt: null,
+      lengthIn: null,
       girthIn: null,
       woodTypeId: null
     });

@@ -22,9 +22,9 @@
                         </div>
                     </div>
                     <div class="col-6 mb-3">
-                        <label>LENGTH (ft)</label>
-                        <div class="premium-input-sm" [class.has-error]="logForm.get('lengthFt')?.invalid && logForm.get('lengthFt')?.touched">
-                            <input type="number" formControlName="lengthFt" placeholder="0.0" (keypress)="onKeyPress($event)">
+                        <label>LENGTH (in)</label>
+                        <div class="premium-input-sm" [class.has-error]="logForm.get('lengthIn')?.invalid && logForm.get('lengthIn')?.touched">
+                            <input type="number" formControlName="lengthIn" placeholder="0.0" (keypress)="onKeyPress($event)">
                         </div>
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { PayrollService, PayrollRequestDTO, PayrollResponseDTO } from '../../../service/payroll.service';
+import { PayrollService, PayrollRequestDTO, PayrollResponseDTO, PaySheetDTO } from '../../../service/payroll.service';
 import { EmployeeService } from '../../../service/employee.service';
 import { ToastService } from '../../../service/toast.service';
 import { AuthService } from '../../../service/auth.service';
@@ -28,9 +28,18 @@ export class PayrollManagementComponent implements OnInit {
   paymentType: string = 'MONTHLY';
   isLoanDeductionEnabled: boolean = true;
 
+  todayStr: string = new Date().toISOString().split('T')[0];
+  selectedDate: string = this.todayStr;
+
   payrollPreview: PayrollResponseDTO | null = null;
   isCalculating: boolean = false;
   isConfirming: boolean = false;
+
+  // Calendar-based paysheet lookup
+  viewDate: string = this.todayStr;
+  viewedPaysheet: PaySheetDTO | null = null;
+  isViewingPaysheet: boolean = false;
+  hasCheckedView: boolean = false;
 
   months = [
     'January', 'February', 'March', 'April', 'May', 'June',
@@ -73,8 +82,39 @@ export class PayrollManagementComponent implements OnInit {
       otherDeductionReason: this.otherDeductionReason,
       loanDeductionOverride: this.loanOverride,
       paymentType: this.paymentType,
-      isLoanDeductionEnabled: this.isLoanDeductionEnabled
+      isLoanDeductionEnabled: this.isLoanDeductionEnabled,
+      date: this.paymentType === 'DAILY' ? this.selectedDate : undefined
     };
+  }
+
+  onSelectedDateChange(): void {
+    if (this.paymentType === 'DAILY' && this.selectedDate) {
+      const d = new Date(this.selectedDate);
+      this.selectedMonth = d.getMonth() + 1;
+      this.selectedYear = d.getFullYear();
+    }
+  }
+
+  viewPaysheetForDate(): void {
+    if (!this.selectedEmployeeId || !this.viewDate) {
+      this.toastService.showWarning('Please select an employee and a date', 'Selection Required');
+      return;
+    }
+
+    this.isViewingPaysheet = true;
+    this.hasCheckedView = false;
+    this.payrollService.getPaysheetByDate(this.selectedEmployeeId, this.viewDate).subscribe({
+      next: (data) => {
+        this.viewedPaysheet = data;
+        this.isViewingPaysheet = false;
+        this.hasCheckedView = true;
+      },
+      error: () => {
+        this.viewedPaysheet = null;
+        this.isViewingPaysheet = false;
+        this.hasCheckedView = true;
+      }
+    });
   }
 
   calculatePayroll(): void {

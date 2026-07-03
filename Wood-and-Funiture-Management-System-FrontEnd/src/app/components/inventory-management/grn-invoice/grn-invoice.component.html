@@ -111,8 +111,8 @@
               <th>#</th>
               <th>Material Description</th>
               <th>Log No</th>
-              <th>Length (Ft)</th>
-              <th>Girth (Ft)</th>
+              <th>Length (in)</th>
+              <th>Girth (in)</th>
               <th class="text-end">Qty (CFT)</th>
               <th class="text-end">Unit Price</th>
               <th class="text-end">Total</th>
@@ -125,8 +125,8 @@
                 <strong>{{ item.rmName }}</strong>
               </td>
               <td>{{ item.logNumber }}</td>
-              <td>{{ item.lengthFt }}'</td>
-              <td>{{ item.girthFt }}'</td>
+              <td>{{ item.lengthFt * 12 | number:'1.0-1' }}"</td>
+              <td>{{ item.girthFt }}"</td>
               <td class="text-end">{{ item.totalQuantityCft | number:'1.2-4' }}</td>
               <td class="text-end">{{ item.unitPrice | currency:'LKR ':'symbol':'1.2-2' }}</td>
               <td class="text-end">{{ item.amount | currency:'LKR ':'symbol':'1.2-2' }}</td>

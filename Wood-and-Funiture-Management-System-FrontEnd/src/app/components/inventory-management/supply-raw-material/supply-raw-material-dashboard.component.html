@@ -161,7 +161,7 @@
             <tbody>
               <tr *ngFor="let detail of selectedSupply?.supplyDetails">
                 <td>{{ detail.logNumber }}</td>
-                <td>{{ detail.lengthFt }}</td>
+                <td>{{ detail.lengthFt * 12 | number:'1.0-1' }}</td>
                 <td>{{ detail.girthFt }}</td>
                 <td>{{ detail.totalQuantityCft | number:'1.4-4' }}</td>
                 <td>Rs. {{ detail.price | number:'1.2-2' }}</td>

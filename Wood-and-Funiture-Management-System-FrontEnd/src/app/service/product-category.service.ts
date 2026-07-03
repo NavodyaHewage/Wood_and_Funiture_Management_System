@@ -47,7 +47,8 @@ export class ProductCategoryService {
       materialCategory: category.materialCategory ?? category.material_category ?? category.name ?? '',
       description: category.description ?? category.Description ?? '',
       unitOfMeasurement: category.unitOfMeasurement ?? category.unit_of_measurement ?? UnitOfMeasurement.SQUARE_FEET,
-      unitPrice: Number(category.unitPrice ?? category.unit_price ?? category.price ?? 0)
+      unitPrice: Number(category.unitPrice ?? category.unit_price ?? category.price ?? 0),
+      rawMaterials: category.rawMaterials ?? category.raw_materials ?? []
     };
   }
 }

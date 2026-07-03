@@ -15,6 +15,7 @@ export interface PayrollRequestDTO {
   loanDeductionOverride?: number;
   paymentType?: string;
   isLoanDeductionEnabled?: boolean;
+  date?: string;
 }
 
 export interface PayrollResponseDTO {
@@ -28,6 +29,22 @@ export interface PayrollResponseDTO {
   previouslyPaidAmount: number;
   netSalary: number;
   attendanceWarnings: string[];
+}
+
+export interface PaySheetDTO {
+  employeeName: string;
+  designation: string;
+  month: number;
+  year: number;
+  date: string | null;
+  presentDays: number;
+  baseSalary: number;
+  overtimeAmount: number;
+  loanDeduction: number;
+  otherDeduction: number;
+  totalEarnings: number;
+  deductions: number;
+  netSalary: number;
 }
 
 @Injectable({
@@ -58,6 +75,17 @@ export class PayrollService {
       responseType: 'text' as 'json'
     }).pipe(
       catchError(err => this.handleError(err))
+    );
+  }
+
+  getPaysheetByDate(employeeId: number, date: string): Observable<PaySheetDTO | null> {
+    return this.http.get<PaySheetDTO>(`${environment.apiUrl}/paysheet-details/employee/${employeeId}/date/${date}`).pipe(
+      catchError(err => {
+        if (err.status === 204 || err.status === 404) {
+          return [null];
+        }
+        return this.handleError(err);
+      })
     );
   }
 

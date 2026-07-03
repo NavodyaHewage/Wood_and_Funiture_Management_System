@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -6,6 +6,7 @@ import { AuthService } from '../../../service/auth.service';
 import { ToastService } from '../../../service/toast.service';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
+import { DesignationSalaryService } from '../../../service/designation-salary.service';
 
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
@@ -16,7 +17,9 @@ import { TranslatePipe } from '../../../pipes/translate.pipe';
   templateUrl: './register.html',
   styleUrls: ['./register.css']
 })
-export class Register {
+export class Register implements OnInit {
+  designations: string[] = [];
+
   registerData = {
     isSystemUser: true,
     entityType: 'EMPLOYEE',
@@ -39,8 +42,20 @@ export class Register {
   constructor(
     private router: Router,
     private authService: AuthService,
-    private toastService: ToastService
+    private toastService: ToastService,
+    private designationSalaryService: DesignationSalaryService
   ) { }
+
+  ngOnInit(): void {
+    this.designationSalaryService.getAll().subscribe({
+      next: (data) => {
+        this.designations = data
+          .filter(d => d.isActive)
+          .map(d => d.designationName);
+      },
+      error: (err) => console.error('Error loading designations', err)
+    });
+  }
 
   onUserTypeChange() {
     if (this.registerData.isSystemUser) {

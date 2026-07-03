@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ProductCategory, UnitOfMeasurement } from '../../../model/product-category.model';
 import { ProductCategoryService } from '../../../service/product-category.service';
+import { RawMaterialService } from '../../../service/raw-material.service';
 import { ToastService } from '../../../service/toast.service';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
@@ -23,7 +24,8 @@ export class ProductCategoryComponent implements OnInit {
     description: '',
     materialCategory: '',
     unitOfMeasurement: UnitOfMeasurement.SQUARE_FEET,
-    unitPrice: 0
+    unitPrice: 0,
+    rawMaterials: []
   };
   unitOptions = Object.values(UnitOfMeasurement);
   isEditing = false;
@@ -33,13 +35,39 @@ export class ProductCategoryComponent implements OnInit {
   pageSize = 5;
   Math = Math;
 
+  rawMaterials: any[] = [];
+  selectedRawMaterialIds: number[] = [];
+
   constructor(
     private categoryService: ProductCategoryService,
+    private rawMaterialService: RawMaterialService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     this.loadCategories();
+    this.loadRawMaterials();
+  }
+
+  loadRawMaterials(): void {
+    this.rawMaterialService.getAllRawMaterialItems().subscribe({
+      next: (data) => this.rawMaterials = data,
+      error: (err) => console.error('Error loading raw materials', err)
+    });
+  }
+
+  toggleRawMaterial(rmId: number, checked: boolean): void {
+    if (checked) {
+      if (!this.selectedRawMaterialIds.includes(rmId)) {
+        this.selectedRawMaterialIds.push(rmId);
+      }
+    } else {
+      this.selectedRawMaterialIds = this.selectedRawMaterialIds.filter(id => id !== rmId);
+    }
+  }
+
+  isRawMaterialSelected(rmId: number): boolean {
+    return this.selectedRawMaterialIds.includes(rmId);
   }
 
   loadCategories(): void {
@@ -67,8 +95,13 @@ export class ProductCategoryComponent implements OnInit {
   }
 
   saveCategory(): void {
+    const payload: ProductCategory = {
+      ...this.newCategory,
+      rawMaterials: this.selectedRawMaterialIds.map(id => ({ rmId: id }))
+    };
+
     if (this.isEditing && this.editId !== null) {
-      this.categoryService.update(this.editId, this.newCategory).subscribe({
+      this.categoryService.update(this.editId, payload).subscribe({
         next: () => {
           this.toastService.show('Category updated successfully', 'success');
           this.resetForm();
@@ -77,7 +110,7 @@ export class ProductCategoryComponent implements OnInit {
         error: () => this.toastService.show('Error updating category', 'error')
       });
     } else {
-      this.categoryService.create(this.newCategory).subscribe({
+      this.categoryService.create(payload).subscribe({
         next: () => {
           this.toastService.show('Category created successfully', 'success');
           this.resetForm();
@@ -92,6 +125,8 @@ export class ProductCategoryComponent implements OnInit {
     this.isEditing = true;
     this.editId = cat.productCatId!;
     this.newCategory = { ...cat };
+    this.selectedRawMaterialIds = (cat.rawMaterials || []).map(rm => rm.rmId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   deleteCategory(id: number): void {
@@ -113,8 +148,10 @@ export class ProductCategoryComponent implements OnInit {
       description: '',
       materialCategory: '',
       unitOfMeasurement: UnitOfMeasurement.SQUARE_FEET,
-      unitPrice: 0
+      unitPrice: 0,
+      rawMaterials: []
     };
+    this.selectedRawMaterialIds = [];
   }
 
   get paginatedCategories(): ProductCategory[] {
