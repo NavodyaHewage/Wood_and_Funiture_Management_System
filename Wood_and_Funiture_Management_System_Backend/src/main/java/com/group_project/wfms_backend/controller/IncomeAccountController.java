@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/income-account")
-@CrossOrigin(origins = "http://localhost:4200")
 public class IncomeAccountController {
     @Autowired
     private IncomeAccountService incomeService;

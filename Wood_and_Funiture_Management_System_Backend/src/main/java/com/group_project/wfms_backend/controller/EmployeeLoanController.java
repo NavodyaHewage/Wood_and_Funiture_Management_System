@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/loans")
-@CrossOrigin(origins = "http://localhost:4200")
 
 public class EmployeeLoanController {
     @Autowired

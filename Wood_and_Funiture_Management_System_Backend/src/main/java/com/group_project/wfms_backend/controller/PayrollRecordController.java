@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/payroll-records")
-@CrossOrigin(origins = "http://localhost:4200") // Angular port එකට අවසර දීම
 public class PayrollRecordController {
 
     @Autowired
