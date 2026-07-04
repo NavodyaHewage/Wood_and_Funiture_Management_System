@@ -32,6 +32,8 @@ export class OrderManagementDashboardComponent implements OnInit {
   showCreateModal = false;
   showViewModal = false;
   showDeleteConfirm = false;
+  showOutstandingBalanceModal = false;
+  pendingOutstandingBalance = 0;
   orderToDelete: number | null = null;
   isEditMode = false;
   editOrderId: number | null = null;
@@ -211,7 +213,36 @@ export class OrderManagementDashboardComponent implements OnInit {
     this.showCreateModal = true;
   }
 
+  getCustomerOutstandingBalance(customerId: number): number {
+    return this.orders
+      .filter(o => o.customerId === customerId && o.status?.toUpperCase() !== 'CANCELLED')
+      .reduce((sum, o) => sum + (o.balanceAmount || 0), 0);
+  }
+
   submitForm(): void {
+    if (!this.isEditMode) {
+      const balance = this.getCustomerOutstandingBalance(Number(this.orderForm.customerId));
+      if (balance > 0) {
+        this.pendingOutstandingBalance = balance;
+        this.showOutstandingBalanceModal = true;
+        return;
+      }
+    }
+    this.proceedSubmit();
+  }
+
+  confirmProceedWithOutstandingBalance(): void {
+    this.showOutstandingBalanceModal = false;
+    this.pendingOutstandingBalance = 0;
+    this.proceedSubmit();
+  }
+
+  cancelOutstandingBalanceCheck(): void {
+    this.showOutstandingBalanceModal = false;
+    this.pendingOutstandingBalance = 0;
+  }
+
+  private proceedSubmit(): void {
     const currentUserId = this.authService.currentUserValue?.userId || null;
     this.orderForm.createdById = currentUserId;
 

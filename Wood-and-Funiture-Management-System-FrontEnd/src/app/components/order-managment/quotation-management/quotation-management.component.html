@@ -272,6 +272,16 @@
             <span class="fw-bold text-success">{{ selectedQuotation?.totalAmount | currency:'LKR ':'symbol':'1.2-2' }}</span>
           </div>
         </div>
+
+        <div class="outstanding-balance-warning mt-3 p-3 rounded text-start" *ngIf="selectedQuotationOutstandingBalance > 0"
+             style="background-color: #fff3cd; border: 1px solid #ffecb5;">
+          <p class="mb-0 text-danger fw-bold">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i>
+            {{ 'QUOTATION_MANAGEMENT.OUTSTANDING_BALANCE_MSG' | translate }}
+            {{ selectedQuotationOutstandingBalance | currency:'LKR ':'symbol':'1.2-2' }}.
+            {{ 'QUOTATION_MANAGEMENT.OUTSTANDING_BALANCE_QUESTION' | translate }}
+          </p>
+        </div>
       </div>
 
       <div class="modal-footer">

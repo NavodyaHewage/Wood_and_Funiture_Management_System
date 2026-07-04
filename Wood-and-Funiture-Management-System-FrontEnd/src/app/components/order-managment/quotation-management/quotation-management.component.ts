@@ -9,6 +9,8 @@ import { ToastService } from '../../../service/toast.service';
 import { HeaderComponent } from '../../header/header.component';
 import { AdminSideComponent } from '../../user-management/admin-side/admin-side.component';
 import { ProductCategoryService } from '../../../service/product-category.service';
+import { ProductStockService, ProductStock } from '../../../service/product-stock.service';
+import { OrderService } from '../../../service/order.service';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '../../../pipes/translate.pipe';
 
@@ -25,6 +27,9 @@ export class QuotationManagementComponent implements OnInit {
   productCategories: any[] = [];
   filteredCategories: any[] = [];
   categorySearchTerm: string = '';
+  productStock: ProductStock[] = [];
+  customerOrders: any[] = [];
+  selectedQuotationOutstandingBalance = 0;
 
   quotationForm!: FormGroup;
   showModal = false;
@@ -49,6 +54,8 @@ export class QuotationManagementComponent implements OnInit {
     private customerService: CustomerService,
     private authService: AuthService,
     private productCategoryService: ProductCategoryService,
+    private productStockService: ProductStockService,
+    private orderService: OrderService,
     private toastService: ToastService,
     private router: Router
   ) {
@@ -59,6 +66,37 @@ export class QuotationManagementComponent implements OnInit {
     this.loadQuotations();
     this.loadCustomers();
     this.loadProductCategories();
+    this.loadProductStock();
+    this.loadCustomerOrders();
+  }
+
+  loadProductStock(): void {
+    this.productStockService.getAllProductStock().subscribe({
+      next: (data) => this.productStock = data,
+      error: (err) => console.error('Error loading product stock', err)
+    });
+  }
+
+  loadCustomerOrders(): void {
+    this.orderService.getAllOrders().subscribe({
+      next: (data) => this.customerOrders = data,
+      error: (err) => console.error('Error loading orders', err)
+    });
+  }
+
+  hasInsufficientStock(): boolean {
+    return this.details.controls.some(control => {
+      const productCatId = control.get('productCatId')?.value;
+      const quantity = Number(control.get('quantity')?.value) || 0;
+      const stock = this.productStock.find(s => s.productCatId === productCatId);
+      return !stock || quantity > stock.availableQuantity;
+    });
+  }
+
+  getCustomerOutstandingBalance(customerId: number): number {
+    return this.customerOrders
+      .filter((o: any) => o.customerId === customerId && o.status?.toUpperCase() !== 'CANCELLED')
+      .reduce((sum: number, o: any) => sum + (o.balanceAmount || 0), 0);
   }
 
   initForm(): void {
@@ -227,6 +265,10 @@ export class QuotationManagementComponent implements OnInit {
   onSubmit(): void {
     if (this.quotationForm.invalid) return;
 
+    if (this.hasInsufficientStock()) {
+      this.toastService.show('Insufficient stock available.', 'warning');
+    }
+
     this.isLoading = true;
     const formData = this.quotationForm.value;
 
@@ -366,6 +408,7 @@ export class QuotationManagementComponent implements OnInit {
 
   approveAndConvert(q: any): void {
     this.selectedQuotation = q;
+    this.selectedQuotationOutstandingBalance = this.getCustomerOutstandingBalance(q.customerId);
     this.showApproveModal = true;
   }
 
@@ -378,6 +421,7 @@ export class QuotationManagementComponent implements OnInit {
     this.quotationService.convertToOrder(this.selectedQuotation.quotationId).subscribe({
       next: (response) => {
         this.isLoading = false;
+        this.selectedQuotationOutstandingBalance = 0;
         this.toastService.show('Quotation approved and converted to Order successfully!', 'success');
         this.router.navigate(['/order-management']);
       },
@@ -401,5 +445,6 @@ export class QuotationManagementComponent implements OnInit {
   closeApproveModal(): void {
     this.showApproveModal = false;
     this.selectedQuotation = null;
+    this.selectedQuotationOutstandingBalance = 0;
   }
 }

@@ -317,7 +317,12 @@ export class LanguageService {
         'DELETE': 'Delete',
         'SELECT_CUSTOMER': 'Select customer',
         'SELECT': 'Select',
-        'ITEM_DESC': 'Item description'
+        'ITEM_DESC': 'Item description',
+        'OUTSTANDING_BALANCE_TITLE': 'Outstanding Balance',
+        'OUTSTANDING_BALANCE_MSG': 'This customer has an outstanding balance of',
+        'OUTSTANDING_BALANCE_QUESTION': 'Do you want to continue?',
+        'NO': 'No',
+        'YES': 'Yes'
       },
       'CUSTOMER_MANAGEMENT': {
         'TITLE': 'Customer Management',
@@ -408,7 +413,9 @@ export class LanguageService {
         'DELETE_MSG_1': 'Are you sure you want to delete this quotation?',
         'DELETE_MSG_2': 'This action cannot be undone.',
         'QUOTE_ID': 'Quotation ID:',
-        'YES_DELETE': 'Yes, Delete'
+        'YES_DELETE': 'Yes, Delete',
+        'OUTSTANDING_BALANCE_MSG': 'This customer has an outstanding balance of',
+        'OUTSTANDING_BALANCE_QUESTION': 'Do you want to continue?'
       },
       'ADMIN_DASHBOARD': {
         'WELCOME': 'Welcome to Sachintha Timber Mall',
@@ -1323,7 +1330,12 @@ export class LanguageService {
         'DELETE': 'මකා දමන්න',
         'SELECT_CUSTOMER': 'පාරිභෝගිකයෙකු තෝරන්න',
         'SELECT': 'තෝරන්න',
-        'ITEM_DESC': 'අයිතම විස්තරය'
+        'ITEM_DESC': 'අයිතම විස්තරය',
+        'OUTSTANDING_BALANCE_TITLE': 'නොගෙවූ ශේෂය',
+        'OUTSTANDING_BALANCE_MSG': 'මෙම පාරිභෝගිකයාට නොගෙවූ ශේෂයක් ඇත:',
+        'OUTSTANDING_BALANCE_QUESTION': 'ඔබට ඉදිරියට යාමට අවශ්‍යද?',
+        'NO': 'නැත',
+        'YES': 'ඔව්'
       },
       'CUSTOMER_MANAGEMENT': {
         'TITLE': 'පාරිභෝගික කළමනාකරණය',
@@ -1414,7 +1426,9 @@ export class LanguageService {
         'DELETE_MSG_1': 'මෙම මිල ගණන් පත්‍රය මකා දැමීමට ඔබට විශ්වාසද?',
         'DELETE_MSG_2': 'මෙය ආපසු හැරවිය නොහැක.',
         'QUOTE_ID': 'හැඳුනුම්පත:',
-        'YES_DELETE': 'ඔව්, මකා දමන්න'
+        'YES_DELETE': 'ඔව්, මකා දමන්න',
+        'OUTSTANDING_BALANCE_MSG': 'මෙම පාරිභෝගිකයාට නොගෙවූ ශේෂයක් ඇත:',
+        'OUTSTANDING_BALANCE_QUESTION': 'ඔබට ඉදිරියට යාමට අවශ්‍යද?'
       },
       'ADMIN_DASHBOARD': {
         'WELCOME': 'සචින්ත ටිම්බර් මෝල් වෙත සාදරයෙන් පිළිගනිමු',

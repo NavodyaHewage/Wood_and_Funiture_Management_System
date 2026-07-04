@@ -357,6 +357,30 @@
           </div>
         </div>
 
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <!-- OUTSTANDING BALANCE CONFIRM MODAL                       -->
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <div class="modal-overlay" *ngIf="showOutstandingBalanceModal" (click)="cancelOutstandingBalanceCheck()">
+          <div class="modal-box small" (click)="$event.stopPropagation()">
+            <div class="modal-header danger">
+              <h5>{{ 'ORDER_MANAGEMENT.OUTSTANDING_BALANCE_TITLE' | translate }}</h5>
+              <button class="modal-close" (click)="cancelOutstandingBalanceCheck()"><i class="bi bi-x-lg"></i></button>
+            </div>
+            <div class="modal-body text-center">
+              <i class="bi bi-exclamation-triangle-fill delete-icon"></i>
+              <p class="mt-3">
+                {{ 'ORDER_MANAGEMENT.OUTSTANDING_BALANCE_MSG' | translate }}
+                <strong>Rs. {{ pendingOutstandingBalance | number:'1.2-2' }}</strong>.
+                {{ 'ORDER_MANAGEMENT.OUTSTANDING_BALANCE_QUESTION' | translate }}
+              </p>
+            </div>
+            <div class="modal-footer">
+              <button class="btn-cancel" (click)="cancelOutstandingBalanceCheck()">{{ 'ORDER_MANAGEMENT.NO' | translate }}</button>
+              <button class="btn-danger" (click)="confirmProceedWithOutstandingBalance()">{{ 'ORDER_MANAGEMENT.YES' | translate }}</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </main>
