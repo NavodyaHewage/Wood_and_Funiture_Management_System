@@ -1,0 +1,176 @@
+<div class="dashboard-layout">
+  <app-admin-side></app-admin-side>
+
+  <main class="main-content">
+    <app-header></app-header>
+
+    <div class="content-body">
+      <div class="receipt-page-wrapper">
+
+        <!-- Action Bar (Hidden during Print) -->
+        <div class="action-bar no-print">
+          <button class="btn-action btn-back" (click)="goBack()">
+            <i class="bi bi-arrow-left"></i> Back
+          </button>
+          <div class="right-actions" style="display: flex; gap: 0.75rem;">
+            <button class="btn-action btn-pdf" (click)="downloadPDF()">
+              <i class="bi bi-file-earmark-pdf"></i> Download PDF
+            </button>
+            <button class="btn-action btn-print" (click)="printQuotation()">
+              <i class="bi bi-printer"></i> Print
+            </button>
+          </div>
+        </div>
+
+        <!-- Loading State -->
+        <div *ngIf="isLoading" class="loading-state">
+          <div class="spinner-premium"></div>
+          <p>Loading quotation details...</p>
+        </div>
+
+        <!-- Quotation Content Container -->
+        <div *ngIf="!isLoading && quotation" class="invoice-container shadow-premium" id="quotation-invoice-container">
+
+          <!-- Company Brand Header -->
+          <header class="invoice-header">
+            <div class="company-brand">
+              <div class="logo-box">
+                <img src="/logo.jpg" alt="Sachintha Sew Mill Logo" class="company-logo">
+              </div>
+              <div class="company-info">
+                <h1>SACHINTHA SEW MILL</h1>
+                <p class="reg-no">Business Reg No: TD/448</p>
+                <p class="address">Sachintha Sew Mill, Kudalu Deniya, Galdola, Kotapola.</p>
+                <p class="contact">Tel: 077-2333722 | Email: wfmscahinthasewmill&#64;gmail.com</p>
+              </div>
+            </div>
+            <div class="invoice-title-block">
+              <h2>QUOTATION</h2>
+              <div class="receipt-meta">
+                <div class="meta-item">
+                  <span class="label">QUOTE NO:</span>
+                  <span class="value">{{ quotation.quotationNumber || ('#Q-' + quotation.quotationId) }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">DATE:</span>
+                  <span class="value">{{ quotation.quotationDate | date:'mediumDate' }}</span>
+                </div>
+                <div class="meta-item" *ngIf="quotation.validUntil">
+                  <span class="label">VALID UNTIL:</span>
+                  <span class="value">{{ quotation.validUntil | date:'mediumDate' }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="label">STATUS:</span>
+                  <span class="value badge" [ngClass]="getStatusClass(quotation.status)">{{ quotation.status }}</span>
+                </div>
+              </div>
+            </div>
+          </header>
+
+          <div class="invoice-body">
+
+            <!-- Party Details Grid -->
+            <div class="details-grid">
+              <div class="detail-box">
+                <h3>Customer Particulars</h3>
+                <div class="info-row">
+                  <span class="lbl">Customer ID:</span>
+                  <span class="val">#{{ quotation.customerId }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="lbl">Name:</span>
+                  <span class="val font-large">{{ quotation.customerName }}</span>
+                </div>
+              </div>
+
+              <div class="detail-box">
+                <h3>Quotation Reference</h3>
+                <div class="info-row">
+                  <span class="lbl">Prepared By:</span>
+                  <span class="val">{{ quotation.createdByName || ('User #' + quotation.createdBy) }}</span>
+                </div>
+                <div class="info-row">
+                  <span class="lbl">Quote Status:</span>
+                  <span class="val badge" [ngClass]="getStatusClass(quotation.status)">{{ quotation.status }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Items Table -->
+            <div class="table-responsive">
+              <table class="table invoice-table">
+                <thead>
+                  <tr>
+                    <th style="width: 50px;">#</th>
+                    <th>Item Description</th>
+                    <th class="text-right" style="width: 90px;">Qty</th>
+                    <th class="text-right" style="width: 150px;">Unit Price (LKR)</th>
+                    <th class="text-right" style="width: 180px;">Line Total (LKR)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let detail of quotation.details; let i = index">
+                    <td>{{ i + 1 }}</td>
+                    <td>
+                      <div class="item-desc">
+                        <strong>{{ detail.name }}</strong>
+                        <span class="sub-text" *ngIf="detail.productCatName">{{ detail.productCatName }}</span>
+                      </div>
+                    </td>
+                    <td class="text-right">{{ detail.quantity }}</td>
+                    <td class="text-right">LKR {{ detail.price | number:'1.2-2' }}</td>
+                    <td class="text-right font-medium">LKR {{ detail.lineTotal | number:'1.2-2' }}</td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colspan="4" class="text-right fw-bold text-uppercase">Grand Total</td>
+                    <td class="text-right fw-bold text-total">LKR {{ quotation.totalAmount | number:'1.2-2' }}</td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <!-- Remarks and Summary -->
+            <div class="invoice-footer-section">
+              <div class="notes-area">
+                <h4>Remarks:</h4>
+                <p>{{ quotation.remarks || 'No additional remarks provided.' }}</p>
+              </div>
+              <div class="summary-area">
+                <div class="summary-line grand-total">
+                  <span class="lbl">Grand Total:</span>
+                  <span class="val">LKR {{ quotation.totalAmount | number:'1.2-2' }}</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Authorized Signatures -->
+          <div class="signatures-grid">
+            <div class="sig-box">
+              <div class="line"></div>
+              <p>Prepared By</p>
+            </div>
+            <div class="sig-box">
+              <div class="line"></div>
+              <p>Authorized By</p>
+            </div>
+            <div class="sig-box">
+              <div class="line"></div>
+              <p>Customer Acceptance</p>
+            </div>
+          </div>
+
+          <!-- Print Footer -->
+          <footer class="print-footer">
+            <p>This is a computer-generated Quotation. Prices and stock availability are subject to change after the validity period.</p>
+            <p>Sachintha Timber Mall - Wood &amp; Furniture Management System</p>
+          </footer>
+
+        </div>
+      </div>
+    </div>
+  </main>
+</div>

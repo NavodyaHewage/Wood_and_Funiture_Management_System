@@ -16,6 +16,7 @@ import { AdminLayoutComponent } from './components/shared/admin-layout/admin-lay
 import { LoanComponent } from './components/loan/loan.component';
 import { OrderManagementDashboardComponent } from './components/order-managment/order-managemnt-dashboard/order-managemnt-dashboard.component';
 import { QuotationManagementComponent } from './components/order-managment/quotation-management/quotation-management.component';
+import { QuotationViewComponent } from './components/order-managment/quotation-view/quotation-view.component';
 import { ProductCategoryComponent } from './components/order-managment/product-category/product-category.component';
 import { PayrollManagementComponent } from './components/payroll/payroll-management/payroll-management.component';
 import { DesignationSalaryConfigComponent } from './components/payroll/designation-salary-config/designation-salary-config.component';
@@ -54,6 +55,7 @@ export const routes: Routes = [
     
     { path: 'order-management', component: OrderManagementDashboardComponent, canActivate: [permissionGuard], data: { title: 'Order Management', requiredFunction: 'order-management' } },
     { path: 'quotation-management', component: QuotationManagementComponent, canActivate: [permissionGuard], data: { title: 'Quotation Management', requiredFunction: 'quotation-management' } },
+    { path: 'quotation-management/view/:id', component: QuotationViewComponent, canActivate: [permissionGuard], data: { title: 'Printable Quotation', requiredFunction: 'quotation-management' } },
     { path: 'product-category', component: ProductCategoryComponent, canActivate: [permissionGuard], data: { title: 'Product Category', requiredFunction: 'product-category' } },
     { path: 'attendance-management', component: AttendanceListComponent, canActivate: [permissionGuard], data: { title: 'Attendance Management', requiredFunction: 'attendance-management' } },
     { path: 'loan-management', component: LoanComponent, canActivate: [permissionGuard], data: { title: 'Loan & Advance Management', requiredFunction: 'loan-management' } },

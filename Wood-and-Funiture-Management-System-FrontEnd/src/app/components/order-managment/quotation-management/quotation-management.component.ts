@@ -279,7 +279,13 @@ export class QuotationManagementComponent implements OnInit {
       });
     } else {
       this.quotationService.createQuotation(formData).subscribe({
-        next: () => this.handleSuccess('Quotation created successfully'),
+        next: (response) => {
+          this.isLoading = false;
+          this.showModal = false;
+          this.loadQuotations();
+          this.toastService.show('Quotation created successfully', 'success');
+          this.router.navigate(['/quotation-management/view', response.quotationId]);
+        },
         error: (err) => this.handleError('Error creating quotation', err)
       });
     }
